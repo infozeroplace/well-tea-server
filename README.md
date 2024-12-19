@@ -5,17 +5,28 @@ PRODUCTION_ADMIN_FRONTEND_BASE_URL : [https://welltea-admin.zeroplace.co](https:
 
 SERVER PORT : 8081
 
-```bash
-PRODUCTION_DATABASE_URL : "mongodb+srv://churchlogoinfo:1lAPFr9vpYOYTa99@churchlogo.rv9tf.mongodb.net/welltea?retryWrites=true&w=majority"
-```
+PRODUCTION_DATABASE_URL :
 
 ```bash
-DEVELOPMENT_DATABASE_URL : "mongodb+srv://churchlogoinfo:1lAPFr9vpYOYTa99@churchlogo.rv9tf.mongodb.net/welltea?retryWrites=true&w=majority"
+mongodb+srv://churchlogoinfo:1lAPFr9vpYOYTa99@churchlogo.rv9tf.mongodb.net/welltea?retryWrites=true&w=majority
 ```
 
+DEVELOPMENT_DATABASE_URL :
+
 ```bash
-GOOGLE_CLIENT_ID : "167441940625-25d9ofhn0t0e91nitmv1bco386efusc6.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET : "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"
+mongodb+srv://churchlogoinfo:1lAPFr9vpYOYTa99@churchlogo.rv9tf.mongodb.net/welltea?retryWrites=true&w=majority
+```
+
+GOOGLE_CLIENT_ID :
+
+```bash
+167441940625-25d9ofhn0t0e91nitmv1bco386efusc6.apps.googleusercontent.com
+```
+
+GOOGLE_CLIENT_SECRET :
+
+```bash
+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
 ```
 
 ```bash
@@ -23,39 +34,44 @@ STRIPE_SECRET_KEY_DEV : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 STRIPE_SECRET_KEY_PROD : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 ```
 
-```bash
-STRIPE_PUBLISHABLE_KEY_DEV : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-STRIPE_PUBLISHABLE_KEY_PROD : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-```
+STRIPE_PUBLISHABLE_KEY_DEV :
 
 ```bash
-STRIPE_ENDPOINT_SECRET_KEY_DEV : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-STRIPE_ENDPOINT_SECRET_KEY_PROD : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
+
+STRIPE_PUBLISHABLE_KEY_PROD :
 
 ```bash
-CLOUDINARY_CLOUD_NAME : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-CLOUDINARY_API_KEY : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-CLOUDINARY_API_SECRET : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+STRIPE_ENDPOINT_SECRET_KEY_DEV :
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+STRIPE_ENDPOINT_SECRET_KEY_PROD :
 
-## Learn More
+```bash
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+```
 
-To learn more about Next.js, take a look at the following resources:
+CLOUDINARY_CLOUD_NAME :
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+CLOUDINARY_API_KEY :
 
-## Deploy on Vercel
+```bash
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+CLOUDINARY_API_SECRET :
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+```
