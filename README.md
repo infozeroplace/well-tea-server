@@ -1,17 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Credentials
 
-## Getting Started
+PRODUCTION_FRONTEND_BASE_URL : [https://welltea.zeroplace.co](https://welltea.zeroplace.co)
+PRODUCTION_ADMIN_FRONTEND_BASE_URL : [https://welltea-admin.zeroplace.co](https://welltea-admin.zeroplace.co)
 
-First, run the development server:
+SERVER PORT : 8081
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+PRODUCTION_DATABASE_URL : "mongodb+srv://churchlogoinfo:1lAPFr9vpYOYTa99@churchlogo.rv9tf.mongodb.net/welltea?retryWrites=true&w=majority"
+```
+
+```bash
+DEVELOPMENT_DATABASE_URL : "mongodb+srv://churchlogoinfo:1lAPFr9vpYOYTa99@churchlogo.rv9tf.mongodb.net/welltea?retryWrites=true&w=majority"
+```
+
+```bash
+GOOGLE_CLIENT_ID : "167441940625-25d9ofhn0t0e91nitmv1bco386efusc6.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET : "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"
+```
+
+```bash
+STRIPE_SECRET_KEY_DEV : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+STRIPE_SECRET_KEY_PROD : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+```
+
+```bash
+STRIPE_PUBLISHABLE_KEY_DEV : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+STRIPE_PUBLISHABLE_KEY_PROD : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+```
+
+```bash
+STRIPE_ENDPOINT_SECRET_KEY_DEV : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+STRIPE_ENDPOINT_SECRET_KEY_PROD : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+```
+
+```bash
+CLOUDINARY_CLOUD_NAME : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+CLOUDINARY_API_KEY : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+CLOUDINARY_API_SECRET : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
