@@ -130,7 +130,7 @@ const register = async (payload) => {
   if (isEmailExist) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "User already exists with this email"
+      "Email already exists!!"
     );
   }
 
@@ -397,7 +397,7 @@ const googleLogin = async (code) => {
       firstName: given_name || ".",
       lastName: family_name || ".",
       verified: true,
-      isGoogleLogin: true,
+      isSocialLogin: true,
       photo: {
         url: picture,
       },

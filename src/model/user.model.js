@@ -50,7 +50,7 @@ const UserSchema = Schema(
         message: "{VALUE} is not matched",
       },
     },
-    isGoogleLogin: {
+    isSocialLogin: {
       type: Boolean,
       default: false,
     },
@@ -93,7 +93,7 @@ const UserSchema = Schema(
         "Invalid password format",
       ],
       required: function () {
-        return !this.isGoogleLogin; // Only require password for non-Google logins
+        return !this.isSocialLogin;
       },
     },
     resetToken: {
