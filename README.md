@@ -1,76 +1,97 @@
 ## Credentials
 
-PRODUCTION_FRONTEND_BASE_URL : [https://welltea.zeroplace.co](https://welltea.zeroplace.co) <br />
-PRODUCTION_ADMIN_FRONTEND_BASE_URL : [https://welltea-admin.zeroplace.co](https://welltea-admin.zeroplace.co)
+Frontend URL : [https://welltea.zeroplace.co](https://welltea.zeroplace.co) <br />
+Admin panel URL : [https://welltea-admin.zeroplace.co](https://welltea-admin.zeroplace.co) <br />
+API URL : [https://api.welltea.zeroplace.co](https://api.welltea.zeroplace.co)
 
-SERVER PORT : 8081
+Server Port : 8081
 
-PRODUCTION_DATABASE_URL :
+Credential Email :
+
+```bash
+Email : 4welltea@gmail.com
+Password : @mina624696
+```
+
+Production database URI :
 
 ```bash
 mongodb+srv://churchlogoinfo:1lAPFr9vpYOYTa99@churchlogo.rv9tf.mongodb.net/welltea?retryWrites=true&w=majority
 ```
 
-DEVELOPMENT_DATABASE_URL :
+Development database URI :
 
 ```bash
 mongodb+srv://churchlogoinfo:1lAPFr9vpYOYTa99@churchlogo.rv9tf.mongodb.net/welltea?retryWrites=true&w=majority
 ```
 
-GOOGLE_CLIENT_ID :
+Google client ID :
 
 ```bash
 167441940625-25d9ofhn0t0e91nitmv1bco386efusc6.apps.googleusercontent.com
 ```
 
-GOOGLE_CLIENT_SECRET :
+Google client secret :
 
 ```bash
 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
 ```
 
-```bash
-STRIPE_SECRET_KEY_DEV : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-STRIPE_SECRET_KEY_PROD : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-```
-
-STRIPE_PUBLISHABLE_KEY_DEV :
+Stripe secret key prod :
 
 ```bash
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
-STRIPE_PUBLISHABLE_KEY_PROD :
+Stripe secret key dev :
 
 ```bash
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
-STRIPE_ENDPOINT_SECRET_KEY_DEV :
+Stripe publishable key prod :
 
 ```bash
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
-STRIPE_ENDPOINT_SECRET_KEY_PROD :
+Stripe publishable key dev :
 
 ```bash
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
-CLOUDINARY_CLOUD_NAME :
+Stripe endpoint secret key prod :
 
 ```bash
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
-CLOUDINARY_API_KEY :
+Stripe endpoint secret key dev :
 
 ```bash
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
-CLOUDINARY_API_SECRET :
+Cloudinary cloud name :
+
+```bash
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+```
+
+Cloudinary API key :
+
+```bash
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+```
+
+Cloudinary API secret :
+
+```bash
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+```
+
+Cloudinary upload preset :
 
 ```bash
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
