@@ -156,19 +156,19 @@ export const sendForgotPasswordLink = async (email, name, token) => {
   const mailOptions = {
     from: `"ChurchLogo" <${config.support_mail_address}>`,
     to: email,
-    subject: "Reset Your Church Logo Password",
+    subject: "Reset Your WellTea Password",
     html: `
       <div style="width: 100%; padding: 20px 10px; font-size: 18px; font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
         <h3>Hello, ${name}</h3>
 
         <p>
-          We received a request to reset your Church Logo account password. Please click the link below 
+          We received a request to reset your WellTea account password. Please click the link below 
           <strong style="font-weight: 900;">within 15 minutes</strong> to reset your password:
         </p>
 
         <p style="margin: 30px 0;">
           <a 
-            href="${config.frontend_base_url}/reset-password/${token}" 
+            href="${config.frontend_base_url}/reset-password?token=${token}" 
             target="_blank" 
             style="
               padding: 12px 24px;
@@ -193,17 +193,17 @@ export const sendForgotPasswordLink = async (email, name, token) => {
 
         <p style="margin: 40px 0 0;">
           Best regards, <br />
-          <strong>The Church Logo Support Team</strong>
+          <strong>WellTea Support Team</strong>
         </p>
 
         <footer style="margin-top: 40px; font-size: 14px; color: #777;">
             <p style="margin: 0;">For further assistance, contact us at:</p>
             <a 
-              href="mailto:contact@churchlogo.co" 
+              href="mailto:contact@welltea.co" 
               target="_blank" 
               style="color: #348edb; text-decoration: none; font-weight: bold;"
             >
-              support@churchlogo.co
+              support@welltea.co
             </a>
             <p style="margin: 10px 0 0;">
               <a 
@@ -211,7 +211,7 @@ export const sendForgotPasswordLink = async (email, name, token) => {
                 target="_blank" 
                 style="color: #348edb; text-decoration: none;"
               >
-                www.churchlogo.co
+                www.welltea.co
               </a>
             </p>
         </footer>
