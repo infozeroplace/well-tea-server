@@ -2,10 +2,7 @@ import multer from "multer";
 import path from "path";
 import generateUniqueImageName from "../utils/generateUniqueImageName.js";
 
-const storage = multer.diskStorage({
-  // destination: (req, file, cb) => {
-  //   cb(null, "src/public");
-  // },
+const singleImageUploaderStorage = multer.diskStorage({
   filename: (req, file, cb) => {
     const uniqueSuffix = generateUniqueImageName(file.originalname);
 
@@ -13,11 +10,13 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({
-  storage: storage,
+const singlePhotoUploader = multer({
+  storage: singleImageUploaderStorage,
   fileFilter: (req, file, cb) => {
-    const supportedImage = /png|jpg|jpeg|pdf/;
+    const supportedImage = /png|jpg|jpeg/;
+
     const extension = path.extname(file.originalname);
+
     if (supportedImage.test(extension)) {
       cb(null, true);
     } else {
@@ -26,4 +25,4 @@ const upload = multer({
   },
 }).single("image");
 
-export { upload };
+export { singlePhotoUploader };

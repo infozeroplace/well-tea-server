@@ -1,14 +1,9 @@
 import express from "express";
 import { AuthController } from "../../controller/public/auth.controller.js";
 import limiter from "../../middleware/limiter.js";
-import { upload } from "../../middleware/multer.js";
 import validateRequest from "../../middleware/validateRequest.js";
 import { AuthValidation } from "../../validation/auth.validation.js";
 const router = express.Router();
-
-// router.post("/auth/upload-file", upload, AuthController.fileUpload);
-
-// router.get("/auth/get-file", AuthController.getFile);
 
 router.post(
   "/auth/reset-password",

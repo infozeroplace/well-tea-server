@@ -1,16 +1,15 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
+import httpStatus from "http-status";
 import path from "path";
-import fs from "fs";
 import Stripe from "stripe";
 import { fileURLToPath } from "url";
 import config from "./config/index.js";
 import { corsOptions } from "./constant/common.constant.js";
 import globalErrorHandler from "./middleware/globalErrorHandler.js";
 import routes from "./routes/index.js";
-import bodyParser from 'body-parser';
-import { upload } from "./middleware/multer.js";
+import sendResponse from "./shared/sendResponse.js";
 
 const app = express();
 
@@ -35,42 +34,19 @@ app.use(
 );
 
 app.use(express.urlencoded({ limit: "100mb", extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use("/api/v1", routes);
 
 app.get("/", async (req, res) => {
-  res.send("WELCOME TO WELL TEA PRODUCTION!!");
-});
-
-app.post("/upload-file", upload, async (req, res) => {
-  const {...payload} = req.file;
-
-  const publicFolder = path.join(__dirname, "public", "uploads");
- 
-   if (!fs.existsSync(publicFolder)) {
-     fs.mkdirSync(publicFolder, { recursive: true });
-   }
- 
-   const newFilePath = path.join(publicFolder, payload.filename);
- 
-   fs.copyFile(payload.path, newFilePath, (copyErr) => {
-     if (copyErr) {
-       console.error("Error copying file:", copyErr);
-       return;
-     }
- 
-     // Delete the original file after copying
-     fs.unlink(payload.path, (unlinkErr) => {
-       if (unlinkErr) {
-         console.error("Error deleting temp file:", unlinkErr);
-         return;
-       }
-       console.log("File successfully uploaded to:", newFilePath);
-     });
-   });
-
-   res.send(payload.filename);
+  // res.send("WELCOME TO WELL TEA PRODUCTION!!");
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "WELCOME TO WELL TEA PRODUCTION!!",
+    meta: null,
+    data: null,
+  });
 });
 
 app.use((req, res) => {

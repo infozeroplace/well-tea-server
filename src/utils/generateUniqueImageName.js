@@ -17,7 +17,7 @@ const generateUniqueImageName = (originalName) => {
   const randomString = crypto.randomBytes(8).toString("hex");
 
   // Combine everything to create a unique file name
-  return `${name}_${timestamp}_${randomString}`;
+  return `${name}__${timestamp}_${randomString}`;
 };
 
 export default generateUniqueImageName;

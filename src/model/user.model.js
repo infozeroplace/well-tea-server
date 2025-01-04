@@ -100,15 +100,8 @@ const UserSchema = Schema(
       type: String,
     },
     photo: {
-      type: {
-        publicId: {
-          type: String,
-        },
-        url: {
-          type: String,
-          match: [/(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/, "Invalid URL format"],
-        },
-      },
+      type: String,
+      match: [/(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/, "Invalid URL format"],
     },
   },
   {

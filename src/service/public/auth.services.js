@@ -1,9 +1,6 @@
 import bcrypt from "bcrypt";
-import fs from "fs";
 import { OAuth2Client } from "google-auth-library";
 import httpStatus from "http-status";
-import path from "path";
-import { __dirname } from "../../app.js";
 import config from "../../config/index.js";
 import ApiError from "../../error/ApiError.js";
 import { dateFormatter } from "../../helper/dateFormatter.js";
@@ -21,35 +18,6 @@ const oAuth2Client = new OAuth2Client(
   config.google_client_secret,
   "postmessage"
 );
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-const fileUpload = async (payload) => {
-  const publicFolder = path.join(__dirname, "public", "uploads");
-
-  if (!fs.existsSync(publicFolder)) {
-    fs.mkdirSync(publicFolder, { recursive: true });
-  }
-
-  const newFilePath = path.join(publicFolder, payload.filename);
-
-  fs.copyFile(payload.path, newFilePath, (copyErr) => {
-    if (copyErr) {
-      console.error("Error copying file:", copyErr);
-      return;
-    }
-
-    // Delete the original file after copying
-    fs.unlink(payload.path, (unlinkErr) => {
-      if (unlinkErr) {
-        console.error("Error deleting temp file:", unlinkErr);
-        return;
-      }
-      console.log("File successfully uploaded to:", newFilePath);
-    });
-  });
-};
 
 const resetPassword = async (payload) => {
   const { token, password } = payload;
@@ -427,9 +395,7 @@ const googleLogin = async (code) => {
       lastName: family_name || ".",
       verified: true,
       isSocialLogin: true,
-      photo: {
-        url: picture,
-      },
+      photo: picture,
     });
 
     const { UTC, dateString } = dateFormatter.getDates();
@@ -513,7 +479,6 @@ const refreshToken = async (token) => {
 };
 
 export const AuthService = {
-  fileUpload,
   resetPassword,
   forgotPassword,
   register,

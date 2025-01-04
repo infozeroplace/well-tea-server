@@ -3,20 +3,6 @@ import { AuthService } from "../../service/public/auth.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 
-const fileUpload = catchAsync(async (req, res) => {
-  const { ...file } = req.file;
-
-  const result = await AuthService.fileUpload(file);
-
-  return sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Password reset successful!",
-    meta: null,
-    data: null,
-  });
-});
-
 const resetPassword = catchAsync(async (req, res) => {
   const { ...resetPasswordData } = req.body;
 
@@ -114,7 +100,6 @@ const refreshToken = catchAsync(async (req, res) => {
 });
 
 export const AuthController = {
-  fileUpload,
   resetPassword,
   forgotPassword,
   register,
