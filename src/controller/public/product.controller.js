@@ -1,12 +1,19 @@
 import httpStatus from "http-status";
+import { productTeaFilterableField } from "../../constant/product.constant.js";
 import { ProductService } from "../../service/public/product.services.js";
 import catchAsync from "../../shared/catchAsync.js";
+import pick from "../../shared/pick.js";
 import sendResponse from "../../shared/sendResponse.js";
+import { paginationFields } from "../../constant/pagination.constant.js";
 
-const getProductList = catchAsync(async (req, res) => {
-  const { ...queries } = req.query;
+const getProductTeaList = catchAsync(async (req, res) => {
+  const filters = pick(req.query, productTeaFilterableField);
+  const paginationOptions = pick(req.query, paginationFields);
 
-  const { meta, data } = await ProductService.getProductList(queries);
+  const { meta, data } = await ProductService.getProductTeaList(
+    filters,
+    paginationOptions
+  );
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -18,5 +25,5 @@ const getProductList = catchAsync(async (req, res) => {
 });
 
 export const ProductController = {
-  getProductList,
+  getProductTeaList,
 };

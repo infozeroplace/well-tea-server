@@ -1,8 +1,25 @@
-export const packageSearchableFields = ["title", "packageId", "createdBy"];
+export const productTeaSearchableFields = [
+  "productId",
+  "title",
+  "type",
+  "format",
+  "flavour",
+  "ingredient",
+  "benefit",
+  "originName",
+  "originAddress",
+];
 
-export const packageFilterableField = [
+export const productTeaFilterableField = [
   "searchTerm",
-  "category",
-  "isPopular",
-  "basePrice",
+  "type",
+  "format",
+  "flavour",
+  "ingredient",
+  "benefit",
+  "isSale",
+  "isSubscription",
+  "ratings",
+  "unitPrices",
+  "price"
 ];

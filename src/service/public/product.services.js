@@ -1,302 +1,132 @@
-const getProductList = async (queries) => {
-  const productList = [
+import { productTeaSearchableFields } from "../../constant/product.constant.js";
+import { PaginationHelpers } from "../../helper/paginationHelper.js";
+import { Tea } from "../../model/products.model.js";
+
+const getProductTeaList = async (filters, paginationOptions) => {
+  const { searchTerm, ...filtersData } = filters;
+
+  const andCondition = [];
+
+  if (searchTerm) {
+    andCondition.push({
+      $or: productTeaSearchableFields.map((field) => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: "i",
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filtersData).length) {
+    const filterHandlers = {
+      type: (value) => {
+        const types = value.split(",");
+        return {
+          type: {
+            $in: types,
+          },
+        };
+      },
+      format: (value) => {
+        const formats = value.split(",");
+        return {
+          format: {
+            $in: formats,
+          },
+        };
+      },
+      benefit: (value) => {
+        const benefits = value.split(",");
+        return {
+          benefit: {
+            $in: benefits,
+          },
+        };
+      },
+      flavour: (value) => {
+        const flavours = value.split(",");
+        return {
+          flavour: {
+            $in: flavours,
+          },
+        };
+      },
+      ingredient: (value) => {
+        const ingredients = value.split(",");
+        return {
+          ingredient: {
+            $in: ingredients,
+          },
+        };
+      },
+      price: (value) => {
+        const [min, max] = value.split("-").map(Number);
+        return {
+          "unitPrices.0.price": {
+            $gte: min, // Minimum price condition
+            $lte: max, // Maximum price condition
+          },
+        };
+      },
+      default: (field, value) => ({
+        [field]: value,
+      }),
+    };
+
+    if (Object.keys(filtersData).length) {
+      andCondition.push({
+        $and: Object.entries(filtersData).map(([field, value]) => {
+          const handler = filterHandlers[field] || filterHandlers.default;
+          return handler(field === "default" ? [field, value] : value);
+        }),
+      });
+    }
+  }
+
+  const whereConditions = andCondition.length > 0 ? { $and: andCondition } : {};
+
+  const { page, limit, sortBy, sortOrder } =
+    PaginationHelpers.calculationPagination(paginationOptions);
+
+  const sortConditions = {};
+
+  if (sortBy && sortOrder) {
+    if (sortBy === "price") {
+      sortConditions["unitPrices.0.price"] = sortOrder;
+    } else {
+      sortConditions[sortBy] = sortOrder;
+    }
+  }
+
+  const pipelines = [
     {
-      id: "1",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "green-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
+      $match: whereConditions,
     },
     {
-      id: "2",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "ginger-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "3",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "organic-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "4",
-      designation: "best seller",
-      discount: "",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "yellow-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "5",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "organic-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "6",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "black-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "7",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "organic-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "8",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "green-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "9",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "organic-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "10",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "herbal-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "11",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "herbal-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "12",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "herbal-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "13",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "green-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "14",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "herbal-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "15",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "organic-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "16",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "green-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "17",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "herbal-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "18",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "herbal-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "19",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "herbal-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "20",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "herbal-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "21",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "ginger-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "22",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_03.jpg",
-      hoverImage: "/products/product_04.jpg",
-      type: "black-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
-    },
-    {
-      id: "23",
-      designation: "best seller",
-      discount: "40",
-      image: "/products/product_01.jpg",
-      hoverImage: "/products/product_02.jpg",
-      type: "yellow-tea",
-      title: "White Tera Rose Melange",
-      rating: "4",
-      price: "50",
-      discountPrice: "20",
+      $sort: sortConditions,
     },
   ];
-  console.log(queries);
 
-  const filteredProducts = productList.filter((product) =>
-    Object.entries(queries).every(([key, value]) => {
-      // Check if the key exists in the product and matches the query value
-      return value ? product[key] === value : true;
-    })
-  );
+  const options = {
+    page,
+    limit,
+  };
 
+  const result = await Tea.aggregatePaginate(pipelines, options);
+
+  const { docs, totalDocs } = result;
 
   return {
     meta: {
-      page: 1,
-      limit: 10,
-      totalDocs: 10,
+      page,
+      limit,
+      totalDocs,
     },
-    data: [...filteredProducts],
+    data: docs,
   };
 };
 
 export const ProductService = {
-  getProductList,
+  getProductTeaList,
 };
