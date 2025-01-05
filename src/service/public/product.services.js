@@ -104,6 +104,54 @@ const getProductTeaList = async (filters, paginationOptions) => {
       $match: whereConditions,
     },
     {
+      $addFields: {
+        unitPrices: {
+          $map: {
+            input: "$unitPrices",
+            as: "unitPrice",
+            in: {
+              unit: "$$unitPrice.unit",
+              price: "$$unitPrice.price",
+              salePrice: {
+                $cond: {
+                  if: "$isSale",
+                  then: {
+                    $round: [
+                      {
+                        $subtract: [
+                          "$$unitPrice.price",
+                          { $multiply: ["$$unitPrice.price", { $divide: ["$sale", 100] }] },
+                        ],
+                      },
+                      2, // Round to 2 decimal places
+                    ],
+                  },
+                  else: 0,
+                },
+              },
+              subscriptionPrice: {
+                $cond: {
+                  if: { $and: ["$isSubscription"] },
+                  then: {
+                    $round: [
+                      {
+                        $subtract: [
+                          "$$unitPrice.price",
+                          { $multiply: ["$$unitPrice.price", { $divide: ["$subscriptionSale", 100] }] },
+                        ],
+                      },
+                      2, // Round to 2 decimal places
+                    ],
+                  },
+                  else: 0,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    {
       $sort: sortConditions,
     },
   ];
