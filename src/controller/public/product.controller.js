@@ -1,10 +1,10 @@
 import httpStatus from "http-status";
+import { paginationFields } from "../../constant/pagination.constant.js";
 import { productTeaFilterableField } from "../../constant/product.constant.js";
 import { ProductService } from "../../service/public/product.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import pick from "../../shared/pick.js";
 import sendResponse from "../../shared/sendResponse.js";
-import { paginationFields } from "../../constant/pagination.constant.js";
 
 const getProductList = catchAsync(async (req, res) => {
   const filters = pick(req.query, productTeaFilterableField);
@@ -24,6 +24,21 @@ const getProductList = catchAsync(async (req, res) => {
   });
 });
 
+const getProduct = catchAsync(async (req, res) => {
+  const { slug } = req.params;
+
+  const result = await ProductService.getProduct(slug);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Product retrieved successfully",
+    meta: null,
+    data: result,
+  });
+});
+
 export const ProductController = {
+  getProduct,
   getProductList,
 };

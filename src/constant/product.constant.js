@@ -16,6 +16,7 @@ export const productTeaSearchableFields = [
 export const productTeaFilterableField = [
   "searchTerm",
   "category",
+  "sku",
   "keyword",
   "type",
   "format",
@@ -26,6 +27,7 @@ export const productTeaFilterableField = [
   "isStock",
   "isNew",
   "isBestSeller",
+  "isFeatured",
   "isSale",
   "isSubscription",
   "ratings",

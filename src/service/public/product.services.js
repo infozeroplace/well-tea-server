@@ -1,6 +1,18 @@
+import httpStatus from "http-status";
 import { productTeaSearchableFields } from "../../constant/product.constant.js";
+import ApiError from "../../error/ApiError.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import Product from "../../model/products.model.js";
+
+const getProduct = async (slug) => {
+  const result = await Product.findOne({
+    urlParameter: { $regex: new RegExp(`^${slug}$`, "i") },
+  });
+
+  if (!result) throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+
+  return result;
+};
 
 const getProductList = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
@@ -96,6 +108,13 @@ const getProductList = async (filters, paginationOptions) => {
       isBestSeller: (value) => {
         return {
           isBestSeller: {
+            $in: [value === "true"],
+          },
+        };
+      },
+      isFeatured: (value) => {
+        return {
+          isFeatured: {
             $in: [value === "true"],
           },
         };
@@ -224,5 +243,6 @@ const getProductList = async (filters, paginationOptions) => {
 };
 
 export const ProductService = {
+  getProduct,
   getProductList,
 };

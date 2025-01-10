@@ -6,6 +6,24 @@ import auth from "../../middleware/auth.js";
 const router = express.Router();
 
 router.put(
+  "/system/update-top-notification",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateNotification
+);
+
+router.put(
+  "/system/update-featured-setting",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateFeaturedSectionSetting
+);
+
+router.put(
+  "/system/update-logo",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateLogo
+);
+
+router.put(
   "/system/update-offer-setting",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
   SystemController.updateOfferSetting

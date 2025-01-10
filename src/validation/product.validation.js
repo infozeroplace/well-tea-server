@@ -85,6 +85,10 @@ const addProductSchema = z.object({
       required_error: "IsBestSeller is required",
       invalid_type_error: "IsBestSeller must be a boolean",
     }),
+    isFeatured: z.boolean({
+      required_error: "IsFeatured is required",
+      invalid_type_error: "IsFeatured must be a boolean",
+    }),
     isSale: z.boolean({
       required_error: "IsSale is required",
       invalid_type_error: "IsSale must be a boolean",

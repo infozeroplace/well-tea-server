@@ -6,6 +6,7 @@ const SystemSchema = Schema(
       type: String,
       default: "system-1",
     },
+    logo: String,
     hero: {
       type: [
         {
@@ -43,6 +44,14 @@ const SystemSchema = Schema(
         },
       },
     },
+    featured: {
+      title: String,
+      subTitle: String,
+      buttonText: String,
+      buttonUrl: String,
+      bannerImage: String,
+    },
+    topNotifications: [String],
   },
   {
     timestamps: true,

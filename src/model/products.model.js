@@ -180,6 +180,10 @@ const ProductSchema = Schema(
       type: Boolean,
       default: false,
     },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
     isSale: {
       type: Boolean,
       default: false,

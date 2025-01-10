@@ -3,6 +3,131 @@ import ApiError from "../../error/ApiError.js";
 import { System } from "../../model/system.model.js";
 import { removeImage } from "../../utils/fileSystem.js";
 
+const updateNotification = async (payload) => {
+  const existing = await System.findOne({ systemId: "system-1" });
+
+  if (!existing) {
+    // If no existing document, create a new one
+    const result = await System.create({
+      systemId: "system-1",
+      topNotifications: payload,
+    });
+
+    if (!result) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    }
+
+    return result;
+  } else {
+    // Update the document with the new notifications
+    const result = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { $set: { topNotifications: payload } },
+      { new: true }
+    );
+
+    if (!result) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    }
+
+    return result;
+  }
+};
+
+const updateFeaturedSectionSetting = async (payload) => {
+  const existing = await System.findOne({ systemId: "system-1" });
+
+  const newImagePath = payload.bannerImage;
+
+  if (!existing) {
+    // If no existing document, create a new one
+    const result = await System.create({
+      systemId: "system-1",
+      featured: {
+        title: payload.title,
+        subTitle: payload.subTitle,
+        buttonText: payload.buttonText,
+        buttonUrl: payload.buttonUrl,
+        bannerImage: newImagePath,
+      },
+    });
+
+    if (!result) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    }
+
+    return result;
+  } else {
+    const oldImage = existing.featured?.bannerImage;
+
+    // Remove old image if a new image is uploaded
+    if (oldImage && oldImage !== newImagePath) {
+      const filename = oldImage.split("/").pop(); // Extract the filename
+      await removeImage(filename);
+    }
+
+    // Update the featured section
+    const result = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      {
+        $set: {
+          featured: {
+            title: payload.title,
+            subTitle: payload.subTitle,
+            buttonText: payload.buttonText,
+            buttonUrl: payload.buttonUrl,
+            bannerImage: newImagePath,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    if (!result) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    }
+
+    return result;
+  }
+};
+
+const updateLogo = async (payload) => {
+  const { url } = payload;
+
+  const existing = await System.findOne({
+    systemId: "system-1",
+  });
+
+  if (!existing) {
+    const result = await System.create({
+      systemId: "system-1",
+      logo: url,
+    });
+
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
+    return result;
+  } else {
+    existing.logo && (await removeImage(existing.logo));
+
+    const result = await System.findOneAndUpdate(
+      {
+        systemId: "system-1",
+      },
+      {
+        $set: { logo: url },
+      },
+      { new: true }
+    );
+
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
+    return result;
+  }
+};
+
 const updateOfferSetting = async (payload) => {
   const existing = await System.findOne({ systemId: "system-1" });
 
@@ -150,6 +275,9 @@ const getSystemConfiguration = async (payload) => {
 };
 
 export const SystemService = {
+  updateNotification,
+  updateFeaturedSectionSetting,
+  updateLogo,
   updateOfferSetting,
   updateHeroSetting,
   getSystemConfiguration,
