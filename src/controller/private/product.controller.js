@@ -3,10 +3,10 @@ import { ProductService } from "../../service/private/product.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 
-const deleteProductTea = catchAsync(async (req, res) => {
+const deleteProduct = catchAsync(async (req, res) => {
   const { ...data } = req.body;
 
-  const result = await ProductService.deleteProductTea(data);
+  const result = await ProductService.deleteProduct(data);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -17,10 +17,10 @@ const deleteProductTea = catchAsync(async (req, res) => {
   });
 });
 
-const addProductTea = catchAsync(async (req, res) => {
+const addProduct = catchAsync(async (req, res) => {
   const { ...data } = req.body;
 
-  const result = await ProductService.addProductTea(data);
+  const result = await ProductService.addProduct(data);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -32,6 +32,6 @@ const addProductTea = catchAsync(async (req, res) => {
 });
 
 export const ProductController = {
-  deleteProductTea,
-  addProductTea,
+  deleteProduct,
+  addProduct,
 };

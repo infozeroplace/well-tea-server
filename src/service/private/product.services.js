@@ -1,11 +1,11 @@
 import httpStatus from "http-status";
 import ApiError from "../../error/ApiError.js";
-import { Tea } from "../../model/products.model.js";
+import Product from "../../model/products.model.js";
 import extractAlterText from "../../utils/extractAlterText.js";
 import { removeImage } from "../../utils/fileSystem.js";
 
-const deleteProductTea = async (payload) => {
-  const isExistProduct = await Tea.findById(payload.id);
+const deleteProduct = async (payload) => {
+  const isExistProduct = await Product.findById(payload.id);
 
   if (!isExistProduct) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Product not found");
@@ -16,7 +16,7 @@ const deleteProductTea = async (payload) => {
     ...(isExistProduct?.slideImages || []),
   ];
 
-  const result = await Tea.findByIdAndDelete(payload.id);
+  const result = await Product.findByIdAndDelete(payload.id);
 
   if (imagesToRemove.length > 0) {
     await Promise.all(
@@ -26,7 +26,7 @@ const deleteProductTea = async (payload) => {
   return result;
 };
 
-const addProductTea = async (payload) => {
+const addProduct = async (payload) => {
   const { thumbnails, slideImages, ...data } = payload;
 
   const product = {
@@ -43,7 +43,7 @@ const addProductTea = async (payload) => {
     ...data,
   };
 
-  const result = await Tea.create(product);
+  const result = await Product.create(product);
 
   if (!result)
     throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
@@ -52,6 +52,6 @@ const addProductTea = async (payload) => {
 };
 
 export const ProductService = {
-  deleteProductTea,
-  addProductTea,
+  deleteProduct,
+  addProduct,
 };

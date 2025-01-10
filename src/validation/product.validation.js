@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { productCategories } from "../constant/product.constant.js";
 
-const deleteTeaSchema = z.object({
+const deleteProductSchema = z.object({
   body: z.object({
     id: z.string({ required_error: "ID is required" }),
   }),
@@ -30,11 +31,12 @@ const subscriptionSchema = z.object({
   days: z.number({ required_error: "Days is required" }),
 });
 
-const addTeaSchema = z.object({
+const addProductSchema = z.object({
   body: z.object({
-    productId: z.string({ required_error: "Product Id is required" }),
+    urlParameter: z.string({ required_error: "urlParameter is required" }),
+    sku: z.string({ required_error: "sku is required" }),
     title: z.string({ required_error: "Title is required" }),
-    description: z.string({ required_error: "Description is required" }),
+    longDescription: z.string({ required_error: "Description is required" }),
     shortDescription: z.string({
       required_error: "Short description is required",
     }),
@@ -43,6 +45,14 @@ const addTeaSchema = z.object({
     }),
     slideImages: z.array(z.string(), {
       required_error: "Slide images must be an array of strings",
+    }),
+    category: z.array(
+      z.enum(productCategories, {
+        required_error: "Category must be an array of valid strings",
+      })
+    ),
+    keyword: z.array(z.string(), {
+      required_error: "keyword must be an array of strings",
     }),
     type: z.array(z.string(), {
       required_error: "Type must be an array of strings",
@@ -59,8 +69,22 @@ const addTeaSchema = z.object({
     benefit: z.array(z.string(), {
       required_error: "Benefits must be an array of strings",
     }),
-    originName: z.string({ required_error: "Origin name is required" }),
+    originName: z.array(z.string(), {
+      required_error: "origin name must be an array of strings",
+    }),
     originAddress: z.string({ required_error: "Origin address is required" }),
+    isStock: z.boolean({
+      required_error: "IsStock is required",
+      invalid_type_error: "IsStock must be a boolean",
+    }),
+    isNew: z.boolean({
+      required_error: "IsNew is required",
+      invalid_type_error: "IsNew must be a boolean",
+    }),
+    isBestSeller: z.boolean({
+      required_error: "IsBestSeller is required",
+      invalid_type_error: "IsBestSeller must be a boolean",
+    }),
     isSale: z.boolean({
       required_error: "IsSale is required",
       invalid_type_error: "IsSale must be a boolean",
@@ -68,6 +92,10 @@ const addTeaSchema = z.object({
     isSubscription: z.boolean({
       required_error: "IsSubscription is required",
       invalid_type_error: "IsSubscription must be a boolean",
+    }),
+    isMultiDiscount: z.boolean({
+      required_error: "isMultiDiscount is required",
+      invalid_type_error: "isMultiDiscount must be a boolean",
     }),
     sale: z.number({ required_error: "Sale is required" }),
     subscriptionSale: z.number({
@@ -78,17 +106,13 @@ const addTeaSchema = z.object({
         required_error: "Unit prices must be an array of objects",
       })
       .min(1, { message: "At least one unit price is required" }),
-    subscriptions: z
-      .array(subscriptionSchema, {
-        required_error: "Subscriptions must be an array of objects",
-      })
-      .min(1, { message: "At least one subscription is required" }),
-    howToMakeTea: z
-      .array(howToMakeTeaItemSchema, {
-        required_error: "HowToMakeTea must be an array of objects",
-      })
-      .min(1, { message: "At least one howToMakeTea item is required" }),
+    subscriptions: z.array(subscriptionSchema, {
+      required_error: "Subscriptions must be an array of objects",
+    }),
+    howToMakeTea: z.array(howToMakeTeaItemSchema, {
+      required_error: "HowToMakeTea must be an array of objects",
+    }),
   }),
 });
 
-export const ProductValidation = { deleteTeaSchema, addTeaSchema };
+export const ProductValidation = { deleteProductSchema, addProductSchema };

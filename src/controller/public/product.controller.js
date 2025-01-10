@@ -6,11 +6,11 @@ import pick from "../../shared/pick.js";
 import sendResponse from "../../shared/sendResponse.js";
 import { paginationFields } from "../../constant/pagination.constant.js";
 
-const getProductTeaList = catchAsync(async (req, res) => {
+const getProductList = catchAsync(async (req, res) => {
   const filters = pick(req.query, productTeaFilterableField);
   const paginationOptions = pick(req.query, paginationFields);
 
-  const { meta, data } = await ProductService.getProductTeaList(
+  const { meta, data } = await ProductService.getProductList(
     filters,
     paginationOptions
   );
@@ -25,5 +25,5 @@ const getProductTeaList = catchAsync(async (req, res) => {
 });
 
 export const ProductController = {
-  getProductTeaList,
+  getProductList,
 };

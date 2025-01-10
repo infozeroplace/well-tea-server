@@ -8,17 +8,17 @@ import { ProductValidation } from "../../validation/product.validation.js";
 const router = express.Router();
 
 router.delete(
-  "/product/tea/delete",
+  "/product/delete",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
-  validateRequest(ProductValidation.deleteTeaSchema),
-  ProductController.deleteProductTea
+  validateRequest(ProductValidation.deleteProductSchema),
+  ProductController.deleteProduct
 );
 
 router.post(
-  "/product/tea/add",
+  "/product/add",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
-  validateRequest(ProductValidation.addTeaSchema),
-  ProductController.addProductTea
+  validateRequest(ProductValidation.addProductSchema),
+  ProductController.addProduct
 );
 
 export const ProductRoutes = router;

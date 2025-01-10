@@ -1,13 +1,27 @@
 import { Schema, model } from "mongoose";
 import mongoosePlugin from "mongoose-aggregate-paginate-v2";
+import { productCategories } from "../constant/product.constant.js";
 
-const TeaSchema = Schema(
+const ProductSchema = Schema(
   {
-    productId: {
+    urlParameter: {
       type: String,
       unique: true,
       trim: true,
-      required: [true, "Product ID is required"],
+      required: [true, "Url parameter is required"],
+      set: (value) =>
+        value
+          .trim()
+          .replace(/[^a-zA-Z0-9\s]/g, "")
+          .replace(/\s+/g, " ")
+          .toLowerCase()
+          .replace(/ /g, "-"),
+    },
+    sku: {
+      type: String,
+      unique: true,
+      trim: true,
+      required: [true, "Sku is required"],
       set: (value) =>
         value
           .trim()
@@ -18,19 +32,28 @@ const TeaSchema = Schema(
     },
     title: {
       type: String,
-      unique: true,
       trim: true,
       required: [true, "Title is required"],
     },
-    description: {
+    longDescription: {
       type: String,
       trim: true,
-      required: [true, "Description is required"],
+      required: [true, "longDescription is required"],
     },
     shortDescription: {
       type: String,
       trim: true,
-      required: [true, "Short description is required"],
+      required: [true, "shortDescription is required"],
+    },
+    metaTitle: {
+      type: String,
+      trim: true,
+      required: [true, "metaTitle is required"],
+    },
+    metaDescription: {
+      type: String,
+      trim: true,
+      required: [true, "metaDescription is required"],
     },
     thumbnails: [
       {
@@ -46,6 +69,33 @@ const TeaSchema = Schema(
         path: String,
       },
     ],
+    category: {
+      type: [String],
+      enum: {
+        values: productCategories,
+        message: "{VALUE} is not matched",
+      },
+      required: [true, "Category is required!"],
+      set: (values) =>
+        values.map((value) =>
+          value
+            .trim()
+            .replace(/[^a-zA-Z0-9\s]/g, "")
+            .replace(/\s+/g, " ")
+            .toLowerCase()
+        ),
+    },
+    keyword: {
+      type: [String],
+      set: (values) =>
+        values.map((value) =>
+          value
+            .trim()
+            .replace(/[^a-zA-Z0-9\s]/g, "")
+            .replace(/\s+/g, " ")
+            .toLowerCase()
+        ),
+    },
     type: {
       type: [String],
       set: (values) =>
@@ -102,30 +152,61 @@ const TeaSchema = Schema(
         ),
     },
     originName: {
-      type: String,
-      trim: true,
-      set: (value) => value.trim().replace(/\s+/g, " ").toLowerCase(),
+      type: [String],
+      set: (values) =>
+        values.map((value) =>
+          value
+            .trim()
+            .replace(/[^a-zA-Z0-9\s]/g, "")
+            .replace(/\s+/g, " ")
+            .toLowerCase()
+        ),
+      default: [],
     },
     originAddress: {
       type: String,
       trim: true,
       set: (value) => value.trim().replace(/\s+/g, " ").toLowerCase(),
     },
+    isStock: {
+      type: Boolean,
+      default: false,
+    },
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
+    isBestSeller: {
+      type: Boolean,
+      default: false,
+    },
     isSale: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     isSubscription: {
       type: Boolean,
       default: false,
     },
+    isMultiDiscount: {
+      type: Boolean,
+      default: false,
+    },
     sale: {
       type: Number,
-      default: false,
+      default: 0,
     },
     subscriptionSale: {
       type: Number,
-      default: false,
+      default: 0,
+    },
+    multiDiscountQuantity: {
+      type: Number,
+      default: 0,
+    },
+    multiDiscountAmount: {
+      type: Number,
+      default: 0,
     },
     ratings: {
       type: Number,
@@ -167,11 +248,11 @@ const TeaSchema = Schema(
   }
 );
 
-TeaSchema.plugin(mongoosePlugin);
+ProductSchema.plugin(mongoosePlugin);
 
-const Tea = model("Tea", TeaSchema);
+const Product = model("Product", ProductSchema);
 
-export { Tea };
+export default Product;
 
 // const tea = {
 //   productId: "assam-breakfast-tea",
@@ -212,10 +293,10 @@ export { Tea };
 //     { unit: "1kg", price: 42.75 },
 //   ],
 //   subscriptions: [
-//     { weeks: "2 week", days: 14 },
-//     { weeks: "4 week", days: 28 },
-//     { weeks: "6 week", days: 42 },
-//     { weeks: "8 week", days: 56 },
+// { weeks: "2 week", days: 14 },
+// { weeks: "4 week", days: 28 },
+// { weeks: "6 week", days: 42 },
+// { weeks: "8 week", days: 56 },
 //   ],
 //   howToMakeTea: [
 //     {

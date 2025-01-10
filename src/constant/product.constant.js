@@ -1,6 +1,9 @@
 export const productTeaSearchableFields = [
-  "productId",
+  "urlParameter",
+  "sku",
   "title",
+  "category",
+  "keyword",
   "type",
   "format",
   "flavour",
@@ -12,14 +15,22 @@ export const productTeaSearchableFields = [
 
 export const productTeaFilterableField = [
   "searchTerm",
+  "category",
+  "keyword",
   "type",
   "format",
   "flavour",
   "ingredient",
   "benefit",
+  "originName",
+  "isStock",
+  "isNew",
+  "isBestSeller",
   "isSale",
   "isSubscription",
   "ratings",
   "unitPrices",
-  "price"
+  "price",
 ];
+
+export const productCategories = ["tea", "teaware", "gift"];

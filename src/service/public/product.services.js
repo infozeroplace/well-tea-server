@@ -1,10 +1,10 @@
 import { productTeaSearchableFields } from "../../constant/product.constant.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
-import { Tea } from "../../model/products.model.js";
+import Product from "../../model/products.model.js";
 
-const getProductTeaList = async (filters, paginationOptions) => {
+const getProductList = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
-
+  // console.log(filters)
   const andCondition = [];
 
   if (searchTerm) {
@@ -20,6 +20,22 @@ const getProductTeaList = async (filters, paginationOptions) => {
 
   if (Object.keys(filtersData).length) {
     const filterHandlers = {
+      category: (value) => {
+        const categories = value.split(",");
+        return {
+          category: {
+            $in: categories,
+          },
+        };
+      },
+      keyword: (value) => {
+        const keywords = value.split(",");
+        return {
+          keyword: {
+            $in: keywords,
+          },
+        };
+      },
       type: (value) => {
         const types = value.split(",");
         return {
@@ -60,12 +76,34 @@ const getProductTeaList = async (filters, paginationOptions) => {
           },
         };
       },
+      originName: (value) => {
+        const countries = value.split(",");
+        return {
+          originName: {
+            $in: countries,
+          },
+        };
+      },
       price: (value) => {
         const [min, max] = value.split("-").map(Number);
         return {
           "unitPrices.0.price": {
             $gte: min, // Minimum price condition
             $lte: max, // Maximum price condition
+          },
+        };
+      },
+      isBestSeller: (value) => {
+        return {
+          isBestSeller: {
+            $in: [value === "true"],
+          },
+        };
+      },
+      isSale: (value) => {
+        return {
+          isSale: {
+            $in: [value === "true"],
           },
         };
       },
@@ -120,7 +158,12 @@ const getProductTeaList = async (filters, paginationOptions) => {
                       {
                         $subtract: [
                           "$$unitPrice.price",
-                          { $multiply: ["$$unitPrice.price", { $divide: ["$sale", 100] }] },
+                          {
+                            $multiply: [
+                              "$$unitPrice.price",
+                              { $divide: ["$sale", 100] },
+                            ],
+                          },
                         ],
                       },
                       2, // Round to 2 decimal places
@@ -137,7 +180,12 @@ const getProductTeaList = async (filters, paginationOptions) => {
                       {
                         $subtract: [
                           "$$unitPrice.price",
-                          { $multiply: ["$$unitPrice.price", { $divide: ["$subscriptionSale", 100] }] },
+                          {
+                            $multiply: [
+                              "$$unitPrice.price",
+                              { $divide: ["$subscriptionSale", 100] },
+                            ],
+                          },
                         ],
                       },
                       2, // Round to 2 decimal places
@@ -161,7 +209,7 @@ const getProductTeaList = async (filters, paginationOptions) => {
     limit,
   };
 
-  const result = await Tea.aggregatePaginate(pipelines, options);
+  const result = await Product.aggregatePaginate(pipelines, options);
 
   const { docs, totalDocs } = result;
 
@@ -176,5 +224,5 @@ const getProductTeaList = async (filters, paginationOptions) => {
 };
 
 export const ProductService = {
-  getProductTeaList,
+  getProductList,
 };
