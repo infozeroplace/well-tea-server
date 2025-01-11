@@ -5,13 +5,112 @@ import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import Product from "../../model/products.model.js";
 
 const getProduct = async (slug) => {
-  const result = await Product.findOne({
-    urlParameter: { $regex: new RegExp(`^${slug}$`, "i") },
-  });
+  const pipeline = [
+    {
+      $match: {
+        urlParameter: { $regex: new RegExp(`^${slug}$`, "i") },
+      },
+    },
+    {
+      $lookup: {
+        from: "reviews", // The name of the collection storing reviews
+        localField: "reviews", // Field in the current document
+        foreignField: "_id", // Field in the `reviews` collection
+        as: "reviews", // Output array in the resulting document
+      },
+    },
+    {
+      $lookup: {
+        from: "products", // The name of the collection storing products
+        localField: "availableAs", // Field in the current document
+        foreignField: "_id", // Field in the `products` collection
+        as: "availableAs", // Output array in the resulting document
+      },
+    },
+    {
+      $addFields: {
+        availableAs: {
+          $map: {
+            input: "$availableAs",
+            as: "product",
+            in: {
+              urlParameter: "$$product.urlParameter",
+              format: "$$product.format",
+            },
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
+        unitPrices: {
+          $map: {
+            input: "$unitPrices",
+            as: "unitPrice",
+            in: {
+              unit: "$$unitPrice.unit",
+              price: "$$unitPrice.price",
+              salePrice: {
+                $cond: {
+                  if: "$isSale",
+                  then: {
+                    $round: [
+                      {
+                        $subtract: [
+                          "$$unitPrice.price",
+                          {
+                            $multiply: [
+                              "$$unitPrice.price",
+                              { $divide: ["$sale", 100] },
+                            ],
+                          },
+                        ],
+                      },
+                      2,
+                    ],
+                  },
+                  else: 0,
+                },
+              },
+              subscriptionPrice: {
+                $cond: {
+                  if: "$isSubscription",
+                  then: {
+                    $round: [
+                      {
+                        $subtract: [
+                          "$$unitPrice.price",
+                          {
+                            $multiply: [
+                              "$$unitPrice.price",
+                              { $divide: ["$subscriptionSale", 100] },
+                            ],
+                          },
+                        ],
+                      },
+                      2,
+                    ],
+                  },
+                  else: 0,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      $limit: 1, // Ensure we only get one product
+    },
+  ];
 
-  if (!result) throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+  const result = await Product.aggregate(pipeline);
 
-  return result;
+  if (!result || result.length === 0) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+  }
+
+  return result[0];
 };
 
 const getProductList = async (filters, paginationOptions) => {

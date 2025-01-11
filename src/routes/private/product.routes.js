@@ -7,6 +7,12 @@ import { ProductValidation } from "../../validation/product.validation.js";
 
 const router = express.Router();
 
+router.get(
+  "/product/list",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  ProductController.getProductList
+);
+
 router.delete(
   "/product/delete",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),

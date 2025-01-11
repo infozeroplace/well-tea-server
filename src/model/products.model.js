@@ -8,6 +8,7 @@ const ProductSchema = Schema(
       type: String,
       unique: true,
       trim: true,
+      index: true,
       required: [true, "Url parameter is required"],
       set: (value) =>
         value
@@ -21,6 +22,7 @@ const ProductSchema = Schema(
       type: String,
       unique: true,
       trim: true,
+      index: true,
       required: [true, "Sku is required"],
       set: (value) =>
         value
@@ -221,6 +223,15 @@ const ProductSchema = Schema(
         {
           type: Schema.Types.ObjectId,
           ref: "Review",
+        },
+      ],
+      default: [],
+    },
+    availableAs: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Product",
         },
       ],
       default: [],
