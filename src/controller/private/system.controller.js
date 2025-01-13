@@ -3,6 +3,44 @@ import { SystemService } from "../../service/private/system.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+const updateCompanyService = catchAsync(async (req, res) => {
+  const result = await SystemService.updateCompanyService(req.body);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
+const updateWhyChooseUs = catchAsync(async (req, res) => {
+  const result = await SystemService.updateWhyChooseUs(req.body);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
+const updateSecondaryLogo = catchAsync(async (req, res) => {
+  const { ...data } = req.body;
+
+  const result = await SystemService.updateSecondaryLogo(data);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
 const updateNotification = catchAsync(async (req, res) => {
   const result = await SystemService.updateNotification(req.body);
 
@@ -80,6 +118,9 @@ const getSystemConfiguration = catchAsync(async (req, res) => {
 });
 
 export const SystemController = {
+  updateCompanyService,
+  updateWhyChooseUs,
+  updateSecondaryLogo,
   updateNotification,
   updateFeaturedSectionSetting,
   updateOfferSetting,

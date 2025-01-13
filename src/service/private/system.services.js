@@ -3,6 +3,140 @@ import ApiError from "../../error/ApiError.js";
 import { System } from "../../model/system.model.js";
 import { removeImage } from "../../utils/fileSystem.js";
 
+const updateCompanyService = async (payload) => {
+  const existing = await System.findOne({ systemId: "system-1" });
+
+  const updatedFields = payload.map((item) => ({
+    ...item,
+    iconPath: `/public/image/upload/${item.iconPath}`,
+  }));
+
+  if (!existing) {
+    // Create a new document if none exists
+    const result = await System.create({
+      systemId: "system-1",
+      companyService: updatedFields,
+    });
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    return result;
+  } else {
+    // Get current icon paths
+    const oldIcons = existing.companyService.map((field) => field.iconPath);
+
+    // Get new icon paths
+    const newIcons = updatedFields.map((field) => field.iconPath);
+
+    // Determine which icons are no longer used
+    const iconsToRemove = oldIcons.filter((path) => !newIcons.includes(path));
+
+    // Remove unused icons
+    for (const iconPath of iconsToRemove) {
+      const filename = iconPath.split("/").pop();
+      await removeImage(filename); // Assuming `removeImage` deletes the file
+    }
+
+    // Update the existing document
+    const result = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { $set: { companyService: updatedFields } },
+      { new: true }
+    );
+
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    return result;
+  }
+};
+
+const updateWhyChooseUs = async (payload) => {
+  const existing = await System.findOne({ systemId: "system-1" });
+
+  const updatedFields = payload.map((item) => ({
+    ...item,
+    iconPath: `/public/image/upload/${item.iconPath}`,
+    imagePath: `/public/image/upload/${item.imagePath}`,
+  }));
+
+  if (!existing) {
+    const result = await System.create({
+      systemId: "system-1",
+      whyChooseUs: updatedFields,
+    });
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    return result;
+  } else {
+    const oldIcons = existing.whyChooseUs.map((field) => field.iconPath);
+    const oldImages = existing.whyChooseUs.map((field) => field.imagePath);
+
+    const newIcons = updatedFields.map((field) => field.iconPath);
+    const newImages = updatedFields.map((field) => field.imagePath);
+
+    const iconsToRemove = oldIcons.filter((path) => !newIcons.includes(path));
+    const imagesToRemove = oldImages.filter(
+      (path) => !newImages.includes(path)
+    );
+
+    for (const iconPath of iconsToRemove) {
+      const filename = iconPath.split("/").pop();
+      await removeImage(filename);
+    }
+
+    for (const imagePath of imagesToRemove) {
+      const filename = imagePath.split("/").pop();
+      await removeImage(filename);
+    }
+
+    const result = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { $set: { whyChooseUs: updatedFields } },
+      { new: true }
+    );
+
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    return result;
+  }
+};
+
+const updateSecondaryLogo = async (payload) => {
+  const { url } = payload;
+
+  const existing = await System.findOne({
+    systemId: "system-1",
+  });
+
+  if (!existing) {
+    const result = await System.create({
+      systemId: "system-1",
+      secondaryLogo: url,
+    });
+
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
+    return result;
+  } else {
+    existing.secondaryLogo && (await removeImage(existing.secondaryLogo));
+
+    const result = await System.findOneAndUpdate(
+      {
+        systemId: "system-1",
+      },
+      {
+        $set: { secondaryLogo: url },
+      },
+      { new: true }
+    );
+
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
+    return result;
+  }
+};
+
 const updateNotification = async (payload) => {
   const existing = await System.findOne({ systemId: "system-1" });
 
@@ -275,6 +409,9 @@ const getSystemConfiguration = async (payload) => {
 };
 
 export const SystemService = {
+  updateCompanyService,
+  updateWhyChooseUs,
+  updateSecondaryLogo,
   updateNotification,
   updateFeaturedSectionSetting,
   updateLogo,

@@ -7,6 +7,7 @@ const SystemSchema = Schema(
       default: "system-1",
     },
     logo: String,
+    secondaryLogo: String,
     hero: {
       type: [
         {
@@ -15,6 +16,25 @@ const SystemSchema = Schema(
           bannerImageDescription: String,
           bannerImageButtonText: String,
           bannerImageButtonUrl: String,
+        },
+      ],
+    },
+    whyChooseUs: {
+      type: [
+        {
+          title: String,
+          description: String,
+          iconPath: String,
+          imagePath: String,
+        },
+      ],
+    },
+    companyService: {
+      type: [
+        {
+          title: String,
+          description: String,
+          iconPath: String,
         },
       ],
     },
