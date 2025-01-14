@@ -25,7 +25,7 @@ export const productTeaFilterableField = [
   "benefit",
   "originName",
   "isStock",
-  "isNew",
+  "isNewProduct",
   "isBestSeller",
   "isFeatured",
   "isSale",

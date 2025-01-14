@@ -174,7 +174,7 @@ const ProductSchema = Schema(
       type: Boolean,
       default: false,
     },
-    isNew: {
+    isNewProduct: {
       type: Boolean,
       default: false,
     },

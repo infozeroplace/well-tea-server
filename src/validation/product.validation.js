@@ -77,9 +77,9 @@ const addProductSchema = z.object({
       required_error: "IsStock is required",
       invalid_type_error: "IsStock must be a boolean",
     }),
-    isNew: z.boolean({
-      required_error: "IsNew is required",
-      invalid_type_error: "IsNew must be a boolean",
+    isNewProduct: z.boolean({
+      required_error: "isNewProduct is required",
+      invalid_type_error: "isNewProduct must be a boolean",
     }),
     isBestSeller: z.boolean({
       required_error: "IsBestSeller is required",
