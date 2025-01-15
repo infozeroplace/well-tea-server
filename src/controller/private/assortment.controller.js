@@ -6,6 +6,30 @@ import catchAsync from "../../shared/catchAsync.js";
 import pick from "../../shared/pick.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+const deleteAssortments = catchAsync(async (req, res) => {
+  const result = await AssortmentService.deleteAssortments(req.body);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Assortments deleted successfully",
+    meta: null,
+    data: result,
+  });
+});
+
+const getAllAssortmentList = catchAsync(async (req, res) => {
+  const result = await AssortmentService.getAllAssortmentList();
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Assortments retrieved successfully",
+    meta: null,
+    data: result,
+  });
+});
+
 const deleteAssortment = catchAsync(async (req, res) => {
   const result = await AssortmentService.deleteAssortment(req.body);
 
@@ -49,6 +73,8 @@ const addAssortment = catchAsync(async (req, res) => {
 });
 
 export const AssortmentController = {
+  deleteAssortments,
+  getAllAssortmentList,
   deleteAssortment,
   getAssortmentList,
   addAssortment,

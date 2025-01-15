@@ -8,6 +8,12 @@ import { ProductValidation } from "../../validation/product.validation.js";
 const router = express.Router();
 
 router.get(
+  "/product/all-list",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  ProductController.getAllProductList
+);
+
+router.get(
   "/product/list",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
   ProductController.getProductList

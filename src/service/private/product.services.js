@@ -6,6 +6,12 @@ import Product from "../../model/products.model.js";
 import extractAlterText from "../../utils/extractAlterText.js";
 import { removeImage } from "../../utils/fileSystem.js";
 
+const getAllProductList = async () => {
+  const result = await Product.find({});
+
+  return result;
+};
+
 const getProductList = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
 
@@ -282,6 +288,7 @@ const addProduct = async (payload) => {
 };
 
 export const ProductService = {
+  getAllProductList,
   getProductList,
   deleteProduct,
   addProduct,

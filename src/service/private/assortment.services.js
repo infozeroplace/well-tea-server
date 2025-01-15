@@ -4,13 +4,28 @@ import ApiError from "../../error/ApiError.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import Assortment from "../../model/assortment.model.js";
 
+const deleteAssortments = async (ids) => {
+  const result = await Assortment.deleteMany({
+    _id: { $in: ids },
+  });
+
+  if (!result)
+    throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
+  return result;
+};
+
+const getAllAssortmentList = async () => {
+  const result = await Assortment.find({});
+  return result;
+};
+
 const deleteAssortment = async (payload) => {
   const { id } = payload;
 
   const isExisting = await Assortment.findById(id);
 
-  if (!isExisting)
-    throw new ApiError(httpStatus.N, "Not found!");
+  if (!isExisting) throw new ApiError(httpStatus.BAD_REQUEST, "Not found!");
 
   const result = await Assortment.findByIdAndDelete(id);
 
@@ -37,20 +52,11 @@ const getAssortmentList = async (filters, paginationOptions) => {
   }
 
   if (Object.keys(filtersData).length) {
-    const filterHandlers = {
-      default: (field, value) => ({
+    andCondition.push({
+      $and: Object.entries(filtersData).map(([field, value]) => ({
         [field]: value,
-      }),
-    };
-
-    if (Object.keys(filtersData).length) {
-      andCondition.push({
-        $and: Object.entries(filtersData).map(([field, value]) => {
-          const handler = filterHandlers[field] || filterHandlers.default;
-          return handler(field === "default" ? [field, value] : value);
-        }),
-      });
-    }
+      })),
+    });
   }
 
   const whereConditions = andCondition.length > 0 ? { $and: andCondition } : {};
@@ -102,6 +108,8 @@ const addAssortment = async (payload) => {
 };
 
 export const AssortmentService = {
+  deleteAssortments,
+  getAllAssortmentList,
   deleteAssortment,
   getAssortmentList,
   addAssortment,

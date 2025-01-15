@@ -3,8 +3,20 @@ import { paginationFields } from "../../constant/pagination.constant.js";
 import { productTeaFilterableField } from "../../constant/product.constant.js";
 import { ProductService } from "../../service/private/product.services.js";
 import catchAsync from "../../shared/catchAsync.js";
-import sendResponse from "../../shared/sendResponse.js";
 import pick from "../../shared/pick.js";
+import sendResponse from "../../shared/sendResponse.js";
+
+const getAllProductList = catchAsync(async (req, res) => {
+  const result = await ProductService.getAllProductList();
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Products retrieved successfully",
+    meta: null,
+    data: result,
+  });
+});
 
 const getProductList = catchAsync(async (req, res) => {
   const filters = pick(req.query, productTeaFilterableField);
@@ -53,6 +65,7 @@ const addProduct = catchAsync(async (req, res) => {
 });
 
 export const ProductController = {
+  getAllProductList,
   getProductList,
   deleteProduct,
   addProduct,

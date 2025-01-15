@@ -6,6 +6,18 @@ import auth from "../../middleware/auth.js";
 const router = express.Router();
 
 router.delete(
+  "/assortment/delete-assortments",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  AssortmentController.deleteAssortments
+);
+
+router.get(
+  "/assortment/all-list",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  AssortmentController.getAllAssortmentList
+);
+
+router.delete(
   "/assortment/delete-assortment",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
   AssortmentController.deleteAssortment
