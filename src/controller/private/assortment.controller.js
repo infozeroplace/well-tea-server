@@ -1,13 +1,13 @@
 import httpStatus from "http-status";
-import { categoryFilterableField } from "../../constant/category.constant.js";
+import { assortmentFilterableField } from "../../constant/assortment.constant.js";
 import { paginationFields } from "../../constant/pagination.constant.js";
-import { CategoryService } from "../../service/private/category.services.js";
+import { AssortmentService } from "../../service/private/assortment.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import pick from "../../shared/pick.js";
 import sendResponse from "../../shared/sendResponse.js";
 
-const deleteCategory = catchAsync(async (req, res) => {
-  const result = await CategoryService.deleteCategory(req.body);
+const deleteAssortment = catchAsync(async (req, res) => {
+  const result = await AssortmentService.deleteAssortment(req.body);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -18,11 +18,11 @@ const deleteCategory = catchAsync(async (req, res) => {
   });
 });
 
-const getCategoryList = catchAsync(async (req, res) => {
-  const filters = pick(req.query, categoryFilterableField);
+const getAssortmentList = catchAsync(async (req, res) => {
+  const filters = pick(req.query, assortmentFilterableField);
   const paginationOptions = pick(req.query, paginationFields);
 
-  const { meta, data } = await CategoryService.getCategoryList(
+  const { meta, data } = await AssortmentService.getAssortmentList(
     filters,
     paginationOptions
   );
@@ -30,14 +30,14 @@ const getCategoryList = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Categories retrieved successfully",
+    message: "Assortments retrieved successfully",
     meta,
     data,
   });
 });
 
-const addCategory = catchAsync(async (req, res) => {
-  const result = await CategoryService.addCategory(req.body);
+const addAssortment = catchAsync(async (req, res) => {
+  const result = await AssortmentService.addAssortment(req.body);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -48,8 +48,8 @@ const addCategory = catchAsync(async (req, res) => {
   });
 });
 
-export const CategoryController = {
-  deleteCategory,
-  getCategoryList,
-  addCategory,
+export const AssortmentController = {
+  deleteAssortment,
+  getAssortmentList,
+  addAssortment,
 };

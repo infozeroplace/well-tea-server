@@ -1,13 +1,18 @@
 import httpStatus from "http-status";
-import { categorySearchableFields } from "../../constant/category.constant.js";
+import { assortmentSearchableFields } from "../../constant/assortment.constant.js";
 import ApiError from "../../error/ApiError.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
-import Category from "../../model/category.model.js";
+import Assortment from "../../model/assortment.model.js";
 
-const deleteCategory = async (payload) => {
+const deleteAssortment = async (payload) => {
   const { id } = payload;
 
-  const result = await Category.findByIdAndDelete(id);
+  const isExisting = await Assortment.findById(id);
+
+  if (!isExisting)
+    throw new ApiError(httpStatus.N, "Not found!");
+
+  const result = await Assortment.findByIdAndDelete(id);
 
   if (!result)
     throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
@@ -15,14 +20,14 @@ const deleteCategory = async (payload) => {
   return result;
 };
 
-const getCategoryList = async (filters, paginationOptions) => {
+const getAssortmentList = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
 
   const andCondition = [];
 
   if (searchTerm) {
     andCondition.push({
-      $or: categorySearchableFields.map((field) => ({
+      $or: assortmentSearchableFields.map((field) => ({
         [field]: {
           $regex: searchTerm,
           $options: "i",
@@ -73,7 +78,7 @@ const getCategoryList = async (filters, paginationOptions) => {
     limit,
   };
 
-  const result = await Category.aggregatePaginate(pipelines, options);
+  const result = await Assortment.aggregatePaginate(pipelines, options);
 
   const { docs, totalDocs } = result;
 
@@ -87,8 +92,8 @@ const getCategoryList = async (filters, paginationOptions) => {
   };
 };
 
-const addCategory = async (payload) => {
-  const result = await Category.create(payload);
+const addAssortment = async (payload) => {
+  const result = await Assortment.create(payload);
 
   if (!result)
     throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
@@ -96,8 +101,8 @@ const addCategory = async (payload) => {
   return result;
 };
 
-export const CategoryService = {
-  deleteCategory,
-  getCategoryList,
-  addCategory,
+export const AssortmentService = {
+  deleteAssortment,
+  getAssortmentList,
+  addAssortment,
 };

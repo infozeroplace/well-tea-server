@@ -1,9 +1,9 @@
 import { model, Schema } from "mongoose";
 import mongoosePlugin from "mongoose-aggregate-paginate-v2";
 
-const CategorySchema = Schema(
+const AssortmentSchema = Schema(
   {
-    value: {
+    assortment: {
       type: String,
       unique: true,
       trim: true,
@@ -16,7 +16,7 @@ const CategorySchema = Schema(
           .replace(/\s+/g, " ")
           .toLowerCase(),
     },
-    type: {
+    assortmentType: {
       type: String,
       trim: true,
       set: (value) =>
@@ -36,7 +36,8 @@ const CategorySchema = Schema(
   }
 );
 
-CategorySchema.plugin(mongoosePlugin);
-const Category = model("Category", CategorySchema);
+AssortmentSchema.plugin(mongoosePlugin);
 
-export default Category;
+const Assortment = model("Assortment", AssortmentSchema);
+
+export default Assortment;
