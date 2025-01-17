@@ -28,6 +28,14 @@ const getProduct = async (slug) => {
       },
     },
     {
+      $lookup: {
+        from: "brewinstructions", // The name of the collection storing brew instructions
+        localField: "brewInstruction", // Field in the current document
+        foreignField: "_id", // Field in the `brewinstructions` collection
+        as: "brewInstruction", // Output array in the resulting document
+      },
+    },
+    {
       $addFields: {
         availableAs: {
           $map: {

@@ -1,11 +1,13 @@
 import express from "express";
 import { AssortmentRoutes } from "./assortment.routes.js";
+import { BrewInstructionRoutes } from "./brewInstruction.routes.js";
 import { ProductRoutes } from "./product.routes.js";
 import { SystemRoutes } from "./system.routes.js";
 import { UploadRoutes } from "./upload.routes.js";
 
 const router = express.Router();
 
+router.use(BrewInstructionRoutes);
 router.use(AssortmentRoutes);
 router.use(SystemRoutes);
 router.use(UploadRoutes);

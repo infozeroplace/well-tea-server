@@ -6,6 +6,14 @@ import Product from "../../model/products.model.js";
 import extractAlterText from "../../utils/extractAlterText.js";
 import { removeImage } from "../../utils/fileSystem.js";
 
+const getProduct = async (id) => {
+  const result = await Product.findOne({ _id: id });
+
+  if (!result) throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+
+  return result;
+};
+
 const getAllProductList = async () => {
   const result = await Product.find({});
 
@@ -288,6 +296,7 @@ const addProduct = async (payload) => {
 };
 
 export const ProductService = {
+  getProduct,
   getAllProductList,
   getProductList,
   deleteProduct,

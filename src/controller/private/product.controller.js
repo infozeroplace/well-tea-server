@@ -6,6 +6,19 @@ import catchAsync from "../../shared/catchAsync.js";
 import pick from "../../shared/pick.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+const getProduct = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await ProductService.getProduct(id);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Product retrieved successfully",
+    meta: null,
+    data: result,
+  });
+});
+
 const getAllProductList = catchAsync(async (req, res) => {
   const result = await ProductService.getAllProductList();
 
@@ -65,6 +78,7 @@ const addProduct = catchAsync(async (req, res) => {
 });
 
 export const ProductController = {
+  getProduct,
   getAllProductList,
   getProductList,
   deleteProduct,

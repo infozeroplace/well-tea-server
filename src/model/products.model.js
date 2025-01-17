@@ -73,10 +73,6 @@ const ProductSchema = Schema(
     ],
     category: {
       type: [String],
-      enum: {
-        values: productCategories,
-        message: "{VALUE} is not matched",
-      },
       required: [true, "Category is required!"],
       set: (values) =>
         values.map((value) =>
@@ -236,12 +232,20 @@ const ProductSchema = Schema(
       ],
       default: [],
     },
-    howToMakeTea: {
+    addOns: {
       type: [
         {
-          title: String,
-          requirements: [String],
-          steps: [String],
+          type: Schema.Types.ObjectId,
+          ref: "Product",
+        },
+      ],
+      default: [],
+    },
+    brewInstruction: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "BrewInstruction",
         },
       ],
       default: [],

@@ -33,4 +33,10 @@ router.post(
   ProductController.addProduct
 );
 
+router.get(
+  "/product/:id",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  ProductController.getProduct
+);
+
 export const ProductRoutes = router;
