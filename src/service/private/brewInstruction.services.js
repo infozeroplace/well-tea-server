@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import { brewInstructionSearchableFields } from "../../constant/BrewInstruction.constant.js";
+import { brewInstructionSearchableFields } from "../../constant/brewInstruction.constant.js";
 import ApiError from "../../error/ApiError.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import BrewInstruction from "../../model/brewInstruction.model.js";
