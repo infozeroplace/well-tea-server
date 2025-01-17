@@ -53,54 +53,47 @@ const addProductSchema = z.object({
     ),
     keyword: z.array(z.string(), {
       required_error: "keyword must be an array of strings",
-    }),
+    }).optional(),
     type: z.array(z.string(), {
       required_error: "Type must be an array of strings",
-    }),
+    }).optional(),
     format: z.array(z.string(), {
       required_error: "Format must be an array of strings",
-    }),
+    }).optional(),
     flavour: z.array(z.string(), {
       required_error: "Flavour must be an array of strings",
-    }),
+    }).optional(),
     ingredient: z.array(z.string(), {
       required_error: "Ingredients must be an array of strings",
-    }),
+    }).optional(),
     benefit: z.array(z.string(), {
       required_error: "Benefits must be an array of strings",
-    }),
+    }).optional(),
     originName: z.array(z.string(), {
       required_error: "origin name must be an array of strings",
-    }),
+    }).optional(),
     originAddress: z.string({ required_error: "Origin address is required" }),
     isStock: z.boolean({
-      required_error: "IsStock is required",
       invalid_type_error: "IsStock must be a boolean",
-    }),
+    }).optional(),
     isNewProduct: z.boolean({
-      required_error: "isNewProduct is required",
       invalid_type_error: "isNewProduct must be a boolean",
-    }),
+    }).optional(),
     isBestSeller: z.boolean({
-      required_error: "IsBestSeller is required",
       invalid_type_error: "IsBestSeller must be a boolean",
-    }),
+    }).optional(),
     isFeatured: z.boolean({
-      required_error: "IsFeatured is required",
       invalid_type_error: "IsFeatured must be a boolean",
-    }),
+    }).optional(),
     isSale: z.boolean({
-      required_error: "IsSale is required",
       invalid_type_error: "IsSale must be a boolean",
-    }),
+    }).optional(),
     isSubscription: z.boolean({
-      required_error: "IsSubscription is required",
       invalid_type_error: "IsSubscription must be a boolean",
-    }),
+    }).optional(),
     isMultiDiscount: z.boolean({
-      required_error: "isMultiDiscount is required",
       invalid_type_error: "isMultiDiscount must be a boolean",
-    }),
+    }).optional(),
     sale: z.number({ required_error: "Sale is required" }),
     subscriptionSale: z.number({
       required_error: "Subscription sale is required",
@@ -109,13 +102,13 @@ const addProductSchema = z.object({
       .array(unitPriceSchema, {
         required_error: "Unit prices must be an array of objects",
       })
-      .min(1, { message: "At least one unit price is required" }),
+      .min(1, { message: "At least one unit price is required" }).optional(),
     subscriptions: z.array(subscriptionSchema, {
       required_error: "Subscriptions must be an array of objects",
-    }),
+    }).optional(),
     howToMakeTea: z.array(howToMakeTeaItemSchema, {
       required_error: "HowToMakeTea must be an array of objects",
-    }),
+    }).optional(),
   }),
 });
 

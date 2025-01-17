@@ -30,12 +30,6 @@ const updateCompanyService = async (payload) => {
     // Determine which icons are no longer used
     const iconsToRemove = oldIcons.filter((path) => !newIcons.includes(path));
 
-    // Remove unused icons
-    for (const iconPath of iconsToRemove) {
-      const filename = iconPath.split("/").pop();
-      await removeImage(filename); // Assuming `removeImage` deletes the file
-    }
-
     // Update the existing document
     const result = await System.findOneAndUpdate(
       { systemId: "system-1" },
@@ -45,6 +39,13 @@ const updateCompanyService = async (payload) => {
 
     if (!result)
       throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
+    // Remove unused icons
+    for (const iconPath of iconsToRemove) {
+      const filename = iconPath.split("/").pop();
+      await removeImage(filename); // Assuming `removeImage` deletes the file
+    }
+    
     return result;
   }
 };
@@ -78,6 +79,15 @@ const updateWhyChooseUs = async (payload) => {
       (path) => !newImages.includes(path)
     );
 
+    const result = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { $set: { whyChooseUs: updatedFields } },
+      { new: true }
+    );
+
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
     for (const iconPath of iconsToRemove) {
       const filename = iconPath.split("/").pop();
       await removeImage(filename);
@@ -88,14 +98,6 @@ const updateWhyChooseUs = async (payload) => {
       await removeImage(filename);
     }
 
-    const result = await System.findOneAndUpdate(
-      { systemId: "system-1" },
-      { $set: { whyChooseUs: updatedFields } },
-      { new: true }
-    );
-
-    if (!result)
-      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
     return result;
   }
 };
