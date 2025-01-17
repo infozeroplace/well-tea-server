@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import { brewInstructionFilterableField } from "../../constant/BrewInstruction.constant.js";
+import { brewInstructionFilterableField } from "../../constant/brewInstruction.constant.js";
 import { paginationFields } from "../../constant/pagination.constant.js";
 import { BrewInstructionService } from "../../service/private/brewInstruction.services.js";
 import catchAsync from "../../shared/catchAsync.js";
