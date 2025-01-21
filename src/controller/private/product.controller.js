@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import { paginationFields } from "../../constant/pagination.constant.js";
-import { productTeaFilterableField } from "../../constant/product.constant.js";
+import { productFilterableField } from "../../constant/product.constant.js";
 import { ProductService } from "../../service/private/product.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import pick from "../../shared/pick.js";
@@ -32,7 +32,7 @@ const getAllProductList = catchAsync(async (req, res) => {
 });
 
 const getProductList = catchAsync(async (req, res) => {
-  const filters = pick(req.query, productTeaFilterableField);
+  const filters = pick(req.query, productFilterableField);
   const paginationOptions = pick(req.query, paginationFields);
 
   const { meta, data } = await ProductService.getProductList(

@@ -1,29 +1,29 @@
-export const productTeaSearchableFields = [
+export const productSearchableFields = [
   "urlParameter",
   "sku",
   "title",
   "category",
-  "keyword",
-  "type",
-  "format",
-  "flavour",
-  "ingredient",
-  "benefit",
-  "originName",
-  "originAddress",
+  "attribute",
+  "teaType",
+  "teaFormat",
+  "teaFlavor",
+  "teaIngredient",
+  "teaBenefit",
+  "origin",
+  "originLocation",
 ];
 
-export const productTeaFilterableField = [
+export const productFilterableField = [
   "searchTerm",
   "category",
   "sku",
-  "keyword",
-  "type",
-  "format",
-  "flavour",
-  "ingredient",
-  "benefit",
-  "originName",
+  "attribute",
+  "teaType",
+  "teaFormat",
+  "teaFlavor",
+  "teaIngredient",
+  "teaBenefit",
+  "origin",
   "isStock",
   "isNewProduct",
   "isBestSeller",
@@ -34,5 +34,3 @@ export const productTeaFilterableField = [
   "unitPrices",
   "price",
 ];
-
-export const productCategories = ["tea", "teaware", "gift"];

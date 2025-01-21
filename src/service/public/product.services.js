@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import { productTeaSearchableFields } from "../../constant/product.constant.js";
+import { productSearchableFields } from "../../constant/product.constant.js";
 import ApiError from "../../error/ApiError.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import Product from "../../model/products.model.js";
@@ -20,19 +20,88 @@ const getProduct = async (slug) => {
       },
     },
     {
-      $lookup: {
-        from: "products", // The name of the collection storing products
-        localField: "availableAs", // Field in the current document
-        foreignField: "_id", // Field in the `products` collection
-        as: "availableAs", // Output array in the resulting document
+      $unwind: {
+        path: "$reviews",
+        preserveNullAndEmptyArrays: true,
       },
     },
     {
       $lookup: {
-        from: "brewinstructions", // The name of the collection storing brew instructions
-        localField: "brewInstruction", // Field in the current document
-        foreignField: "_id", // Field in the `brewinstructions` collection
-        as: "brewInstruction", // Output array in the resulting document
+        from: "users", // The name of the collection storing users
+        localField: "reviews.user", // Field in the `reviews` document
+        foreignField: "_id", // Field in the `users` collection
+        as: "reviewUser", // Output array for user details
+      },
+    },
+    {
+      $unwind: {
+        path: "$reviewUser",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        "reviews.userName": "$reviewUser.name", // Assuming `name` field exists in the `users` collection
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        urlParameter: { $first: "$urlParameter" },
+        sku: { $first: "$sku" },
+        title: { $first: "$title" },
+        longDescription: { $first: "$longDescription" },
+        shortDescription: { $first: "$shortDescription" },
+        metaTitle: { $first: "$metaTitle" },
+        metaDescription: { $first: "$metaDescription" },
+        thumbnails: { $first: "$thumbnails" },
+        slideImages: { $first: "$slideImages" },
+        category: { $first: "$category" },
+        attribute: { $first: "$attribute" },
+        productType: { $first: "$productType" },
+        teaFormat: { $first: "$teaFormat" },
+        teaFlavor: { $first: "$teaFlavor" },
+        teaIngredient: { $first: "$teaIngredient" },
+        teaBenefit: { $first: "$teaBenefit" },
+        origin: { $first: "$origin" },
+        originLocation: { $first: "$originLocation" },
+        isStock: { $first: "$isStock" },
+        isNewProduct: { $first: "$isNewProduct" },
+        isBestSeller: { $first: "$isBestSeller" },
+        isFeatured: { $first: "$isFeatured" },
+        isSale: { $first: "$isSale" },
+        isSubscription: { $first: "$isSubscription" },
+        isMultiDiscount: { $first: "$isMultiDiscount" },
+        sale: { $first: "$sale" },
+        subscriptionSale: { $first: "$subscriptionSale" },
+        multiDiscountQuantity: { $first: "$multiDiscountQuantity" },
+        multiDiscountAmount: { $first: "$multiDiscountAmount" },
+        ratings: { $first: "$ratings" },
+        reviews: {
+          $push: {
+            _id: "$reviews._id",
+            ratingPoints: "$reviews.ratingPoints",
+            reviewText: "$reviews.reviewText",
+            userName: "$reviews.userName",
+            date: "$reviews.date",
+          },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "availableAs",
+        foreignField: "_id",
+        as: "availableAs",
+      },
+    },
+    {
+      $lookup: {
+        from: "brewinstructions",
+        localField: "brewInstruction",
+        foreignField: "_id",
+        as: "brewInstruction",
       },
     },
     {
@@ -43,7 +112,7 @@ const getProduct = async (slug) => {
             as: "product",
             in: {
               urlParameter: "$$product.urlParameter",
-              format: "$$product.format",
+              teaFormat: "$$product.teaFormat",
             },
           },
         },
@@ -108,7 +177,7 @@ const getProduct = async (slug) => {
       },
     },
     {
-      $limit: 1, // Ensure we only get one product
+      $limit: 1,
     },
   ];
 
@@ -128,7 +197,7 @@ const getProductList = async (filters, paginationOptions) => {
 
   if (searchTerm) {
     andCondition.push({
-      $or: productTeaSearchableFields.map((field) => ({
+      $or: productSearchableFields.map((field) => ({
         [field]: {
           $regex: searchTerm,
           $options: "i",

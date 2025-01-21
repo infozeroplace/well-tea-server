@@ -29,17 +29,24 @@ const getBstTime = () => {
 
 const getDates = () => {
   const date = new Date();
-  const dateString = date.toDateString();
-  const timeNumber = date.getTime();
+  const UTC = date.toISOString();
+  const dateString = date.toDateString(); // Local date in simple format
+  const timeNumber = date.getTime(); // Milliseconds since Unix epoch
   const timeString = date.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
   });
+  const localDateTime = date.toLocaleString("en-GB", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 
-  const UTC = new Date().toISOString()
-
-  return { dateString, timeNumber, timeString, UTC };
+  return { dateString, timeNumber, timeString, UTC, localDateTime };
 };
 
 export const dateFormatter = {
