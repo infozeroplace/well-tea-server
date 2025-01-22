@@ -6,6 +6,20 @@ import catchAsync from "../../shared/catchAsync.js";
 import pick from "../../shared/pick.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+const editProduct = catchAsync(async (req, res) => {
+  const { ...data } = req.body;
+
+  const result = await ProductService.editProduct(data);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Edited successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
 const getProduct = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await ProductService.getProduct(id);
@@ -78,6 +92,7 @@ const addProduct = catchAsync(async (req, res) => {
 });
 
 export const ProductController = {
+  editProduct,
   getProduct,
   getAllProductList,
   getProductList,

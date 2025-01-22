@@ -1,11 +1,18 @@
-import Assortment from "../../model/assortment.model.js";
 import { System } from "../../model/system.model.js";
 
 const getTeaTypes = async () => {
-  const result = await Assortment.find({ assortmentType: "type" });
-  const modifiedResult = result.map((item) => item.assortment);
-
-  return modifiedResult;
+  return [
+    "green tea",
+    "black tea",
+    "organic tea",
+    "oolong tea",
+    "herbal tea",
+    "white tea",
+    "pureh tea",
+    "jasmine tea",
+    "flowering tea",
+    "yellow tea",
+  ];
 };
 
 const getSystemConfig = async () => {

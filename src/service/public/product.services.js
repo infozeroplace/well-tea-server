@@ -76,6 +76,8 @@ const getProduct = async (slug) => {
         subscriptionSale: { $first: "$subscriptionSale" },
         multiDiscountQuantity: { $first: "$multiDiscountQuantity" },
         multiDiscountAmount: { $first: "$multiDiscountAmount" },
+        unitPrices: { $first: "$unitPrices" },
+        subscriptions: { $first: "$subscriptions" },
         ratings: { $first: "$ratings" },
         reviews: {
           $push: {
@@ -216,58 +218,58 @@ const getProductList = async (filters, paginationOptions) => {
           },
         };
       },
-      keyword: (value) => {
-        const keywords = value.split(",");
+      attribute: (value) => {
+        const attributes = value.split(",");
         return {
-          keyword: {
-            $in: keywords,
+          attribute: {
+            $in: attributes,
           },
         };
       },
-      type: (value) => {
-        const types = value.split(",");
+      productType: (value) => {
+        const productTypes = value.split(",");
         return {
-          type: {
-            $in: types,
+          productType: {
+            $in: productTypes,
           },
         };
       },
-      format: (value) => {
-        const formats = value.split(",");
+      teaFormat: (value) => {
+        const teaFormats = value.split(",");
         return {
-          format: {
-            $in: formats,
+          teaFormat: {
+            $in: teaFormats,
           },
         };
       },
-      benefit: (value) => {
-        const benefits = value.split(",");
+      teaFlavor: (value) => {
+        const teaFlavors = value.split(",");
         return {
-          benefit: {
-            $in: benefits,
+          teaFlavor: {
+            $in: teaFlavors,
           },
         };
       },
-      flavour: (value) => {
-        const flavours = value.split(",");
+      teaIngredient: (value) => {
+        const teaIngredients = value.split(",");
         return {
-          flavour: {
-            $in: flavours,
+          teaIngredient: {
+            $in: teaIngredients,
           },
         };
       },
-      ingredient: (value) => {
-        const ingredients = value.split(",");
+      teaBenefit: (value) => {
+        const teaBenefits = value.split(",");
         return {
-          ingredient: {
-            $in: ingredients,
+          teaBenefit: {
+            $in: teaBenefits,
           },
         };
       },
-      originName: (value) => {
+      origin: (value) => {
         const countries = value.split(",");
         return {
-          originName: {
+          origin: {
             $in: countries,
           },
         };
@@ -278,6 +280,20 @@ const getProductList = async (filters, paginationOptions) => {
           "unitPrices.0.price": {
             $gte: min, // Minimum price condition
             $lte: max, // Maximum price condition
+          },
+        };
+      },
+      isStock: (value) => {
+        return {
+          isStock: {
+            $in: [value === "true"],
+          },
+        };
+      },
+      isNewProduct: (value) => {
+        return {
+          isNewProduct: {
+            $in: [value === "true"],
           },
         };
       },
@@ -298,6 +314,20 @@ const getProductList = async (filters, paginationOptions) => {
       isSale: (value) => {
         return {
           isSale: {
+            $in: [value === "true"],
+          },
+        };
+      },
+      isSubscription: (value) => {
+        return {
+          isSubscription: {
+            $in: [value === "true"],
+          },
+        };
+      },
+      isMultiDiscount: (value) => {
+        return {
+          isMultiDiscount: {
             $in: [value === "true"],
           },
         };

@@ -7,6 +7,13 @@ import { ProductValidation } from "../../validation/product.validation.js";
 
 const router = express.Router();
 
+router.put(
+  "/product/edit",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  // validateRequest(ProductValidation.addProductSchema),
+  ProductController.editProduct
+);
+
 router.get(
   "/product/all-list",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),

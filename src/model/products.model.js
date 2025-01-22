@@ -12,8 +12,8 @@ const ProductSchema = Schema(
       set: (value) =>
         value
           .trim()
-          .replace(/[^a-zA-Z0-9\s]/g, "")
-          .replace(/\s+/g, " ")
+          // .replace(/[^a-zA-Z0-9\s]/g, "")
+          // .replace(/\s+/g, " ")
           .toLowerCase()
           .replace(/ /g, "-"),
     },
@@ -26,10 +26,10 @@ const ProductSchema = Schema(
       set: (value) =>
         value
           .trim()
-          .replace(/[^a-zA-Z0-9\s]/g, "")
-          .replace(/\s+/g, " ")
-          .toLowerCase()
-          .replace(/ /g, "-"),
+          // .replace(/[^a-zA-Z0-9\s]/g, "")
+          // .replace(/\s+/g, " ")
+          .toLowerCase(),
+      // .replace(/ /g, "-"),
     },
     title: {
       type: String,
@@ -77,8 +77,8 @@ const ProductSchema = Schema(
         values.map((value) =>
           value
             .trim()
-            .replace(/[^a-zA-Z0-9\s]/g, "")
-            .replace(/\s+/g, " ")
+            // .replace(/[^a-zA-Z0-9\s]/g, "")
+            // .replace(/\s+/g, " ")
             .toLowerCase()
         ),
     },
@@ -88,8 +88,8 @@ const ProductSchema = Schema(
         values.map((value) =>
           value
             .trim()
-            .replace(/[^a-zA-Z0-9\s]/g, "")
-            .replace(/\s+/g, " ")
+            // .replace(/[^a-zA-Z0-9\s]/g, "")
+            // .replace(/\s+/g, " ")
             .toLowerCase()
         ),
     },
@@ -100,8 +100,8 @@ const ProductSchema = Schema(
         values.map((value) =>
           value
             .trim()
-            .replace(/[^a-zA-Z0-9\s]/g, "")
-            .replace(/\s+/g, " ")
+            // .replace(/[^a-zA-Z0-9\s]/g, "")
+            // .replace(/\s+/g, " ")
             .toLowerCase()
         ),
     },
@@ -111,8 +111,8 @@ const ProductSchema = Schema(
         values.map((value) =>
           value
             .trim()
-            .replace(/[^a-zA-Z0-9\s]/g, "")
-            .replace(/\s+/g, " ")
+            // .replace(/[^a-zA-Z0-9\s]/g, "")
+            // .replace(/\s+/g, " ")
             .toLowerCase()
         ),
     },
@@ -122,8 +122,8 @@ const ProductSchema = Schema(
         values.map((value) =>
           value
             .trim()
-            .replace(/[^a-zA-Z0-9\s]/g, "")
-            .replace(/\s+/g, " ")
+            // .replace(/[^a-zA-Z0-9\s]/g, "")
+            // .replace(/\s+/g, " ")
             .toLowerCase()
         ),
     },
@@ -133,8 +133,8 @@ const ProductSchema = Schema(
         values.map((value) =>
           value
             .trim()
-            .replace(/[^a-zA-Z0-9\s]/g, "")
-            .replace(/\s+/g, " ")
+            // .replace(/[^a-zA-Z0-9\s]/g, "")
+            // .replace(/\s+/g, " ")
             .toLowerCase()
         ),
     },
@@ -144,8 +144,8 @@ const ProductSchema = Schema(
         values.map((value) =>
           value
             .trim()
-            .replace(/[^a-zA-Z0-9\s]/g, "")
-            .replace(/\s+/g, " ")
+            // .replace(/[^a-zA-Z0-9\s]/g, "")
+            // .replace(/\s+/g, " ")
             .toLowerCase()
         ),
     },
@@ -155,8 +155,8 @@ const ProductSchema = Schema(
         values.map((value) =>
           value
             .trim()
-            .replace(/[^a-zA-Z0-9\s]/g, "")
-            .replace(/\s+/g, " ")
+            // .replace(/[^a-zA-Z0-9\s]/g, "")
+            // .replace(/\s+/g, " ")
             .toLowerCase()
         ),
       default: [],
@@ -164,7 +164,11 @@ const ProductSchema = Schema(
     originLocation: {
       type: String,
       trim: true,
-      set: (value) => value.trim().replace(/\s+/g, " ").toLowerCase(),
+      set: (value) =>
+        value
+          .trim()
+          // .replace(/\s+/g, " ")
+          .toLowerCase(),
     },
     isStock: {
       type: Boolean,

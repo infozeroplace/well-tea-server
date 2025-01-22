@@ -5,13 +5,115 @@ import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import Product from "../../model/products.model.js";
 import extractAlterText from "../../utils/extractAlterText.js";
 import { removeImage } from "../../utils/fileSystem.js";
+import mongoose from "mongoose";
+
+const { ObjectId } = mongoose.Types;
+
+const editProduct = async (payload) => {
+  console.log(payload);
+
+  return payload;
+};
 
 const getProduct = async (id) => {
-  const result = await Product.findOne({ _id: id });
+  // const result = await Product.findOne({ _id: id });
 
-  if (!result) throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+  // if (!result) throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
 
-  return result;
+  // return result;
+
+  const pipeline = [
+    {
+      $match: {
+        _id: new ObjectId(id),
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        urlParameter: { $first: "$urlParameter" },
+        sku: { $first: "$sku" },
+        title: { $first: "$title" },
+        longDescription: { $first: "$longDescription" },
+        shortDescription: { $first: "$shortDescription" },
+        metaTitle: { $first: "$metaTitle" },
+        metaDescription: { $first: "$metaDescription" },
+        thumbnails: { $first: "$thumbnails" },
+        slideImages: { $first: "$slideImages" },
+        category: { $first: "$category" },
+        attribute: { $first: "$attribute" },
+        productType: { $first: "$productType" },
+        teaFormat: { $first: "$teaFormat" },
+        teaFlavor: { $first: "$teaFlavor" },
+        teaIngredient: { $first: "$teaIngredient" },
+        teaBenefit: { $first: "$teaBenefit" },
+        origin: { $first: "$origin" },
+        originLocation: { $first: "$originLocation" },
+        isStock: { $first: "$isStock" },
+        isNewProduct: { $first: "$isNewProduct" },
+        isBestSeller: { $first: "$isBestSeller" },
+        isFeatured: { $first: "$isFeatured" },
+        isSale: { $first: "$isSale" },
+        isSubscription: { $first: "$isSubscription" },
+        isMultiDiscount: { $first: "$isMultiDiscount" },
+        sale: { $first: "$sale" },
+        subscriptionSale: { $first: "$subscriptionSale" },
+        multiDiscountQuantity: { $first: "$multiDiscountQuantity" },
+        multiDiscountAmount: { $first: "$multiDiscountAmount" },
+        unitPrices: { $first: "$unitPrices" },
+        subscriptions: { $first: "$subscriptions" },
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "availableAs",
+        foreignField: "_id",
+        as: "availableAs",
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "addOns",
+        foreignField: "_id",
+        as: "addOns",
+      },
+    },
+    {
+      $lookup: {
+        from: "brewinstructions",
+        localField: "brewInstruction",
+        foreignField: "_id",
+        as: "brewInstruction",
+      },
+    },
+    {
+      $addFields: {
+        availableAs: {
+          $map: {
+            input: "$availableAs",
+            as: "product",
+            in: {
+              urlParameter: "$$product.urlParameter",
+              teaFormat: "$$product.teaFormat",
+            },
+          },
+        },
+      },
+    },
+    {
+      $limit: 1,
+    },
+  ];
+
+  const result = await Product.aggregate(pipeline);
+
+  if (!result || result.length === 0) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+  }
+
+  return result[0];
 };
 
 const getAllProductList = async () => {
@@ -324,6 +426,7 @@ const addProduct = async (payload) => {
 };
 
 export const ProductService = {
+  editProduct,
   getProduct,
   getAllProductList,
   getProductList,

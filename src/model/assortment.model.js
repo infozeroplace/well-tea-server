@@ -11,8 +11,8 @@ const AssortmentSchema = Schema(
       set: (value) =>
         value
           .trim()
-          .replace(/[^a-zA-Z0-9\s&]/g, "") // Remove invalid characters except for alphanumerics, spaces, and &
-          .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+          // .replace(/[^a-zA-Z0-9\s&]/g, "")
+          // .replace(/\s+/g, " ")
           .toLowerCase(),
     },
     assortmentType: {
