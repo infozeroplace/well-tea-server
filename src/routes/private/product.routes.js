@@ -10,7 +10,7 @@ const router = express.Router();
 router.put(
   "/product/edit",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
-  // validateRequest(ProductValidation.addProductSchema),
+  validateRequest(ProductValidation.editProductSchema),
   ProductController.editProduct
 );
 

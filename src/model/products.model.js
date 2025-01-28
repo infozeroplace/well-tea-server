@@ -56,20 +56,8 @@ const ProductSchema = Schema(
       trim: true,
       required: [true, "metaDescription is required"],
     },
-    thumbnails: [
-      {
-        alt: String,
-        uid: String,
-        path: String,
-      },
-    ],
-    slideImages: [
-      {
-        alt: String,
-        uid: String,
-        path: String,
-      },
-    ],
+    thumbnails: [String],
+    slideImages: [String],
     category: {
       type: [String],
       required: [true, "Category is required!"],

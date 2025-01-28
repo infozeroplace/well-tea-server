@@ -1,27 +1,42 @@
 import httpStatus from "http-status";
+import mongoose from "mongoose";
 import { productSearchableFields } from "../../constant/product.constant.js";
 import ApiError from "../../error/ApiError.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import Product from "../../model/products.model.js";
-import extractAlterText from "../../utils/extractAlterText.js";
 import { removeImage } from "../../utils/fileSystem.js";
-import mongoose from "mongoose";
 
 const { ObjectId } = mongoose.Types;
 
 const editProduct = async (payload) => {
-  console.log(payload);
+  const { id, ...data } = payload;
 
-  return payload;
+  const existingProduct = await Product.findById(id);
+
+  if (!existingProduct)
+    throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+
+  const result = await Product.findOneAndUpdate({ _id: id }, data, {
+    new: true,
+  });
+
+  const existingThumbnails = existingProduct.thumbnails || [];
+  const existingSlideImages = existingProduct.slideImages || [];
+
+  for (const elem of existingThumbnails) {
+    const isExist = data.thumbnails.includes(elem);
+    !isExist && removeImage(elem);
+  }
+
+  for (const elem of existingSlideImages) {
+    const isExist = data.slideImages.includes(elem);
+    !isExist && removeImage(elem);
+  }
+
+  return result;
 };
 
 const getProduct = async (id) => {
-  // const result = await Product.findOne({ _id: id });
-
-  // if (!result) throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
-
-  // return result;
-
   const pipeline = [
     {
       $match: {
@@ -62,6 +77,9 @@ const getProduct = async (id) => {
         multiDiscountAmount: { $first: "$multiDiscountAmount" },
         unitPrices: { $first: "$unitPrices" },
         subscriptions: { $first: "$subscriptions" },
+        availableAs: { $first: "$availableAs" },
+        addOns: { $first: "$addOns" },
+        brewInstruction: { $first: "$brewInstruction" },
       },
     },
     {
@@ -95,8 +113,30 @@ const getProduct = async (id) => {
             input: "$availableAs",
             as: "product",
             in: {
-              urlParameter: "$$product.urlParameter",
-              teaFormat: "$$product.teaFormat",
+              title: "$$product.title",
+              thumbnails: "$$product.thumbnails",
+              _id: "$$product._id",
+            },
+          },
+        },
+        addOns: {
+          $map: {
+            input: "$addOns",
+            as: "product",
+            in: {
+              title: "$$product.title",
+              thumbnails: "$$product.thumbnails",
+              _id: "$$product._id",
+            },
+          },
+        },
+        brewInstruction: {
+          $map: {
+            input: "$brewInstruction",
+            as: "brewinstructions",
+            in: {
+              title: "$$brewinstructions.title",
+              _id: "$$brewinstructions._id",
             },
           },
         },
@@ -401,23 +441,7 @@ const deleteProduct = async (payload) => {
 };
 
 const addProduct = async (payload) => {
-  const { thumbnails, slideImages, ...data } = payload;
-
-  const product = {
-    thumbnails: thumbnails.map((item) => ({
-      alt: extractAlterText(item),
-      uid: item,
-      path: `/public/image/upload/${item}`,
-    })),
-    slideImages: slideImages.map((item) => ({
-      alt: extractAlterText(item),
-      uid: item,
-      path: `/public/image/upload/${item}`,
-    })),
-    ...data,
-  };
-
-  const result = await Product.create(product);
+  const result = await Product.create(payload);
 
   if (!result)
     throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");

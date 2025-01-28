@@ -101,7 +101,7 @@ const UserSchema = Schema(
     },
     photo: {
       type: String,
-      match: [/(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/, "Invalid URL format"],
+      trim: true,
     },
   },
   {

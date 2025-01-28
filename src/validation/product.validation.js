@@ -30,6 +30,92 @@ const subscriptionSchema = z.object({
   days: z.number({ required_error: "Days is required" }),
 });
 
+const editProductSchema = z.object({
+  body: z.object({
+    id: z.string({ required_error: "ID is required" }),
+    urlParameter: z.string().optional(),
+    sku: z.string().optional(),
+    title: z.string().optional(),
+    longDescription: z.string().optional(),
+    shortDescription: z.string().optional(),
+    metaTitle: z.string().optional(),
+    metaDescription: z.string().optional(),
+    thumbnails: z.array(z.string()).optional(),
+    slideImages: z.array(z.string()).optional(),
+    category: z.array(z.string()).optional(),
+    attribute: z.array(z.string()).optional(),
+    productType: z.array(z.string()).optional(),
+    teaFormat: z.array(z.string()).optional(),
+    teaFlavor: z.array(z.string()).optional(),
+    teaIngredient: z.array(z.string()).optional(),
+    teaBenefit: z.array(z.string()).optional(),
+    origin: z.array(z.string()).optional(),
+    originLocation: z.string().optional(),
+    isStock: z
+      .boolean({
+        invalid_type_error: "IsStock must be a boolean",
+      })
+      .optional(),
+    isNewProduct: z
+      .boolean({
+        invalid_type_error: "isNewProduct must be a boolean",
+      })
+      .optional(),
+    isBestSeller: z
+      .boolean({
+        invalid_type_error: "IsBestSeller must be a boolean",
+      })
+      .optional(),
+    isFeatured: z
+      .boolean({
+        invalid_type_error: "IsFeatured must be a boolean",
+      })
+      .optional(),
+    isSale: z
+      .boolean({
+        invalid_type_error: "IsSale must be a boolean",
+      })
+      .optional(),
+    isSubscription: z
+      .boolean({
+        invalid_type_error: "IsSubscription must be a boolean",
+      })
+      .optional(),
+    isMultiDiscount: z
+      .boolean({
+        invalid_type_error: "isMultiDiscount must be a boolean",
+      })
+      .optional(),
+    sale: z.number({ invalid_type_error: "sale must be a number" }).optional(),
+    subscriptionSale: z
+      .number({
+        invalid_type_error: "subscriptionSale must be a number",
+      })
+      .optional(),
+    multiDiscountQuantity: z
+      .number({
+        invalid_type_error: "multiDiscountQuantity must be a number",
+      })
+      .optional(),
+    multiDiscountAmount: z
+      .number({
+        invalid_type_error: "multiDiscountAmount must be a number",
+      })
+      .optional(),
+    ratings: z
+      .number({
+        invalid_type_error: "ratings must be a number",
+      })
+      .optional(),
+    reviews: z.array(z.string()).optional(),
+    availableAs: z.array(z.string()).optional(),
+    addOns: z.array(z.string()).optional(),
+    brewInstruction: z.array(z.string()).optional(),
+    unitPrices: z.array(unitPriceSchema).optional(),
+    subscriptions: z.array(subscriptionSchema).optional(),
+  }),
+});
+
 const addProductSchema = z.object({
   body: z.object({
     urlParameter: z.string({ required_error: "URL parameter is required" }),
@@ -137,4 +223,8 @@ const addProductSchema = z.object({
   }),
 });
 
-export const ProductValidation = { deleteProductSchema, addProductSchema };
+export const ProductValidation = {
+  deleteProductSchema,
+  editProductSchema,
+  addProductSchema,
+};

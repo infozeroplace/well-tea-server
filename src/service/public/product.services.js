@@ -13,10 +13,10 @@ const getProduct = async (slug) => {
     },
     {
       $lookup: {
-        from: "reviews", // The name of the collection storing reviews
-        localField: "reviews", // Field in the current document
-        foreignField: "_id", // Field in the `reviews` collection
-        as: "reviews", // Output array in the resulting document
+        from: "reviews",
+        localField: "reviews",
+        foreignField: "_id",
+        as: "reviews",
       },
     },
     {
@@ -27,10 +27,10 @@ const getProduct = async (slug) => {
     },
     {
       $lookup: {
-        from: "users", // The name of the collection storing users
-        localField: "reviews.user", // Field in the `reviews` document
-        foreignField: "_id", // Field in the `users` collection
-        as: "reviewUser", // Output array for user details
+        from: "users",
+        localField: "reviews.user",
+        foreignField: "_id",
+        as: "reviewUser",
       },
     },
     {
@@ -41,7 +41,9 @@ const getProduct = async (slug) => {
     },
     {
       $addFields: {
-        "reviews.userName": "$reviewUser.name", // Assuming `name` field exists in the `users` collection
+        "reviews.firstName": "$reviewUser.firstName",
+        "reviews.lastName": "$reviewUser.lastName",
+        "reviews.photo": "$reviewUser.photo",
       },
     },
     {
@@ -76,15 +78,20 @@ const getProduct = async (slug) => {
         subscriptionSale: { $first: "$subscriptionSale" },
         multiDiscountQuantity: { $first: "$multiDiscountQuantity" },
         multiDiscountAmount: { $first: "$multiDiscountAmount" },
+        ratings: { $first: "$ratings" },
         unitPrices: { $first: "$unitPrices" },
         subscriptions: { $first: "$subscriptions" },
-        ratings: { $first: "$ratings" },
+        availableAs: { $first: "$availableAs" },
+        addOns: { $first: "$addOns" },
+        brewInstruction: { $first: "$brewInstruction" },
         reviews: {
           $push: {
             _id: "$reviews._id",
             ratingPoints: "$reviews.ratingPoints",
             reviewText: "$reviews.reviewText",
-            userName: "$reviews.userName",
+            firstName: "$reviews.firstName",
+            lastName: "$reviews.lastName",
+            photo: "$reviews.photo",
             date: "$reviews.date",
           },
         },
@@ -96,6 +103,14 @@ const getProduct = async (slug) => {
         localField: "availableAs",
         foreignField: "_id",
         as: "availableAs",
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "addOns",
+        foreignField: "_id",
+        as: "addOns",
       },
     },
     {
@@ -118,10 +133,17 @@ const getProduct = async (slug) => {
             },
           },
         },
-      },
-    },
-    {
-      $addFields: {
+        addOns: {
+          $map: {
+            input: "$addOns",
+            as: "product",
+            in: {
+              title: "$$product.title",
+              thumbnails: "$$product.thumbnails",
+              _id: "$$product._id",
+            },
+          },
+        },
         unitPrices: {
           $map: {
             input: "$unitPrices",
