@@ -138,9 +138,72 @@ const getProduct = async (slug) => {
             input: "$addOns",
             as: "product",
             in: {
+              _id: "$$product._id",
+              sku: "$$product.sku",
+              urlParameter: "$$product.urlParameter",
               title: "$$product.title",
               thumbnails: "$$product.thumbnails",
-              _id: "$$product._id",
+              isSale: "$$product.isSale",
+              isSubscription: "$$product.isSubscription",
+              isMultiDiscount: "$$product.isMultiDiscount",
+              sale: "$$product.sale",
+              subscriptionSale: "$$product.subscriptionSale",
+              multiDiscountQuantity: "$$product.multiDiscountQuantity",
+              multiDiscountAmount: "$$product.multiDiscountAmount",
+              unitPrices: {
+                $map: {
+                  input: "$$product.unitPrices",
+                  as: "unitPrice",
+                  in: {
+                    unit: "$$unitPrice.unit",
+                    price: "$$unitPrice.price",
+                    salePrice: {
+                      $cond: {
+                        if: "$$product.isSale",
+                        then: {
+                          $round: [
+                            {
+                              $subtract: [
+                                "$$unitPrice.price",
+                                {
+                                  $multiply: [
+                                    "$$unitPrice.price",
+                                    { $divide: ["$$product.sale", 100] },
+                                  ],
+                                },
+                              ],
+                            },
+                            2,
+                          ],
+                        },
+                        else: 0,
+                      },
+                    },
+                    subscriptionPrice: {
+                      $cond: {
+                        if: "$$product.isSubscription",
+                        then: {
+                          $round: [
+                            {
+                              $subtract: [
+                                "$$unitPrice.price",
+                                {
+                                  $multiply: [
+                                    "$$unitPrice.price",
+                                    { $divide: ["$$product.subscriptionSale", 100] },
+                                  ],
+                                },
+                              ],
+                            },
+                            2,
+                          ],
+                        },
+                        else: 0,
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -204,6 +267,7 @@ const getProduct = async (slug) => {
       $limit: 1,
     },
   ];
+  
 
   const result = await Product.aggregate(pipeline);
 
