@@ -2,8 +2,8 @@ import httpStatus from "http-status";
 import ApiError from "../../error/ApiError.js";
 import { dateFormatter } from "../../helper/dateFormatter.js";
 import Product from "../../model/products.model.js";
-import User from "../../model/user.model.js";
 import Review from "../../model/review.model.js";
+import User from "../../model/user.model.js";
 
 const addReview = async (payload, userId) => {
   const { sku, ratingPoints, reviewText } = payload;
@@ -17,7 +17,8 @@ const addReview = async (payload, userId) => {
 
   // Check if user or product exists
   if (!user) throw new ApiError(httpStatus.BAD_REQUEST, "User not found!");
-  if (!product) throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+  if (!product)
+    throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
 
   // Create a new review
   const review = await new Review({
@@ -40,7 +41,15 @@ const addReview = async (payload, userId) => {
   product.ratings = averageRating;
   await product.save();
 
-  return review;
+  return {
+    _id: review._id,
+    ratingPoints: review.ratingPoints,
+    reviewText: review.reviewText,
+    firstName: user.firstName || "",
+    lastName: user.lastName || "",
+    photo: user.photo || "",
+    date: review.date,
+  };
 };
 
 export const ReviewService = {
