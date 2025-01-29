@@ -3,6 +3,7 @@ import { productSearchableFields } from "../../constant/product.constant.js";
 import ApiError from "../../error/ApiError.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import Product from "../../model/products.model.js";
+import escapeRegex from "../../utils/escapeRegex.js";
 
 const getProduct = async (slug) => {
   const pipeline = [
@@ -190,7 +191,12 @@ const getProduct = async (slug) => {
                                 {
                                   $multiply: [
                                     "$$unitPrice.price",
-                                    { $divide: ["$$product.subscriptionSale", 100] },
+                                    {
+                                      $divide: [
+                                        "$$product.subscriptionSale",
+                                        100,
+                                      ],
+                                    },
                                   ],
                                 },
                               ],
@@ -267,7 +273,6 @@ const getProduct = async (slug) => {
       $limit: 1,
     },
   ];
-  
 
   const result = await Product.aggregate(pipeline);
 
@@ -280,14 +285,14 @@ const getProduct = async (slug) => {
 
 const getProductList = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
-  // console.log(filters)
+  // console.log(filters);
   const andCondition = [];
 
   if (searchTerm) {
     andCondition.push({
       $or: productSearchableFields.map((field) => ({
         [field]: {
-          $regex: searchTerm,
+          $regex: escapeRegex(searchTerm),
           $options: "i",
         },
       })),

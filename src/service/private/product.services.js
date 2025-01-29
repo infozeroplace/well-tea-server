@@ -457,3 +457,11 @@ export const ProductService = {
   deleteProduct,
   addProduct,
 };
+
+// - [x] In product details page, add ons products’ prices will be sale price if there is a sale on the product, but will be shown both the regular and sale price like product card and above product slider a message will be shown for offer on multiple product purchase
+// - [ ] Navbar items will be dynamically rendered on the frontend, new items might be added in the future
+// - [ ] In tea dropdown, types will have images and sections should be enabled to change position dynamically and their items will be increased or decreased in the future
+// - [x] In social media section, follow us button will be like our regular section button
+// - [x] Product card sale image size will be little bit bigger and color should be more visible
+// - [x] In home page, best seller title will be bigger
+// - [x] A embeded youtube video will be added on the terms & conditions / privacy policy page along with the article
