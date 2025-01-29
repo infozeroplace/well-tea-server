@@ -3,6 +3,174 @@ import ApiError from "../../error/ApiError.js";
 import { System } from "../../model/system.model.js";
 import { removeImage } from "../../utils/fileSystem.js";
 
+const updateDeliveryPolicy = async (payload) => {
+  const system = await System.findOne({ systemId: "system-1" });
+
+  if (!system) {
+    system = await System.create({
+      systemId: "system-1",
+      deliveryPolicy: payload,
+    });
+
+    if (!system) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Failed to create system settings"
+      );
+    }
+
+    return system;
+  } else {
+    const updatedSystem = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { deliveryPolicy: payload },
+      { new: true }
+    );
+
+    return updatedSystem;
+  }
+};
+
+const updateSubscriptionPolicy = async (payload) => {
+  const system = await System.findOne({ systemId: "system-1" });
+
+  if (!system) {
+    system = await System.create({
+      systemId: "system-1",
+      subscriptionPolicy: payload,
+    });
+
+    if (!system) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Failed to create system settings"
+      );
+    }
+
+    return system;
+  } else {
+    const updatedSystem = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { subscriptionPolicy: payload },
+      { new: true }
+    );
+
+    return updatedSystem;
+  }
+};
+
+const updateReturnAndRefundPolicy = async (payload) => {
+  const system = await System.findOne({ systemId: "system-1" });
+
+  if (!system) {
+    system = await System.create({
+      systemId: "system-1",
+      returnAndRefund: payload,
+    });
+
+    if (!system) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Failed to create system settings"
+      );
+    }
+
+    return system;
+  } else {
+    const updatedSystem = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { returnAndRefund: payload },
+      { new: true }
+    );
+
+    return updatedSystem;
+  }
+};
+
+const updateCookiesPolicy = async (payload) => {
+  const system = await System.findOne({ systemId: "system-1" });
+
+  if (!system) {
+    system = await System.create({
+      systemId: "system-1",
+      cookiesPolicy: payload,
+    });
+
+    if (!system) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Failed to create system settings"
+      );
+    }
+
+    return system;
+  } else {
+    const updatedSystem = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { cookiesPolicy: payload },
+      { new: true }
+    );
+
+    return updatedSystem;
+  }
+};
+
+const updateTermsAndConditions = async (payload) => {
+  const system = await System.findOne({ systemId: "system-1" });
+
+  if (!system) {
+    system = await System.create({
+      systemId: "system-1",
+      termsAndConditions: payload,
+    });
+
+    if (!system) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Failed to create system settings"
+      );
+    }
+
+    return system;
+  } else {
+    const updatedSystem = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { termsAndConditions: payload },
+      { new: true }
+    );
+
+    return updatedSystem;
+  }
+};
+
+const updatePrivacyPolicy = async (payload) => {
+  const system = await System.findOne({ systemId: "system-1" });
+
+  if (!system) {
+    system = await System.create({
+      systemId: "system-1",
+      privacyPolicy: payload,
+    });
+
+    if (!system) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Failed to create system settings"
+      );
+    }
+
+    return system;
+  } else {
+    const updatedSystem = await System.findOneAndUpdate(
+      { systemId: "system-1" },
+      { privacyPolicy: payload },
+      { new: true }
+    );
+
+    return updatedSystem;
+  }
+};
+
 const updateCompanyService = async (payload) => {
   const existing = await System.findOne({ systemId: "system-1" });
 
@@ -45,7 +213,7 @@ const updateCompanyService = async (payload) => {
       const filename = iconPath.split("/").pop();
       await removeImage(filename); // Assuming `removeImage` deletes the file
     }
-    
+
     return result;
   }
 };
@@ -411,6 +579,12 @@ const getSystemConfiguration = async (payload) => {
 };
 
 export const SystemService = {
+  updateDeliveryPolicy,
+  updateSubscriptionPolicy,
+  updateReturnAndRefundPolicy,
+  updateCookiesPolicy,
+  updateTermsAndConditions,
+  updatePrivacyPolicy,
   updateCompanyService,
   updateWhyChooseUs,
   updateSecondaryLogo,

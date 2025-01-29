@@ -3,6 +3,90 @@ import { SystemService } from "../../service/private/system.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+const updateDeliveryPolicy = catchAsync(async (req, res) => {
+  const {content} = req.body;
+  
+  const result = await SystemService.updateDeliveryPolicy(content);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
+const updateSubscriptionPolicy = catchAsync(async (req, res) => {
+  const {content} = req.body;
+  
+  const result = await SystemService.updateSubscriptionPolicy(content);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
+const updateReturnAndRefundPolicy = catchAsync(async (req, res) => {
+  const {content} = req.body;
+  
+  const result = await SystemService.updateReturnAndRefundPolicy(content);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
+const updateCookiesPolicy = catchAsync(async (req, res) => {
+  const {content} = req.body;
+  
+  const result = await SystemService.updateCookiesPolicy(content);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
+const updateTermsAndConditions = catchAsync(async (req, res) => {
+  const {content} = req.body;
+  
+  const result = await SystemService.updateTermsAndConditions(content);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
+const updatePrivacyPolicy = catchAsync(async (req, res) => {
+  const {content} = req.body;
+
+  const result = await SystemService.updatePrivacyPolicy(content);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
 const updateCompanyService = catchAsync(async (req, res) => {
   const result = await SystemService.updateCompanyService(req.body);
 
@@ -118,6 +202,12 @@ const getSystemConfiguration = catchAsync(async (req, res) => {
 });
 
 export const SystemController = {
+  updateDeliveryPolicy,
+  updateSubscriptionPolicy,
+  updateReturnAndRefundPolicy,
+  updateCookiesPolicy,
+  updateTermsAndConditions,
+  updatePrivacyPolicy,
   updateCompanyService,
   updateWhyChooseUs,
   updateSecondaryLogo,

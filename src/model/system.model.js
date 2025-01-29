@@ -72,6 +72,12 @@ const SystemSchema = Schema(
       bannerImage: String,
     },
     topNotifications: [String],
+    privacyPolicy: String,
+    termsAndConditions: String,
+    cookiesPolicy: String,
+    returnAndRefund: String,
+    subscriptionPolicy: String,
+    deliveryPolicy: String,
   },
   {
     timestamps: true,

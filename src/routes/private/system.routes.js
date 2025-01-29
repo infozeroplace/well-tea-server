@@ -6,6 +6,42 @@ import auth from "../../middleware/auth.js";
 const router = express.Router();
 
 router.put(
+  "/system/update-delivery-policy",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateDeliveryPolicy
+);
+
+router.put(
+  "/system/update-subscription-policy",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateSubscriptionPolicy
+);
+
+router.put(
+  "/system/update-return-and-refund",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateReturnAndRefundPolicy
+);
+
+router.put(
+  "/system/update-cookies-policy",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateCookiesPolicy
+);
+
+router.put(
+  "/system/update-terms-and-conditions",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateTermsAndConditions
+);
+
+router.put(
+  "/system/update-privacy-policy",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updatePrivacyPolicy
+);
+
+router.put(
   "/system/update-company-service",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
   SystemController.updateCompanyService
