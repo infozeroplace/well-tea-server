@@ -3,9 +3,23 @@ import { SystemService } from "../../service/private/system.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+const updateFAQ = catchAsync(async (req, res) => {
+  const data = req.body;
+
+  const result = await SystemService.updateFAQ(data);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
 const updateDeliveryPolicy = catchAsync(async (req, res) => {
-  const {content} = req.body;
-  
+  const { content } = req.body;
+
   const result = await SystemService.updateDeliveryPolicy(content);
 
   return sendResponse(res, {
@@ -18,8 +32,8 @@ const updateDeliveryPolicy = catchAsync(async (req, res) => {
 });
 
 const updateSubscriptionPolicy = catchAsync(async (req, res) => {
-  const {content} = req.body;
-  
+  const { content } = req.body;
+
   const result = await SystemService.updateSubscriptionPolicy(content);
 
   return sendResponse(res, {
@@ -32,8 +46,8 @@ const updateSubscriptionPolicy = catchAsync(async (req, res) => {
 });
 
 const updateReturnAndRefundPolicy = catchAsync(async (req, res) => {
-  const {content} = req.body;
-  
+  const { content } = req.body;
+
   const result = await SystemService.updateReturnAndRefundPolicy(content);
 
   return sendResponse(res, {
@@ -46,8 +60,8 @@ const updateReturnAndRefundPolicy = catchAsync(async (req, res) => {
 });
 
 const updateCookiesPolicy = catchAsync(async (req, res) => {
-  const {content} = req.body;
-  
+  const { content } = req.body;
+
   const result = await SystemService.updateCookiesPolicy(content);
 
   return sendResponse(res, {
@@ -60,8 +74,8 @@ const updateCookiesPolicy = catchAsync(async (req, res) => {
 });
 
 const updateTermsAndConditions = catchAsync(async (req, res) => {
-  const {content} = req.body;
-  
+  const { content } = req.body;
+
   const result = await SystemService.updateTermsAndConditions(content);
 
   return sendResponse(res, {
@@ -74,7 +88,7 @@ const updateTermsAndConditions = catchAsync(async (req, res) => {
 });
 
 const updatePrivacyPolicy = catchAsync(async (req, res) => {
-  const {content} = req.body;
+  const { content } = req.body;
 
   const result = await SystemService.updatePrivacyPolicy(content);
 
@@ -202,6 +216,7 @@ const getSystemConfiguration = catchAsync(async (req, res) => {
 });
 
 export const SystemController = {
+  updateFAQ,
   updateDeliveryPolicy,
   updateSubscriptionPolicy,
   updateReturnAndRefundPolicy,

@@ -8,6 +8,14 @@ const SystemSchema = Schema(
     },
     logo: String,
     secondaryLogo: String,
+    faqs: {
+      type: [
+        {
+          title: String,
+          faqs: [{ question: String, answer: String }],
+        },
+      ],
+    },
     hero: {
       type: [
         {
