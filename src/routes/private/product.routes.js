@@ -27,6 +27,13 @@ router.get(
 );
 
 router.delete(
+  "/product/delete-products",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  validateRequest(ProductValidation.deleteProductsSchema),
+  ProductController.deleteProducts
+);
+
+router.delete(
   "/product/delete",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
   validateRequest(ProductValidation.deleteProductSchema),

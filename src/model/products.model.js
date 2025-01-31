@@ -158,6 +158,17 @@ const ProductSchema = Schema(
           // .replace(/\s+/g, " ")
           .toLowerCase(),
     },
+    youtubeLink: {
+      type: String,
+      trim: true,
+      set: (value) =>
+        value
+          .trim()
+    },
+    isPublished: {
+      type: Boolean,
+      default: false,
+    },
     isStock: {
       type: Boolean,
       default: false,

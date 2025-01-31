@@ -68,6 +68,7 @@ const getProduct = async (slug) => {
         teaBenefit: { $first: "$teaBenefit" },
         origin: { $first: "$origin" },
         originLocation: { $first: "$originLocation" },
+        youtubeLink: { $first: "$youtubeLink" },
         isStock: { $first: "$isStock" },
         isNewProduct: { $first: "$isNewProduct" },
         isBestSeller: { $first: "$isBestSeller" },

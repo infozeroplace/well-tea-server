@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+const deleteProductsSchema = z.object({
+  body: z.object({
+    ids: z.array(z.string(), {
+      required_error: "IDs required",
+    }),
+  }),
+});
+
 const deleteProductSchema = z.object({
   body: z.object({
     id: z.string({ required_error: "ID is required" }),
@@ -51,6 +59,7 @@ const editProductSchema = z.object({
     teaBenefit: z.array(z.string()).optional(),
     origin: z.array(z.string()).optional(),
     originLocation: z.string().optional(),
+    youtubeLink: z.string().optional(),
     isStock: z
       .boolean({
         invalid_type_error: "IsStock must be a boolean",
@@ -150,6 +159,7 @@ const addProductSchema = z.object({
     teaBenefit: z.array(z.string()).optional(),
     origin: z.array(z.string()).optional(),
     originLocation: z.string().optional(),
+    youtubeLink: z.string().optional(),
     isStock: z
       .boolean({
         invalid_type_error: "IsStock must be a boolean",
@@ -224,6 +234,7 @@ const addProductSchema = z.object({
 });
 
 export const ProductValidation = {
+  deleteProductsSchema,
   deleteProductSchema,
   editProductSchema,
   addProductSchema,

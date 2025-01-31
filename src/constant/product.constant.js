@@ -22,6 +22,7 @@ export const productFilterableField = [
   "teaFormat",
   "teaFlavor",
   "teaIngredient",
+  "isPublished",
   "teaBenefit",
   "origin",
   "isStock",

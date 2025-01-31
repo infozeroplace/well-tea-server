@@ -64,6 +64,8 @@ const getProduct = async (id) => {
         teaBenefit: { $first: "$teaBenefit" },
         origin: { $first: "$origin" },
         originLocation: { $first: "$originLocation" },
+        youtubeLink: { $first: "$youtubeLink" },
+        isPublished: { $first: "$isPublished" },
         isStock: { $first: "$isStock" },
         isNewProduct: { $first: "$isNewProduct" },
         isBestSeller: { $first: "$isBestSeller" },
@@ -164,7 +166,7 @@ const getAllProductList = async () => {
 
 const getProductList = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
-  // console.log(filtersData);
+
   const andCondition = [];
 
   if (searchTerm) {
@@ -244,12 +246,10 @@ const getProductList = async (filters, paginationOptions) => {
           },
         };
       },
-      price: (value) => {
-        const [min, max] = value.split("-").map(Number);
+      isPublished: (value) => {
         return {
-          "unitPrices.0.price": {
-            $gte: min, // Minimum price condition
-            $lte: max, // Maximum price condition
+          isPublished: {
+            $in: [value === "true"],
           },
         };
       },
@@ -418,8 +418,31 @@ const getProductList = async (filters, paginationOptions) => {
   };
 };
 
-const deleteProduct = async (payload) => {
-  const isExistProduct = await Product.findById(payload.id);
+const deleteProducts = async (ids) => {
+  const products = await Product.find({ _id: { $in: ids } });
+
+  if (!products.length) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Products not found");
+  }
+
+  // Collect all images to remove
+  const imagesToRemove = products.flatMap((product) => [
+    ...(product?.thumbnails || []),
+    ...(product?.slideImages || []),
+  ]);
+
+  // Delete products
+  const result = await Product.deleteMany({ _id: { $in: ids } });
+
+  if (imagesToRemove.length > 0) {
+    await Promise.all(imagesToRemove.map((image) => removeImage(image.uid)));
+  }
+
+  return result;
+};
+
+const deleteProduct = async (id) => {
+  const isExistProduct = await Product.findById(id);
 
   if (!isExistProduct) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Product not found");
@@ -430,7 +453,7 @@ const deleteProduct = async (payload) => {
     ...(isExistProduct?.slideImages || []),
   ];
 
-  const result = await Product.findByIdAndDelete(payload.id);
+  const result = await Product.findByIdAndDelete(id);
 
   if (imagesToRemove.length > 0) {
     await Promise.all(
@@ -450,6 +473,7 @@ const addProduct = async (payload) => {
 };
 
 export const ProductService = {
+  deleteProducts,
   editProduct,
   getProduct,
   getAllProductList,
