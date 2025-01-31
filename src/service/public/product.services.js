@@ -286,7 +286,7 @@ const getProduct = async (slug) => {
 
 const getProductList = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
-  // console.log(filters);
+
   const andCondition = [];
 
   if (searchTerm) {
