@@ -152,7 +152,7 @@ const addProductSchema = z.object({
     attribute: z.array(z.string()).optional(),
     productType: z.array(z.string(), {
       required_error: "Product type must be an array of strings",
-    }),
+    }).optional(),
     teaFormat: z.array(z.string()).optional(),
     teaFlavor: z.array(z.string()).optional(),
     teaIngredient: z.array(z.string()).optional(),
