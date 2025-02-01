@@ -26,18 +26,101 @@ const getRelatedProductList = async (productIds) => {
   const relatedProducts = await Product.aggregate([
     {
       $match: {
-        _id: { $nin: productIdArray }, // Ensure exclusion works
+        _id: { $nin: productIdArray }, // Exclude provided products
+        isPublished: true,
         $or: [
-          { category: { $in: categories } }, // Match category
-          { productType: { $in: productTypes } }, // Match productType
+          { category: { $in: categories } }, // Match by category
+          { productType: { $in: productTypes } }, // Match by product type
         ],
       },
     },
-    { $sample: { size: 5 } }, // Get 5 random related products
+    {
+      $addFields: {
+        unitPrices: {
+          $map: {
+            input: "$unitPrices",
+            as: "unitPrice",
+            in: {
+              unit: "$$unitPrice.unit",
+              price: "$$unitPrice.price",
+              salePrice: {
+                $cond: {
+                  if: "$isSale",
+                  then: {
+                    $round: [
+                      {
+                        $subtract: [
+                          "$$unitPrice.price",
+                          {
+                            $multiply: [
+                              "$$unitPrice.price",
+                              { $divide: ["$sale", 100] },
+                            ],
+                          },
+                        ],
+                      },
+                      2, // Round to 2 decimal places
+                    ],
+                  },
+                  else: 0,
+                },
+              },
+              subscriptionPrice: {
+                $cond: {
+                  if: "$isSubscription",
+                  then: {
+                    $round: [
+                      {
+                        $subtract: [
+                          "$$unitPrice.price",
+                          {
+                            $multiply: [
+                              "$$unitPrice.price",
+                              { $divide: ["$subscriptionSale", 100] },
+                            ],
+                          },
+                        ],
+                      },
+                      2, // Round to 2 decimal places
+                    ],
+                  },
+                  else: 0,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    { $unwind: "$category" }, // Flatten categories for better matching
+    { $unwind: "$productType" }, // Flatten product types for better matching
+    {
+      $group: {
+        _id: "$_id",
+        product: { $first: "$$ROOT" }, // Preserve full document
+        matchingCategories: {
+          $sum: { $cond: [{ $in: ["$category", categories] }, 1, 0] },
+        },
+        matchingProductTypes: {
+          $sum: { $cond: [{ $in: ["$productType", productTypes] }, 1, 0] },
+        },
+      },
+    },
+    {
+      $addFields: {
+        relevanceScore: {
+          $add: ["$matchingCategories", "$matchingProductTypes"], // Sum relevance factors
+        },
+      },
+    },
+    { $sort: { relevanceScore: -1, "product.ratings": -1 } }, // Sort by relevance and rating
+    { $limit: 5 }, // Limit results to 5 products
+    { $replaceRoot: { newRoot: "$product" } }, // Extract product data
   ]);
 
   return relatedProducts;
 };
+
 
 const getProduct = async (slug) => {
   const pipeline = [
