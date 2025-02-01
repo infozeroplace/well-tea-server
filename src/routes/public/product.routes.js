@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/product/list", ProductController.getProductList);
 
-router.get(
+router.post(
   "/product/get-related-products",
   ProductController.getRelatedProductList
 );
