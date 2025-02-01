@@ -8,6 +8,17 @@ const SystemSchema = Schema(
     },
     logo: String,
     secondaryLogo: String,
+    filters: {
+      type: [
+        {
+          title: String,
+          category: String,
+          key: String,
+          selectedKey: String,
+          options: [{ param: String }],
+        },
+      ],
+    },
     faqs: {
       type: [
         {

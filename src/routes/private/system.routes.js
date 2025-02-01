@@ -6,6 +6,12 @@ import auth from "../../middleware/auth.js";
 const router = express.Router();
 
 router.put(
+  "/system/update-filter",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateFilter
+);
+
+router.put(
   "/system/update-faq",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
   SystemController.updateFAQ

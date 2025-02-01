@@ -3,6 +3,43 @@ import ApiError from "../../error/ApiError.js";
 import { System } from "../../model/system.model.js";
 import { removeImage } from "../../utils/fileSystem.js";
 
+const updateFilter = async (payload) => {
+  const { filters } = payload;
+
+  const existing = await System.findOne({
+    systemId: "system-1",
+  });
+
+  if (!existing) {
+    const result = await System.create({
+      systemId: "system-1",
+      filters,
+    });
+
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
+    return result;
+  } else {
+    const result = await System.findOneAndUpdate(
+      {
+        systemId: "system-1",
+      },
+      {
+        $set: {
+          filters,
+        },
+      },
+      { new: true }
+    );
+
+    if (!result)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
+    return result;
+  }
+};
+
 const updateFAQ = async (payload) => {
   const existing = await System.findOne({
     systemId: "system-1",
@@ -614,6 +651,7 @@ const getSystemConfiguration = async (payload) => {
 };
 
 export const SystemService = {
+  updateFilter,
   updateFAQ,
   updateDeliveryPolicy,
   updateSubscriptionPolicy,

@@ -5,6 +5,11 @@ const router = express.Router();
 
 router.get("/product/list", ProductController.getProductList);
 
+router.get(
+  "/product/get-related-products",
+  ProductController.getRelatedProductList
+);
+
 router.get("/product/:slug", ProductController.getProduct);
 
 export const ProductRoutes = router;

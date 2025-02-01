@@ -1,15 +1,50 @@
 import httpStatus from "http-status";
+import mongoose from "mongoose";
 import { productSearchableFields } from "../../constant/product.constant.js";
 import ApiError from "../../error/ApiError.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import Product from "../../model/products.model.js";
 import escapeRegex from "../../utils/escapeRegex.js";
 
+const getRelatedProductList = async (productIds) => {
+  const ObjectId = mongoose.Types.ObjectId;
+
+  // Ensure productIds is always an array and convert to ObjectId
+  const productIdArray = (
+    Array.isArray(productIds) ? productIds : [productIds]
+  ).map((id) => new ObjectId(id));
+
+  // Fetch all products using the given IDs
+  const products = await Product.find({ _id: { $in: productIdArray } });
+
+  if (!products.length) return [];
+
+  // Collect unique categories & product types from all given products
+  const categories = [...new Set(products.flatMap((p) => p.category))];
+  const productTypes = [...new Set(products.flatMap((p) => p.productType))];
+
+  const relatedProducts = await Product.aggregate([
+    {
+      $match: {
+        _id: { $nin: productIdArray }, // Ensure exclusion works
+        $or: [
+          { category: { $in: categories } }, // Match category
+          { productType: { $in: productTypes } }, // Match productType
+        ],
+      },
+    },
+    { $sample: { size: 5 } }, // Get 5 random related products
+  ]);
+
+  return relatedProducts;
+};
+
 const getProduct = async (slug) => {
   const pipeline = [
     {
       $match: {
         urlParameter: { $regex: new RegExp(`^${slug}$`, "i") },
+        isPublished: true,
       },
     },
     {
@@ -439,7 +474,10 @@ const getProductList = async (filters, paginationOptions) => {
     }
   }
 
-  const whereConditions = andCondition.length > 0 ? { $and: andCondition } : {};
+  const whereConditions =
+    andCondition.length > 0
+      ? { $and: [...andCondition, { isPublished: true }] }
+      : { isPublished: true };
 
   const { page, limit, sortBy, sortOrder } =
     PaginationHelpers.calculationPagination(paginationOptions);
@@ -541,6 +579,7 @@ const getProductList = async (filters, paginationOptions) => {
 };
 
 export const ProductService = {
+  getRelatedProductList,
   getProduct,
   getProductList,
 };

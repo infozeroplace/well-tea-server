@@ -3,6 +3,20 @@ import { SystemService } from "../../service/private/system.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+const updateFilter = catchAsync(async (req, res) => {
+  const data = req.body;
+
+  const result = await SystemService.updateFilter(data);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Updated successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
 const updateFAQ = catchAsync(async (req, res) => {
   const data = req.body;
 
@@ -216,6 +230,7 @@ const getSystemConfiguration = catchAsync(async (req, res) => {
 });
 
 export const SystemController = {
+  updateFilter,
   updateFAQ,
   updateDeliveryPolicy,
   updateSubscriptionPolicy,
