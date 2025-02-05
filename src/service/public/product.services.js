@@ -121,7 +121,6 @@ const getRelatedProductList = async (productIds) => {
   return relatedProducts;
 };
 
-
 const getProduct = async (slug) => {
   const pipeline = [
     {
@@ -206,13 +205,19 @@ const getProduct = async (slug) => {
         brewInstruction: { $first: "$brewInstruction" },
         reviews: {
           $push: {
-            _id: "$reviews._id",
-            ratingPoints: "$reviews.ratingPoints",
-            reviewText: "$reviews.reviewText",
-            firstName: "$reviews.firstName",
-            lastName: "$reviews.lastName",
-            photo: "$reviews.photo",
-            date: "$reviews.date",
+            $cond: {
+              if: { $gt: ["$reviews._id", null] },
+              then: {
+                _id: "$reviews._id",
+                ratingPoints: "$reviews.ratingPoints",
+                reviewText: "$reviews.reviewText",
+                firstName: "$reviews.firstName",
+                lastName: "$reviews.lastName",
+                photo: "$reviews.photo",
+                date: "$reviews.date",
+              },
+              else: "$$REMOVE",
+            },
           },
         },
       },

@@ -460,6 +460,7 @@ const deleteProduct = async (id) => {
       imagesToRemove.map((element) => removeImage(element.uid))
     );
   }
+  
   return result;
 };
 

@@ -4,9 +4,11 @@ import { BrewInstructionRoutes } from "./brewInstruction.routes.js";
 import { ProductRoutes } from "./product.routes.js";
 import { SystemRoutes } from "./system.routes.js";
 import { UploadRoutes } from "./upload.routes.js";
+import { MediaRoutes } from "./media.routes.js";
 
 const router = express.Router();
 
+router.use(MediaRoutes);
 router.use(BrewInstructionRoutes);
 router.use(AssortmentRoutes);
 router.use(SystemRoutes);
