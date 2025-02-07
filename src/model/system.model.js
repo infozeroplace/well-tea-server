@@ -6,8 +6,14 @@ const SystemSchema = Schema(
       type: String,
       default: "system-1",
     },
-    logo: String,
-    secondaryLogo: String,
+    logo: {
+      type: Schema.Types.ObjectId,
+      ref: "Media",
+    },
+    secondaryLogo: {
+      type: Schema.Types.ObjectId,
+      ref: "Media",
+    },
     filters: {
       type: [
         {
@@ -30,7 +36,10 @@ const SystemSchema = Schema(
     hero: {
       type: [
         {
-          bannerImagePath: String,
+          bannerImagePath: {
+            type: Schema.Types.ObjectId,
+            ref: "Media",
+          },
           bannerImageTitle: String,
           bannerImageDescription: String,
           bannerImageButtonText: String,
@@ -43,8 +52,14 @@ const SystemSchema = Schema(
         {
           title: String,
           description: String,
-          iconPath: String,
-          imagePath: String,
+          iconPath: {
+            type: Schema.Types.ObjectId,
+            ref: "Media",
+          },
+          imagePath: {
+            type: Schema.Types.ObjectId,
+            ref: "Media",
+          },
         },
       ],
     },
@@ -53,33 +68,48 @@ const SystemSchema = Schema(
         {
           title: String,
           description: String,
-          iconPath: String,
+          iconPath: {
+            type: Schema.Types.ObjectId,
+            ref: "Media",
+          },
         },
       ],
     },
     offer: {
-      allOffer: {
+      offerOne: {
         title: String,
+        subTitle: String,
+        category: String,
         thumbnail: {
-          path: String,
+          type: Schema.Types.ObjectId,
+          ref: "Media",
         },
       },
-      teaOffer: {
+      offerTwo: {
         title: String,
+        subTitle: String,
+        category: String,
         thumbnail: {
-          path: String,
+          type: Schema.Types.ObjectId,
+          ref: "Media",
         },
       },
-      teawareOffer: {
+      offerThree: {
         title: String,
+        subTitle: String,
+        category: String,
         thumbnail: {
-          path: String,
+          type: Schema.Types.ObjectId,
+          ref: "Media",
         },
       },
-      giftOffer: {
+      offerFour: {
         title: String,
+        subTitle: String,
+        category: String,
         thumbnail: {
-          path: String,
+          type: Schema.Types.ObjectId,
+          ref: "Media",
         },
       },
     },
@@ -88,7 +118,10 @@ const SystemSchema = Schema(
       subTitle: String,
       buttonText: String,
       buttonUrl: String,
-      bannerImage: String,
+      bannerImage: {
+        type: Schema.Types.ObjectId,
+        ref: "Media",
+      },
     },
     topNotifications: [String],
     privacyPolicy: String,

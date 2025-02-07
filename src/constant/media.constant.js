@@ -7,6 +7,7 @@ export const filetypes = [
   "jpeg",
   "webp",
   "svg",
+  "svg+xml",
   "gif",
 ];
 

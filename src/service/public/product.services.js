@@ -35,6 +35,22 @@ const getRelatedProductList = async (productIds) => {
       },
     },
     {
+      $lookup: {
+        from: "media",
+        localField: "thumbnails",
+        foreignField: "_id",
+        as: "thumbnails",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "slideImages",
+        foreignField: "_id",
+        as: "slideImages",
+      },
+    },
+    {
       $addFields: {
         unitPrices: {
           $map: {
@@ -92,7 +108,7 @@ const getRelatedProductList = async (productIds) => {
         },
       },
     },
-    { $unwind: "$category" }, // Flatten categories for better matching
+    // Flatten categories for better matching
     { $unwind: "$productType" }, // Flatten product types for better matching
     {
       $group: {
@@ -165,6 +181,52 @@ const getProduct = async (slug) => {
       },
     },
     {
+      $lookup: {
+        from: "media",
+        localField: "thumbnails",
+        foreignField: "_id",
+        as: "thumbnails",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "slideImages",
+        foreignField: "_id",
+        as: "slideImages",
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "addOns",
+        foreignField: "_id",
+        as: "addOns",
+      },
+    },
+    {
+      $unwind: {
+        path: "$addOns",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "addOns.thumbnails",
+        foreignField: "_id",
+        as: "addOns.thumbnails",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "addOns.slideImages",
+        foreignField: "_id",
+        as: "addOns.slideImages",
+      },
+    },
+    {
       $group: {
         _id: "$_id",
         urlParameter: { $first: "$urlParameter" },
@@ -201,8 +263,16 @@ const getProduct = async (slug) => {
         unitPrices: { $first: "$unitPrices" },
         subscriptions: { $first: "$subscriptions" },
         availableAs: { $first: "$availableAs" },
-        addOns: { $first: "$addOns" },
         brewInstruction: { $first: "$brewInstruction" },
+        addOns: {
+          $push: {
+            $cond: {
+              if: { $gt: ["$addOns._id", null] },
+              then: "$addOns",
+              else: "$$REMOVE",
+            },
+          },
+        },
         reviews: {
           $push: {
             $cond: {
@@ -228,14 +298,6 @@ const getProduct = async (slug) => {
         localField: "availableAs",
         foreignField: "_id",
         as: "availableAs",
-      },
-    },
-    {
-      $lookup: {
-        from: "products",
-        localField: "addOns",
-        foreignField: "_id",
-        as: "addOns",
       },
     },
     {
@@ -583,6 +645,22 @@ const getProductList = async (filters, paginationOptions) => {
   const pipelines = [
     {
       $match: whereConditions,
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "thumbnails",
+        foreignField: "_id",
+        as: "thumbnails",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "slideImages",
+        foreignField: "_id",
+        as: "slideImages",
+      },
     },
     {
       $addFields: {

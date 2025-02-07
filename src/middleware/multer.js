@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 const singlePhotoUploader = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    const supportedImage = /png|jpg|jpeg|webp|svg|gif/;
+    const supportedImage = /png|jpg|jpeg|webp|svg|gif|svg+xml/;
 
     const extension = path.extname(file.originalname);
 
@@ -29,7 +29,7 @@ const singlePhotoUploader = multer({
 const multipleImageMiddleware = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
-    const supportedImage = /png|jpg|jpeg|webp|svg|gif/;
+    const supportedImage = /png|jpg|jpeg|webp|svg|gif|svg+xml/;
 
     const extension = path.extname(file.originalname);
 

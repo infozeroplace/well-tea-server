@@ -1,7 +1,6 @@
 import httpStatus from "http-status";
 import ApiError from "../../error/ApiError.js";
 import { System } from "../../model/system.model.js";
-import { removeImage } from "../../utils/fileSystem.js";
 
 const updateFilter = async (payload) => {
   const { filters } = payload;
@@ -246,45 +245,27 @@ const updatePrivacyPolicy = async (payload) => {
 const updateCompanyService = async (payload) => {
   const existing = await System.findOne({ systemId: "system-1" });
 
-  const updatedFields = payload.map((item) => ({
-    ...item,
-    iconPath: `/public/image/upload/${item.iconPath}`,
-  }));
-
   if (!existing) {
     // Create a new document if none exists
     const result = await System.create({
       systemId: "system-1",
-      companyService: updatedFields,
+      companyService: payload,
     });
+
     if (!result)
       throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
     return result;
   } else {
-    // Get current icon paths
-    const oldIcons = existing.companyService.map((field) => field.iconPath);
-
-    // Get new icon paths
-    const newIcons = updatedFields.map((field) => field.iconPath);
-
-    // Determine which icons are no longer used
-    const iconsToRemove = oldIcons.filter((path) => !newIcons.includes(path));
-
     // Update the existing document
     const result = await System.findOneAndUpdate(
       { systemId: "system-1" },
-      { $set: { companyService: updatedFields } },
+      { $set: { companyService: payload } },
       { new: true }
     );
 
     if (!result)
       throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
-
-    // Remove unused icons
-    for (const iconPath of iconsToRemove) {
-      const filename = iconPath.split("/").pop();
-      await removeImage(filename); // Assuming `removeImage` deletes the file
-    }
 
     return result;
   }
@@ -293,50 +274,25 @@ const updateCompanyService = async (payload) => {
 const updateWhyChooseUs = async (payload) => {
   const existing = await System.findOne({ systemId: "system-1" });
 
-  const updatedFields = payload.map((item) => ({
-    ...item,
-    iconPath: `/public/image/upload/${item.iconPath}`,
-    imagePath: `/public/image/upload/${item.imagePath}`,
-  }));
-
   if (!existing) {
     const result = await System.create({
       systemId: "system-1",
-      whyChooseUs: updatedFields,
+      whyChooseUs: payload,
     });
+
     if (!result)
       throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+
     return result;
   } else {
-    const oldIcons = existing.whyChooseUs.map((field) => field.iconPath);
-    const oldImages = existing.whyChooseUs.map((field) => field.imagePath);
-
-    const newIcons = updatedFields.map((field) => field.iconPath);
-    const newImages = updatedFields.map((field) => field.imagePath);
-
-    const iconsToRemove = oldIcons.filter((path) => !newIcons.includes(path));
-    const imagesToRemove = oldImages.filter(
-      (path) => !newImages.includes(path)
-    );
-
     const result = await System.findOneAndUpdate(
       { systemId: "system-1" },
-      { $set: { whyChooseUs: updatedFields } },
+      { $set: { whyChooseUs: payload } },
       { new: true }
     );
 
     if (!result)
       throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
-
-    for (const iconPath of iconsToRemove) {
-      const filename = iconPath.split("/").pop();
-      await removeImage(filename);
-    }
-
-    for (const imagePath of imagesToRemove) {
-      const filename = imagePath.split("/").pop();
-      await removeImage(filename);
-    }
 
     return result;
   }
@@ -360,8 +316,6 @@ const updateSecondaryLogo = async (payload) => {
 
     return result;
   } else {
-    existing.secondaryLogo && (await removeImage(existing.secondaryLogo));
-
     const result = await System.findOneAndUpdate(
       {
         systemId: "system-1",
@@ -413,8 +367,6 @@ const updateNotification = async (payload) => {
 const updateFeaturedSectionSetting = async (payload) => {
   const existing = await System.findOne({ systemId: "system-1" });
 
-  const newImagePath = payload.bannerImage;
-
   if (!existing) {
     // If no existing document, create a new one
     const result = await System.create({
@@ -424,7 +376,7 @@ const updateFeaturedSectionSetting = async (payload) => {
         subTitle: payload.subTitle,
         buttonText: payload.buttonText,
         buttonUrl: payload.buttonUrl,
-        bannerImage: newImagePath,
+        bannerImage: payload.bannerImage,
       },
     });
 
@@ -434,14 +386,6 @@ const updateFeaturedSectionSetting = async (payload) => {
 
     return result;
   } else {
-    const oldImage = existing.featured?.bannerImage;
-
-    // Remove old image if a new image is uploaded
-    if (oldImage && oldImage !== newImagePath) {
-      const filename = oldImage.split("/").pop(); // Extract the filename
-      await removeImage(filename);
-    }
-
     // Update the featured section
     const result = await System.findOneAndUpdate(
       { systemId: "system-1" },
@@ -452,7 +396,7 @@ const updateFeaturedSectionSetting = async (payload) => {
             subTitle: payload.subTitle,
             buttonText: payload.buttonText,
             buttonUrl: payload.buttonUrl,
-            bannerImage: newImagePath,
+            bannerImage: payload.bannerImage,
           },
         },
       },
@@ -485,8 +429,6 @@ const updateLogo = async (payload) => {
 
     return result;
   } else {
-    existing.logo && (await removeImage(existing.logo));
-
     const result = await System.findOneAndUpdate(
       {
         systemId: "system-1",
@@ -507,62 +449,11 @@ const updateLogo = async (payload) => {
 const updateOfferSetting = async (payload) => {
   const existing = await System.findOne({ systemId: "system-1" });
 
-  // Helper function to handle image updates and removals
-  const handleImageUpdate = async (newImagePath, existingImagePath) => {
-    if (existingImagePath && newImagePath !== existingImagePath) {
-      const oldFilename = existingImagePath.split("/").pop();
-      await removeImage(oldFilename); // Remove old image
-    }
-    return newImagePath;
-  };
-
-  const { allOffer, teaOffer, teawareOffer, giftOffer } = payload;
-
-  // Update or initialize the offer object
-  const updatedOffer = {
-    allOffer: {
-      title: allOffer.title,
-      thumbnail: {
-        path: await handleImageUpdate(
-          allOffer.thumbnail.path,
-          existing?.offer?.allOffer?.thumbnail?.path
-        ),
-      },
-    },
-    teaOffer: {
-      title: teaOffer.title,
-      thumbnail: {
-        path: await handleImageUpdate(
-          teaOffer.thumbnail.path,
-          existing?.offer?.teaOffer?.thumbnail?.path
-        ),
-      },
-    },
-    teawareOffer: {
-      title: teawareOffer.title,
-      thumbnail: {
-        path: await handleImageUpdate(
-          teawareOffer.thumbnail.path,
-          existing?.offer?.teawareOffer?.thumbnail?.path
-        ),
-      },
-    },
-    giftOffer: {
-      title: giftOffer.title,
-      thumbnail: {
-        path: await handleImageUpdate(
-          giftOffer.thumbnail.path,
-          existing?.offer?.giftOffer?.thumbnail?.path
-        ),
-      },
-    },
-  };
-
   if (!existing) {
     // Create a new document if none exists
     const result = await System.create({
       systemId: "system-1",
-      offer: updatedOffer,
+      offer: payload,
     });
 
     if (!result) {
@@ -577,7 +468,7 @@ const updateOfferSetting = async (payload) => {
     // Update existing document
     const result = await System.findOneAndUpdate(
       { systemId: "system-1" },
-      { $set: { offer: updatedOffer } },
+      { $set: { offer: payload } },
       { new: true }
     );
 
@@ -597,7 +488,7 @@ const updateHeroSetting = async (payload) => {
 
   const updatedHeroSlides = payload.map((item) => ({
     ...item,
-    bannerImagePath: `/public/image/upload/${item.bannerImagePath}`,
+    bannerImagePath: item.thumbnail,
   }));
 
   if (!existing) {
@@ -613,22 +504,6 @@ const updateHeroSetting = async (payload) => {
 
     return result;
   } else {
-    // Identify images to remove
-    const oldImages = existing.hero.map((slide) => slide.bannerImagePath);
-    const updatedImages = updatedHeroSlides.map(
-      (slide) => slide.bannerImagePath
-    );
-
-    const imagesToRemove = oldImages.filter(
-      (oldImage) => !updatedImages.includes(oldImage)
-    );
-
-    // Remove old images that are not in the updated list
-    for (const imagePath of imagesToRemove) {
-      const filename = imagePath.split("/").pop(); // Extract the filename
-      await removeImage(filename);
-    }
-
     // Update the document with the new hero slides
     const result = await System.findOneAndUpdate(
       { systemId: "system-1" },
@@ -644,10 +519,161 @@ const updateHeroSetting = async (payload) => {
   }
 };
 
-const getSystemConfiguration = async (payload) => {
-  const result = await System.findOne({ systemId: "system-1" });
+const getSystemConfiguration = async () => {
+  const pipeline = [
+    {
+      $match: { systemId: "system-1" },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "logo",
+        foreignField: "_id",
+        as: "logo",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "secondaryLogo",
+        foreignField: "_id",
+        as: "secondaryLogo",
+      },
+    },
+    {
+      $unwind: { path: "$hero", preserveNullAndEmptyArrays: true },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "hero.bannerImagePath",
+        foreignField: "_id",
+        as: "hero.bannerImagePath",
+      },
+    },
+    {
+      $unwind: { path: "$companyService", preserveNullAndEmptyArrays: true },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "companyService.iconPath",
+        foreignField: "_id",
+        as: "companyService.iconPath",
+      },
+    },
+    {
+      $unwind: { path: "$whyChooseUs", preserveNullAndEmptyArrays: true },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "whyChooseUs.iconPath",
+        foreignField: "_id",
+        as: "whyChooseUs.iconPath",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "whyChooseUs.imagePath",
+        foreignField: "_id",
+        as: "whyChooseUs.imagePath",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "offer.offerOne.thumbnail",
+        foreignField: "_id",
+        as: "offer.offerOne.thumbnail",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "offer.offerTwo.thumbnail",
+        foreignField: "_id",
+        as: "offer.offerTwo.thumbnail",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "offer.offerThree.thumbnail",
+        foreignField: "_id",
+        as: "offer.offerThree.thumbnail",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "offer.offerFour.thumbnail",
+        foreignField: "_id",
+        as: "offer.offerFour.thumbnail",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "featured.bannerImage",
+        foreignField: "_id",
+        as: "featured.bannerImage",
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        systemId: { $first: "$systemId" },
+        filters: { $first: "$filters" },
+        faqs: { $first: "$faqs" },
+        hero: {
+          $addToSet: {
+            _id: "$hero._id",
+            bannerImagePath: "$hero.bannerImagePath",
+            bannerImageTitle: "$hero.bannerImageTitle",
+            bannerImageDescription: "$hero.bannerImageDescription",
+            bannerImageButtonText: "$hero.bannerImageButtonText",
+            bannerImageButtonUrl: "$hero.bannerImageButtonUrl",
+          },
+        },
+        whyChooseUs: {
+          $addToSet: {
+            _id: "$whyChooseUs._id",
+            title: "$whyChooseUs.title",
+            description: "$whyChooseUs.description",
+            iconPath: "$whyChooseUs.iconPath",
+            imagePath: "$whyChooseUs.imagePath",
+          },
+        },
+        companyService: {
+          $addToSet: {
+            _id: "$companyService._id",
+            title: "$companyService.title",
+            description: "$companyService.description",
+            iconPath: "$companyService.iconPath",
+          },
+        },
+        offer: { $first: "$offer" },
+        featured: { $first: "$featured" },
+        topNotifications: { $first: "$topNotifications" },
+        privacyPolicy: { $first: "$privacyPolicy" },
+        termsAndConditions: { $first: "$termsAndConditions" },
+        cookiesPolicy: { $first: "$cookiesPolicy" },
+        returnAndRefund: { $first: "$returnAndRefund" },
+        subscriptionPolicy: { $first: "$subscriptionPolicy" },
+        deliveryPolicy: { $first: "$deliveryPolicy" },
+        logo: { $first: "$logo" },
+        secondaryLogo: { $first: "$secondaryLogo" },
+      },
+    },
+  ];
 
-  return result;
+  const result = await System.aggregate(pipeline);
+
+  // console.log(result[0]);
+
+  return result[0];
 };
 
 export const SystemService = {

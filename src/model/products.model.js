@@ -56,8 +56,24 @@ const ProductSchema = Schema(
       trim: true,
       required: [true, "metaDescription is required"],
     },
-    thumbnails: [String],
-    slideImages: [String],
+    thumbnails: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Media",
+        },
+      ],
+      default: [],
+    },
+    slideImages: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Media",
+        },
+      ],
+      default: [],
+    },
     category: {
       type: [String],
       required: [true, "Category is required!"],
@@ -161,9 +177,7 @@ const ProductSchema = Schema(
     youtubeLink: {
       type: String,
       trim: true,
-      set: (value) =>
-        value
-          .trim()
+      set: (value) => value.trim(),
     },
     isPublished: {
       type: Boolean,

@@ -4,7 +4,6 @@ import { productSearchableFields } from "../../constant/product.constant.js";
 import ApiError from "../../error/ApiError.js";
 import { PaginationHelpers } from "../../helper/paginationHelper.js";
 import Product from "../../model/products.model.js";
-import { removeImage } from "../../utils/fileSystem.js";
 
 const { ObjectId } = mongoose.Types;
 
@@ -19,19 +18,6 @@ const editProduct = async (payload) => {
   const result = await Product.findOneAndUpdate({ _id: id }, data, {
     new: true,
   });
-
-  const existingThumbnails = existingProduct.thumbnails || [];
-  const existingSlideImages = existingProduct.slideImages || [];
-
-  for (const elem of existingThumbnails) {
-    const isExist = data.thumbnails.includes(elem);
-    !isExist && removeImage(elem);
-  }
-
-  for (const elem of existingSlideImages) {
-    const isExist = data.slideImages.includes(elem);
-    !isExist && removeImage(elem);
-  }
 
   return result;
 };
@@ -82,6 +68,22 @@ const getProduct = async (id) => {
         availableAs: { $first: "$availableAs" },
         addOns: { $first: "$addOns" },
         brewInstruction: { $first: "$brewInstruction" },
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "thumbnails",
+        foreignField: "_id",
+        as: "thumbnails",
+      },
+    },
+    {
+      $lookup: {
+        from: "media",
+        localField: "slideImages",
+        foreignField: "_id",
+        as: "slideImages",
       },
     },
     {
@@ -337,6 +339,14 @@ const getProductList = async (filters, paginationOptions) => {
       $match: whereConditions,
     },
     {
+      $lookup: {
+        from: "media",
+        localField: "thumbnails",
+        foreignField: "_id",
+        as: "thumbnails",
+      },
+    },
+    {
       $addFields: {
         unitPrices: {
           $map: {
@@ -425,18 +435,8 @@ const deleteProducts = async (ids) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Products not found");
   }
 
-  // Collect all images to remove
-  const imagesToRemove = products.flatMap((product) => [
-    ...(product?.thumbnails || []),
-    ...(product?.slideImages || []),
-  ]);
-
   // Delete products
   const result = await Product.deleteMany({ _id: { $in: ids } });
-
-  if (imagesToRemove.length > 0) {
-    await Promise.all(imagesToRemove.map((image) => removeImage(image.uid)));
-  }
 
   return result;
 };
@@ -448,19 +448,8 @@ const deleteProduct = async (id) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Product not found");
   }
 
-  const imagesToRemove = [
-    ...(isExistProduct?.thumbnails || []),
-    ...(isExistProduct?.slideImages || []),
-  ];
-
   const result = await Product.findByIdAndDelete(id);
 
-  if (imagesToRemove.length > 0) {
-    await Promise.all(
-      imagesToRemove.map((element) => removeImage(element.uid))
-    );
-  }
-  
   return result;
 };
 
