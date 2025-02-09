@@ -5,7 +5,6 @@ import sendResponse from "../../shared/sendResponse.js";
 
 const getAddresses = catchAsync(async (req, res) => {
   const { userId } = req.user;
-  console.log(req.cookies)
 
   const result = await AddressService.getAddresses(userId);
 

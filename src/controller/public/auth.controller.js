@@ -4,6 +4,34 @@ import { AuthService } from "../../service/public/auth.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+const userRefreshToken = catchAsync(async (req, res) => {
+  const { authToken } = req.cookies;
+
+  const result = await AuthService.refreshToken(authToken);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Success!",
+    meta: null,
+    data: result,
+  });
+});
+
+const checkAuth = catchAsync(async (req, res) => {
+  const { authToken } = req.cookies;
+
+  const result = await AuthService.checkAuth(authToken);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Authenticated!",
+    meta: null,
+    data: result,
+  });
+});
+
 const resetPassword = catchAsync(async (req, res) => {
   const { ...resetPasswordData } = req.body;
 
@@ -53,7 +81,7 @@ const login = catchAsync(async (req, res) => {
   const isInDevelopment = config.env === "development";
 
   const cookieConfigs = {
-    httpOnly: false,
+    httpOnly: true,
     sameSite: isInDevelopment ? false : "none",
     secure: isInDevelopment ? false : true,
     maxAge: 365 * 24 * 60 * 60 * 1000, // one year
@@ -95,7 +123,7 @@ const googleLogin = catchAsync(async (req, res) => {
   const isInDevelopment = config.env === "development";
 
   const cookieConfigs = {
-    httpOnly: false,
+    httpOnly: true,
     sameSite: isInDevelopment ? false : "none",
     secure: isInDevelopment ? false : true,
     maxAge: 365 * 24 * 60 * 60 * 1000, // one year
@@ -129,6 +157,8 @@ const refreshToken = catchAsync(async (req, res) => {
 });
 
 export const AuthController = {
+  userRefreshToken,
+  checkAuth,
   resetPassword,
   forgotPassword,
   register,
