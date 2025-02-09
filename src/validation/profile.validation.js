@@ -29,7 +29,17 @@ const editPasswordZodSchema = z.object({
   }),
 });
 
+const editProfileZodSchema = z.object({
+  body: z.object({
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+  }),
+});
+
 export const ProfileValidation = {
   editPasswordForSocialUserZodSchema,
   editPasswordZodSchema,
+  editProfileZodSchema,
 };

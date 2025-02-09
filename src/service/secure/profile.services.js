@@ -55,7 +55,44 @@ const editPassword = async (payload, userId) => {
   return result;
 };
 
+const editProfile = async (payload, userId) => {
+  const existingUser = await User.findOne({ userId });
+
+  if (payload.email && payload.email !== existingUser.email) {
+    const isExistEmail = await User.findOne({ email: payload.email });
+
+    if (isExistEmail) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "email already exists!");
+    } else {
+      const result = await User.findOneAndUpdate(
+        { userId },
+        { $set: { ...payload } },
+        { new: true, upsert: true }
+      );
+
+      result.isPasswordHas = result.password ? true : false;
+
+      result.password = undefined;
+
+      return result;
+    }
+  } else {
+    const result = await User.findOneAndUpdate(
+      { userId },
+      { $set: { ...payload } },
+      { new: true, upsert: true }
+    );
+
+    result.isPasswordHas = result.password ? true : false;
+
+    result.password = undefined;
+
+    return result;
+  }
+};
+
 export const ProfileService = {
   editPasswordForSocialUser,
   editPassword,
+  editProfile,
 };

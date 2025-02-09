@@ -32,7 +32,21 @@ const editPassword = catchAsync(async (req, res) => {
   });
 });
 
+const editProfile = catchAsync(async (req, res) => {
+  const userId = req.user.userId;
+  const result = await ProfileService.editProfile(req.body, userId);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Profile edited successfully",
+    meta: null,
+    data: result,
+  });
+});
+
 export const ProfileController = {
   editPasswordForSocialUser,
   editPassword,
+  editProfile,
 };

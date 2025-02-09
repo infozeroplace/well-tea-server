@@ -24,4 +24,11 @@ router.put(
   ProfileController.editPassword
 );
 
+router.put(
+  "/profile/edit-profile",
+  auth(ENUM_USER_ROLE.USER),
+  validateRequest(ProfileValidation.editProfileZodSchema),
+  ProfileController.editProfile
+);
+
 export const ProfileRoutes = router;
