@@ -50,12 +50,26 @@ const login = catchAsync(async (req, res) => {
 
   const result = await AuthService.login(loginData);
 
+  const isInDevelopment = config.env === "development";
+
+  const cookieConfigs = {
+    httpOnly: false,
+    sameSite: isInDevelopment ? false : "none",
+    secure: isInDevelopment ? false : true,
+    maxAge: 365 * 24 * 60 * 60 * 1000, // one year
+  };
+
+  res.cookie("authToken", result.refreshToken, cookieConfigs);
+
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Login successful!",
     meta: null,
-    data: result,
+    data: {
+      accessToken: result.accessToken,
+      user: result.user,
+    },
   });
 });
 
@@ -81,7 +95,7 @@ const googleLogin = catchAsync(async (req, res) => {
   const isInDevelopment = config.env === "development";
 
   const cookieConfigs = {
-    httpOnly: true,
+    httpOnly: false,
     sameSite: isInDevelopment ? false : "none",
     secure: isInDevelopment ? false : true,
     maxAge: 365 * 24 * 60 * 60 * 1000, // one year
