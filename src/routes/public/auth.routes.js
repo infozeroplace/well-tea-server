@@ -5,10 +5,6 @@ import validateRequest from "../../middleware/validateRequest.js";
 import { AuthValidation } from "../../validation/auth.validation.js";
 const router = express.Router();
 
-router.get("/auth/refresh/user", AuthController.userRefreshToken);
-
-router.get("/auth/me", AuthController.checkAuth);
-
 router.post(
   "/auth/reset-password",
   limiter(5, 10),

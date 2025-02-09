@@ -18,35 +18,6 @@ const oAuth2Client = new OAuth2Client(
   "postmessage"
 );
 
-const checkAuth = async (token) => {
-  let verifiedToken = null;
-  try {
-    verifiedToken = jwtHelpers.verifiedToken(
-      token,
-      config?.jwt?.refresh_secret
-    );
-  } catch (err) {
-    throw new ApiError(httpStatus.FORBIDDEN, "Invalid refresh token");
-  }
-
-  const { userId } = verifiedToken;
-  // If the user already deleted then delete the refresh token
-  const isUserExist = await User.findOne({ userId: userId }).lean();
-
-  if (!isUserExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "User does not exist");
-  }
-
-  isUserExist.isPasswordHas = isUserExist.password ? true : false;
-
-  // Remove the password
-  isUserExist.password = undefined;
-
-  return {
-    user: isUserExist,
-  };
-};
-
 const resetPassword = async (payload) => {
   const { token, password } = payload;
 
@@ -499,7 +470,6 @@ const refreshToken = async (token) => {
 };
 
 export const AuthService = {
-  checkAuth,
   resetPassword,
   forgotPassword,
   register,
