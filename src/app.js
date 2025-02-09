@@ -49,6 +49,13 @@ app.get("/", async (req, res) => {
   });
 });
 
+app.use((_, res, next) => {
+  res.header("Access-Control-Allow-Origin", config.frontend_base_url);
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
 app.use((req, res) => {
   return res.status(400).json({
     success: false,

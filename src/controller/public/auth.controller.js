@@ -1,4 +1,5 @@
 import httpStatus from "http-status";
+import config from "../../config/index.js";
 import { AuthService } from "../../service/public/auth.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
@@ -77,12 +78,26 @@ const googleLogin = catchAsync(async (req, res) => {
 
   const result = await AuthService.googleLogin(code);
 
+  const isInDevelopment = config.env === "development";
+
+  const cookieConfigs = {
+    httpOnly: true,
+    sameSite: isInDevelopment ? false : "none",
+    secure: isInDevelopment ? false : true,
+    maxAge: 365 * 24 * 60 * 60 * 1000, // one year
+  };
+
+  res.cookie("authToken", result.refreshToken, cookieConfigs);
+
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Login successful!",
     meta: null,
-    data: result,
+    data: {
+      accessToken: result.accessToken,
+      user: result.user,
+    },
   });
 });
 
