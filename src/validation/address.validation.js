@@ -19,6 +19,7 @@ const editAddressSchema = z.object({
     country: z.string(z.enum([...countries])).optional(),
     postalCode: z.string().optional(),
     phone: z.string().optional(),
+    isDefault: z.boolean().optional(),
   }),
 });
 
@@ -37,6 +38,7 @@ const addAddressSchema = z.object({
     ),
     postalCode: z.string({ required_error: "postal code is required" }),
     phone: z.string({ required_error: "phone is required" }),
+    isDefault: z.boolean({ required_error: "default value is required" }),
   }),
 });
 

@@ -12,7 +12,6 @@ export const membersSearchableFields = [
 export const membersFilterableField = [
   "searchTerm",
   "role",
-  "verified",
   "blockStatus",
   "country",
   "gender",

@@ -59,6 +59,10 @@ const AddressSchema = Schema(
       required: [true, "phone is required"],
       set: (value) => value.replace(/[^a-zA-Z0-9\s]/g, "").replace(/\s+/g, " "),
     },
+    isDefault: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

@@ -43,18 +43,7 @@ const UserSchema = Schema(
       },
       default: "user",
     },
-    departments: {
-      type: String,
-      enum: {
-        values: departments,
-        message: "{VALUE} is not matched",
-      },
-    },
     isSocialLogin: {
-      type: Boolean,
-      default: false,
-    },
-    verified: {
       type: Boolean,
       default: false,
     },
@@ -62,29 +51,9 @@ const UserSchema = Schema(
       type: Boolean,
       default: false,
     },
-    country: {
-      type: String,
-      trim: true,
-    },
-    designation: {
-      type: String,
-      trim: true,
-    },
     phone: {
       type: String,
       trim: true,
-    },
-    address: {
-      type: String,
-      trim: true,
-    },
-    gender: {
-      type: String,
-      trim: true,
-      enum: {
-        values: ["male", "female"],
-        message: "{VALUE} is not matched",
-      },
     },
     password: {
       type: String,
@@ -98,10 +67,6 @@ const UserSchema = Schema(
     },
     resetToken: {
       type: String,
-    },
-    photo: {
-      type: String,
-      trim: true,
     },
   },
   {

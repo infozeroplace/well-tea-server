@@ -179,12 +179,6 @@ const register = async (payload) => {
     { new: true }
   );
 
-  const name = `${updatedUser.firstName} ${updatedUser.lastName}`;
-
-  if (updatedUser.resetToken) {
-    await sendEmailVerificationLink(createdUser?.email, name, emailAccessToken);
-  }
-
   createdUser.isPasswordHas = createdUser.password ? true : false;
 
   // Remove the password
@@ -333,7 +327,7 @@ const googleLogin = async (code) => {
   // ....................................
 
   const { payload } = ticket;
-  const { picture, given_name, family_name, email, email_verified } = payload;
+  const { given_name, family_name, email, email_verified } = payload;
 
   // Google authenticating that user is verified or not
   if (!email_verified) {
@@ -393,9 +387,7 @@ const googleLogin = async (code) => {
       email: email,
       firstName: given_name || ".",
       lastName: family_name || ".",
-      verified: true,
       isSocialLogin: true,
-      photo: picture,
     });
 
     const { UTC, dateString } = dateFormatter.getDates();
