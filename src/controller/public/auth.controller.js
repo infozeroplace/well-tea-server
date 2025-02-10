@@ -8,14 +8,30 @@ const logout = catchAsync(async (req, res) => {
   const { token } = req.body;
   const { auth_refresh } = req.cookies;
 
-  const result = await AuthService.logout(res);
+  if (!auth_refresh) {
+    return sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "No session found, but logged out successfully!",
+      meta: null,
+      data: null,
+    });
+  }
+
+  res.clearCookie("auth_refresh", {
+    domain: config.cookie_domain,
+    path: "/",
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "logout successfully!",
+    message: "Logged out successfully!",
     meta: null,
-    data: result,
+    data: null,
   });
 });
 

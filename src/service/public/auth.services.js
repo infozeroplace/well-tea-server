@@ -18,17 +18,6 @@ const oAuth2Client = new OAuth2Client(
   "postmessage"
 );
 
-const logout = async (res) => {
-  res.clearCookie("auth_refresh", {
-    domain: config.cookie_domain,
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  });
-
-  return true;
-};
-
 const resetPassword = async (payload) => {
   const { token, password } = payload;
 
@@ -484,7 +473,6 @@ const refreshToken = async (token, res) => {
 };
 
 export const AuthService = {
-  logout,
   resetPassword,
   forgotPassword,
   register,
