@@ -11,10 +11,8 @@ const resetPassword = catchAsync(async (req, res) => {
     resetPasswordData
   );
 
-  const isProduction = config.env === "production";
-
   res.cookie("auth_refresh", refreshToken, {
-    domain: ".zeroplace.co",
+    domain: config.cookie_domain,
     path: "/",
     httpOnly: true,
     sameSite: "none",
@@ -50,10 +48,8 @@ const register = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.register(registerData);
 
-  const isProduction = config.env === "production";
-
   res.cookie("auth_refresh", refreshToken, {
-    domain: ".zeroplace.co",
+    domain: config.cookie_domain,
     path: "/",
     httpOnly: true,
     sameSite: "none",
@@ -75,10 +71,8 @@ const login = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.login(loginData);
 
-  const isProduction = config.env === "production";
-
   res.cookie("auth_refresh", refreshToken, {
-    domain: ".zeroplace.co",
+    domain: config.cookie_domain,
     path: "/",
     httpOnly: true,
     sameSite: "none",
@@ -114,10 +108,8 @@ const googleLogin = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.googleLogin(code);
 
-  const isProduction = config.env === "production";
-
   res.cookie("auth_refresh", refreshToken, {
-    domain: ".zeroplace.co",
+    domain: config.cookie_domain,
     path: "/",
     httpOnly: true,
     sameSite: "none",
