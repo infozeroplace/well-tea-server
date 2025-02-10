@@ -102,16 +102,16 @@ const googleLogin = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.googleLogin(code);
 
-  const isInDevelopment = config.env === "development";
+  const isProduction = config.env === "production"; // ✅ Check if in production
 
-  const cookieConfigs = {
-    httpOnly: true,
-    sameSite: isInDevelopment ? false : "none",
-    secure: isInDevelopment ? false : true,
-    maxAge: 15 * 24 * 60 * 60 * 1000,
-  };
-
-  res.cookie("auth_refresh", refreshToken, cookieConfigs);
+  res.cookie("auth_refresh", refreshToken, {
+    domain: ".zeroplace.co", // ✅ Allows access from welltea.zeroplace.co and other subdomains
+    path: "/", // ✅ Makes the cookie available on all routes
+    httpOnly: true, // ✅ Prevents client-side access (security best practice)
+    sameSite: "none", // ✅ Needed if frontend and backend are on different subdomains
+    secure: true, // ✅ Required for HTTPS
+    maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+  });
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
