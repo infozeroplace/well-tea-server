@@ -427,7 +427,7 @@ const googleLogin = async (code) => {
   }
 };
 
-const refreshToken = async (token) => {
+const refreshToken = async (token, res) => {
   let verifiedToken = null;
   try {
     verifiedToken = jwtHelpers.verifiedToken(
@@ -435,6 +435,16 @@ const refreshToken = async (token) => {
       config?.jwt?.refresh_secret
     );
   } catch (err) {
+    const isInDevelopment = config.env === "development";
+
+    const cookieConfigs = {
+      httpOnly: true,
+      sameSite: isInDevelopment ? false : "none",
+      secure: isInDevelopment ? false : true,
+    };
+
+    res.clearCookie("auth_refresh", cookieConfigs);
+
     throw new ApiError(httpStatus.FORBIDDEN, "Invalid refresh token");
   }
 

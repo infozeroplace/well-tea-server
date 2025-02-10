@@ -47,10 +47,6 @@ router.post(
   AuthController.googleLogin
 );
 
-router.post(
-  "/auth/refresh/token",
-  validateRequest(AuthValidation.refreshTokenZodSchema),
-  AuthController.refreshToken
-);
+router.get("/auth/refresh/token", AuthController.refreshToken);
 
 export const AuthRoutes = router;
