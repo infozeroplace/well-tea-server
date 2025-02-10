@@ -11,16 +11,16 @@ const resetPassword = catchAsync(async (req, res) => {
     resetPasswordData
   );
 
-  const isInDevelopment = config.env === "development";
+  const isProduction = config.env === "production";
 
-  const cookieConfigs = {
+  res.cookie("auth_refresh", refreshToken, {
+    domain: ".zeroplace.co",
+    path: "/",
     httpOnly: true,
-    sameSite: isInDevelopment ? false : "none",
-    secure: isInDevelopment ? false : true,
+    sameSite: "none",
+    secure: true,
     maxAge: 15 * 24 * 60 * 60 * 1000,
-  };
-
-  res.cookie("auth_refresh", refreshToken, cookieConfigs);
+  });
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -47,14 +47,26 @@ const forgotPassword = catchAsync(async (req, res) => {
 
 const register = catchAsync(async (req, res) => {
   const { ...registerData } = req.body;
-  const result = await AuthService.register(registerData);
+
+  const { refreshToken, ...data } = await AuthService.register(registerData);
+
+  const isProduction = config.env === "production";
+
+  res.cookie("auth_refresh", refreshToken, {
+    domain: ".zeroplace.co",
+    path: "/",
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    maxAge: 15 * 24 * 60 * 60 * 1000,
+  });
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Registration successful!",
     meta: null,
-    data: result,
+    data,
   });
 });
 
@@ -63,16 +75,16 @@ const login = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.login(loginData);
 
-  const isInDevelopment = config.env === "development";
+  const isProduction = config.env === "production";
 
-  const cookieConfigs = {
+  res.cookie("auth_refresh", refreshToken, {
+    domain: ".zeroplace.co",
+    path: "/",
     httpOnly: true,
-    sameSite: isInDevelopment ? false : "none",
-    secure: isInDevelopment ? false : true,
+    sameSite: "none",
+    secure: true,
     maxAge: 15 * 24 * 60 * 60 * 1000,
-  };
-
-  res.cookie("auth_refresh", refreshToken, cookieConfigs);
+  });
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -102,15 +114,15 @@ const googleLogin = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.googleLogin(code);
 
-  const isProduction = config.env === "production"; // ✅ Check if in production
+  const isProduction = config.env === "production";
 
   res.cookie("auth_refresh", refreshToken, {
-    domain: ".zeroplace.co", // ✅ Allows access from welltea.zeroplace.co and other subdomains
-    path: "/", // ✅ Makes the cookie available on all routes
-    httpOnly: true, // ✅ Prevents client-side access (security best practice)
-    sameSite: "none", // ✅ Needed if frontend and backend are on different subdomains
-    secure: true, // ✅ Required for HTTPS
-    maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+    domain: ".zeroplace.co",
+    path: "/",
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    maxAge: 15 * 24 * 60 * 60 * 1000,
   });
 
   return sendResponse(res, {
