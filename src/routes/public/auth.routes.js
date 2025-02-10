@@ -1,9 +1,18 @@
 import express from "express";
 import { AuthController } from "../../controller/public/auth.controller.js";
+import { ENUM_USER_ROLE } from "../../enum/user.js";
+import auth from "../../middleware/auth.js";
 import limiter from "../../middleware/limiter.js";
 import validateRequest from "../../middleware/validateRequest.js";
 import { AuthValidation } from "../../validation/auth.validation.js";
 const router = express.Router();
+
+router.post(
+  "/auth/logout",
+  auth(ENUM_USER_ROLE.USER),
+  validateRequest(AuthValidation.logOutZodSchema),
+  AuthController.logout
+);
 
 router.post(
   "/auth/reset-password",

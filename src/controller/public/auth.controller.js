@@ -4,6 +4,21 @@ import { AuthService } from "../../service/public/auth.services.js";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+const logout = catchAsync(async (req, res) => {
+  const { token } = req.body;
+  const { auth_refresh } = req.cookies;
+
+  const result = await AuthService.logout(res);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "logout successfully!",
+    meta: null,
+    data: result,
+  });
+});
+
 const resetPassword = catchAsync(async (req, res) => {
   const { ...resetPasswordData } = req.body;
 
@@ -141,6 +156,7 @@ const refreshToken = catchAsync(async (req, res) => {
 });
 
 export const AuthController = {
+  logout,
   resetPassword,
   forgotPassword,
   register,

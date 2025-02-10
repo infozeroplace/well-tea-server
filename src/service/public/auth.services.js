@@ -18,6 +18,17 @@ const oAuth2Client = new OAuth2Client(
   "postmessage"
 );
 
+const logout = async (res) => {
+  res.clearCookie("auth_refresh", {
+    domain: config.cookie_domain,
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
+
+  return true;
+};
+
 const resetPassword = async (payload) => {
   const { token, password } = payload;
 
@@ -161,20 +172,8 @@ const register = async (payload) => {
     config?.jwt?.refresh_expires_in
   );
 
-  const emailAccessToken = jwtHelpers.createToken(
-    {
-      role: createdUser?.role,
-      userId: createdUser?.userId,
-      email: createdUser?.email,
-      blockStatus: createdUser?.blockStatus,
-    },
-    config?.jwt?.secret,
-    config?.jwt?.email_expires_in
-  );
-
   const updatedUser = await User.findOneAndUpdate(
     { email: createdUser?.email },
-    { resetToken: emailAccessToken },
     { new: true }
   );
 
@@ -429,21 +428,19 @@ const googleLogin = async (code) => {
 
 const refreshToken = async (token, res) => {
   let verifiedToken = null;
+
   try {
     verifiedToken = jwtHelpers.verifiedToken(
       token,
       config?.jwt?.refresh_secret
     );
   } catch (err) {
-    const isInDevelopment = config.env === "development";
-
-    const cookieConfigs = {
+    res.clearCookie("auth_refresh", {
+      domain: config.cookie_domain,
       httpOnly: true,
-      sameSite: isInDevelopment ? false : "none",
-      secure: isInDevelopment ? false : true,
-    };
-
-    res.clearCookie("auth_refresh", cookieConfigs);
+      sameSite: "none",
+      secure: true,
+    });
 
     throw new ApiError(httpStatus.FORBIDDEN, "Invalid refresh token");
   }
@@ -453,6 +450,13 @@ const refreshToken = async (token, res) => {
   const isUserExist = await User.findOne({ userId: userId }).lean();
 
   if (!isUserExist) {
+    res.clearCookie("auth_refresh", {
+      domain: config.cookie_domain,
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+
     throw new ApiError(httpStatus.BAD_REQUEST, "User does not exist");
   }
 
@@ -480,6 +484,7 @@ const refreshToken = async (token, res) => {
 };
 
 export const AuthService = {
+  logout,
   resetPassword,
   forgotPassword,
   register,

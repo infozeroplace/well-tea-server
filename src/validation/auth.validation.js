@@ -68,6 +68,14 @@ const googleLoginZodSchema = z.object({
   }),
 });
 
+const logOutZodSchema = z.object({
+  body: z.object({
+    token: z.string({
+      required_error: "token is required",
+    }),
+  }),
+});
+
 const refreshTokenZodSchema = z.object({
   body: z.object({
     token: z.string({
@@ -77,6 +85,7 @@ const refreshTokenZodSchema = z.object({
 });
 
 export const AuthValidation = {
+  logOutZodSchema,
   resetPasswordZodSchema,
   forgotPasswordZodSchema,
   registerZodSchema,
