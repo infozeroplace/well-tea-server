@@ -415,12 +415,12 @@ const googleLogin = async (code) => {
   }
 };
 
-const refreshToken = async (token, res) => {
+const refreshToken = async (refreshToken, res) => {
   let verifiedToken = null;
 
   try {
     verifiedToken = jwtHelpers.verifiedToken(
-      token,
+      refreshToken,
       config?.jwt?.refresh_secret
     );
   } catch (err) {

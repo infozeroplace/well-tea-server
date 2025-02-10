@@ -16,7 +16,7 @@ const getTeaTypes = catchAsync(async (req, res) => {
 });
 
 const getSystemConfig = catchAsync(async (req, res) => {
-  const result = await SystemService.getSystemConfig();
+  const result = await SystemService.getSystemConfig(req, res);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,

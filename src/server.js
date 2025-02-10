@@ -11,7 +11,7 @@ process.on("uncaughtException", (error) => {
 
 let server = Server;
 
-async function bootstrap() {
+const bootstrap = async () => {
   try {
     mongoose.set("strictQuery", true);
     await mongoose.connect(config.database_url);

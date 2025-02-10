@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+import config from "../../config/index.js";
 import { System } from "../../model/system.model.js";
 
 const getTeaTypes = async () => {
@@ -15,7 +17,21 @@ const getTeaTypes = async () => {
   ];
 };
 
-const getSystemConfig = async () => {
+const getSystemConfig = async (req, res) => {
+  const { wl_anonymous_id } = req.cookies;
+  console.log(req.cookies);
+
+  if (!wl_anonymous_id) {
+    res.cookie("wl_anonymous_id", uuidv4(), {
+      domain: config.cookie_domain,
+      path: "/",
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      maxAge: 15 * 24 * 60 * 60 * 1000,
+    });
+  }
+
   const pipeline = [
     {
       $match: { systemId: "system-1" },
@@ -191,8 +207,6 @@ const getSystemConfig = async () => {
   ];
 
   const result = await System.aggregate(pipeline);
-
-  // console.log(result[0]);
 
   return result[0];
 };
