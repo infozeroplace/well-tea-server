@@ -69,6 +69,11 @@
             "date": 1739304010834,
             "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\error\\WT-2025-12-02-02-error.log",
             "hash": "38585566498ebe7a0e666a063bd2dd3f05ab8529fa7b8628cb01513b3d88d2f2"
+        },
+        {
+            "date": 1739307714144,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\error\\WT-2025-12-02-03-error.log",
+            "hash": "75de2d93bc569f53d60ade82d45928e15a915c660d23d8284b72862bdd550567"
         }
     ],
     "hashType": "sha256"
