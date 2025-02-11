@@ -1,182 +1,166 @@
-import { v4 as uuidv4 } from "uuid";
-import config from "../../config/index.js";
-import { System } from "../../model/system.model.js";
+import { System } from '../../model/system.model.js';
 
 const getTeaTypes = async () => {
   return [
-    "green tea",
-    "black tea",
-    "organic tea",
-    "oolong tea",
-    "herbal tea",
-    "white tea",
-    "pureh tea",
-    "jasmine tea",
-    "flowering tea",
-    "yellow tea",
+    'green tea',
+    'black tea',
+    'organic tea',
+    'oolong tea',
+    'herbal tea',
+    'white tea',
+    'pureh tea',
+    'jasmine tea',
+    'flowering tea',
+    'yellow tea',
   ];
 };
 
-const getSystemConfig = async (req, res) => {
-  const { wl_anonymous_id } = req.cookies;
-  console.log(req.cookies);
-
-  if (!wl_anonymous_id) {
-    res.cookie("wl_anonymous_id", uuidv4(), {
-      domain: config.cookie_domain,
-      path: "/",
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-      maxAge: 15 * 24 * 60 * 60 * 1000,
-    });
-  }
-
+const getSystemConfig = async () => {
   const pipeline = [
     {
-      $match: { systemId: "system-1" },
+      $match: { systemId: 'system-1' },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "logo",
-        foreignField: "_id",
-        as: "logo",
+        from: 'media',
+        localField: 'logo',
+        foreignField: '_id',
+        as: 'logo',
       },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "secondaryLogo",
-        foreignField: "_id",
-        as: "secondaryLogo",
+        from: 'media',
+        localField: 'secondaryLogo',
+        foreignField: '_id',
+        as: 'secondaryLogo',
       },
     },
     {
-      $unwind: { path: "$hero", preserveNullAndEmptyArrays: true },
+      $unwind: { path: '$hero', preserveNullAndEmptyArrays: true },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "hero.bannerImagePath",
-        foreignField: "_id",
-        as: "hero.bannerImagePath",
+        from: 'media',
+        localField: 'hero.bannerImagePath',
+        foreignField: '_id',
+        as: 'hero.bannerImagePath',
       },
     },
     {
-      $unwind: { path: "$companyService", preserveNullAndEmptyArrays: true },
+      $unwind: { path: '$companyService', preserveNullAndEmptyArrays: true },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "companyService.iconPath",
-        foreignField: "_id",
-        as: "companyService.iconPath",
+        from: 'media',
+        localField: 'companyService.iconPath',
+        foreignField: '_id',
+        as: 'companyService.iconPath',
       },
     },
     {
-      $unwind: { path: "$whyChooseUs", preserveNullAndEmptyArrays: true },
+      $unwind: { path: '$whyChooseUs', preserveNullAndEmptyArrays: true },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "whyChooseUs.iconPath",
-        foreignField: "_id",
-        as: "whyChooseUs.iconPath",
-      },
-    },
-    {
-      $lookup: {
-        from: "media",
-        localField: "whyChooseUs.imagePath",
-        foreignField: "_id",
-        as: "whyChooseUs.imagePath",
+        from: 'media',
+        localField: 'whyChooseUs.iconPath',
+        foreignField: '_id',
+        as: 'whyChooseUs.iconPath',
       },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "offer.offerOne.thumbnail",
-        foreignField: "_id",
-        as: "offer.offerOne.thumbnail",
+        from: 'media',
+        localField: 'whyChooseUs.imagePath',
+        foreignField: '_id',
+        as: 'whyChooseUs.imagePath',
       },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "offer.offerTwo.thumbnail",
-        foreignField: "_id",
-        as: "offer.offerTwo.thumbnail",
+        from: 'media',
+        localField: 'offer.offerOne.thumbnail',
+        foreignField: '_id',
+        as: 'offer.offerOne.thumbnail',
       },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "offer.offerThree.thumbnail",
-        foreignField: "_id",
-        as: "offer.offerThree.thumbnail",
+        from: 'media',
+        localField: 'offer.offerTwo.thumbnail',
+        foreignField: '_id',
+        as: 'offer.offerTwo.thumbnail',
       },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "offer.offerFour.thumbnail",
-        foreignField: "_id",
-        as: "offer.offerFour.thumbnail",
+        from: 'media',
+        localField: 'offer.offerThree.thumbnail',
+        foreignField: '_id',
+        as: 'offer.offerThree.thumbnail',
       },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "featured.bannerImage",
-        foreignField: "_id",
-        as: "featured.bannerImage",
+        from: 'media',
+        localField: 'offer.offerFour.thumbnail',
+        foreignField: '_id',
+        as: 'offer.offerFour.thumbnail',
+      },
+    },
+    {
+      $lookup: {
+        from: 'media',
+        localField: 'featured.bannerImage',
+        foreignField: '_id',
+        as: 'featured.bannerImage',
       },
     },
     {
       $group: {
-        _id: "$_id",
-        systemId: { $first: "$systemId" },
-        logo: { $first: "$logo" },
-        secondaryLogo: { $first: "$secondaryLogo" },
-        filters: { $first: "$filters" },
-        faqs: { $first: "$faqs" },
-        offer: { $first: "$offer" },
-        featured: { $first: "$featured" },
-        topNotifications: { $first: "$topNotifications" },
+        _id: '$_id',
+        systemId: { $first: '$systemId' },
+        logo: { $first: '$logo' },
+        secondaryLogo: { $first: '$secondaryLogo' },
+        filters: { $first: '$filters' },
+        faqs: { $first: '$faqs' },
+        offer: { $first: '$offer' },
+        featured: { $first: '$featured' },
+        topNotifications: { $first: '$topNotifications' },
         hero: {
           $addToSet: {
-            _id: "$hero._id",
-            bannerImagePath: "$hero.bannerImagePath",
-            bannerImageTitle: "$hero.bannerImageTitle",
-            bannerImageDescription: "$hero.bannerImageDescription",
-            bannerImageButtonText: "$hero.bannerImageButtonText",
-            bannerImageButtonUrl: "$hero.bannerImageButtonUrl",
+            _id: '$hero._id',
+            bannerImagePath: '$hero.bannerImagePath',
+            bannerImageTitle: '$hero.bannerImageTitle',
+            bannerImageDescription: '$hero.bannerImageDescription',
+            bannerImageButtonText: '$hero.bannerImageButtonText',
+            bannerImageButtonUrl: '$hero.bannerImageButtonUrl',
           },
         },
         whyChooseUs: {
           $addToSet: {
-            _id: "$whyChooseUs._id",
-            title: "$whyChooseUs.title",
-            description: "$whyChooseUs.description",
-            iconPath: "$whyChooseUs.iconPath",
-            imagePath: "$whyChooseUs.imagePath",
+            _id: '$whyChooseUs._id',
+            title: '$whyChooseUs.title',
+            description: '$whyChooseUs.description',
+            iconPath: '$whyChooseUs.iconPath',
+            imagePath: '$whyChooseUs.imagePath',
           },
         },
         companyService: {
           $addToSet: {
-            _id: "$companyService._id",
-            title: "$companyService.title",
-            description: "$companyService.description",
-            iconPath: "$companyService.iconPath",
+            _id: '$companyService._id',
+            title: '$companyService.title',
+            description: '$companyService.description',
+            iconPath: '$companyService.iconPath',
           },
         },
-        privacyPolicy: { $first: "$privacyPolicy" },
-        termsAndConditions: { $first: "$termsAndConditions" },
-        cookiesPolicy: { $first: "$cookiesPolicy" },
-        returnAndRefund: { $first: "$returnAndRefund" },
-        subscriptionPolicy: { $first: "$subscriptionPolicy" },
-        deliveryPolicy: { $first: "$deliveryPolicy" },
+        privacyPolicy: { $first: '$privacyPolicy' },
+        termsAndConditions: { $first: '$termsAndConditions' },
+        cookiesPolicy: { $first: '$cookiesPolicy' },
+        returnAndRefund: { $first: '$returnAndRefund' },
+        subscriptionPolicy: { $first: '$subscriptionPolicy' },
+        deliveryPolicy: { $first: '$deliveryPolicy' },
       },
     },
     {
@@ -185,21 +169,21 @@ const getSystemConfig = async (req, res) => {
           $concatArrays: [
             [
               {
-                category: "all",
-                title: "Price",
-                key: "price",
+                category: 'all',
+                title: 'Price',
+                key: 'price',
                 options: [
-                  { _id: "1", param: "0-25" },
-                  { _id: "2", param: "26-40" },
-                  { _id: "3", param: "41-65" },
-                  { _id: "4", param: "66-75" },
-                  { _id: "5", param: "66-85" },
-                  { _id: "6", param: "76-95" },
-                  { _id: "7", param: "76-100" },
+                  { _id: '1', param: '0-25' },
+                  { _id: '2', param: '26-40' },
+                  { _id: '3', param: '41-65' },
+                  { _id: '4', param: '66-75' },
+                  { _id: '5', param: '66-85' },
+                  { _id: '6', param: '76-95' },
+                  { _id: '7', param: '76-100' },
                 ],
               },
             ],
-            "$filters",
+            '$filters',
           ],
         },
       },
@@ -207,6 +191,8 @@ const getSystemConfig = async (req, res) => {
   ];
 
   const result = await System.aggregate(pipeline);
+
+  // console.log(result[0]);
 
   return result[0];
 };

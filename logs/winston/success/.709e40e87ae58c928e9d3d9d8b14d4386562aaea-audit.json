@@ -1,0 +1,75 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\.709e40e87ae58c928e9d3d9d8b14d4386562aaea-audit.json",
+    "files": [
+        {
+            "date": 1739214121300,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-01-success.log",
+            "hash": "2ed52e554203fc7fdab0313451699957ecc67500b476ac638a409a1ed53f26e0"
+        },
+        {
+            "date": 1739217625251,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-02-success.log",
+            "hash": "2ae913f3477d6d059ae84f6a7eded059b13acb011b5305b31a7e3f4ab7fc2170"
+        },
+        {
+            "date": 1739221314980,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-03-success.log",
+            "hash": "c13694e18ce3ad9ff866e8dc67dc5a1849735eb2395ff5f4e17368bc58d7ab81"
+        },
+        {
+            "date": 1739259911833,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-13-success.log",
+            "hash": "640e50ed1d7eb1c734a92f453ad303fa8331a50d6851ba5eeb39f7392cd61f10"
+        },
+        {
+            "date": 1739260863066,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-14-success.log",
+            "hash": "6107296ffece8e7ca1a394a4d6cce4928761e32bef60b897e2b7ec25afae7c96"
+        },
+        {
+            "date": 1739264664537,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-15-success.log",
+            "hash": "ff631b80ed4bd0c0087dc5bf8d570031cb4e67ff0deb2b5cb437398568204605"
+        },
+        {
+            "date": 1739268897878,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-16-success.log",
+            "hash": "70c15d6ae2295ce4ed8c7473a654ef685c22ad6d1155ab83a667e523302d9f21"
+        },
+        {
+            "date": 1739287173162,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-21-success.log",
+            "hash": "78cdd9f635ec834476c14b5512b1425f098ea6a67f14c96381fb566659cc57a1"
+        },
+        {
+            "date": 1739289693748,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-22-success.log",
+            "hash": "babc78dec7410a2d197f0bb32f26f6e93db31b8b869d6e9e8e3b8edcb157ec80"
+        },
+        {
+            "date": 1739295031760,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-11-02-23-success.log",
+            "hash": "a9e1b6b941f17131575a230eaf95332cc92761ae7055b0cd64d4fbeb9ebf8bd7"
+        },
+        {
+            "date": 1739296800693,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-12-02-00-success.log",
+            "hash": "3f402378cf2ab636737bcc586c357587275ee717ddb3dbe1e48d69d0fdc59589"
+        },
+        {
+            "date": 1739301841801,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-12-02-01-success.log",
+            "hash": "e42553cf2e9c01e06ed4a8a6a3f0b580de48774c1d5682d7d9aa56fee3d74fc1"
+        },
+        {
+            "date": 1739304010829,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-12-02-02-success.log",
+            "hash": "bfb64f9a9f33a520e4cfcc4ffa7e4cb4a65280bdccd418ec2568ba9d8e25e097"
+        }
+    ],
+    "hashType": "sha256"
+}

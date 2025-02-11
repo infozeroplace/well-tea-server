@@ -1,0 +1,38 @@
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Wishlist validation failed: guestId: Cast to string failed for value "Promise { <pending> }" (type Promise) at path "guestId"
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Wishlist validation failed: guestId: Cast to string failed for value "Promise { <pending> }" (type Promise) at path "guestId"
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ E11000 duplicate key error collection: well_tea.wishlists index: userId_1 dup key: { userId: null }
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ E11000 duplicate key error collection: well_tea.wishlists index: userId_1 dup key: { userId: null }
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ E11000 duplicate key error collection: well_tea.wishlists index: userId_1 dup key: { userId: null }
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ E11000 duplicate key error collection: well_tea.wishlists index: userId_1 dup key: { userId: null }
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ E11000 duplicate key error collection: well_tea.wishlists index: userId_1 dup key: { userId: null }
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ E11000 duplicate key error collection: well_tea.wishlists index: userId_1 dup key: { userId: null }
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ E11000 duplicate key error collection: well_tea.wishlists index: userId_1 dup key: { userId: null }
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ E11000 duplicate key error collection: well_tea.wishlists index: userId_1 dup key: { userId: null }
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "body",
+      "productId"
+    ],
+    "message": "product id is required"
+  }
+]
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token
+Tue Feb 11 2025 [WT] error: ❌👮‍♀️ globalErrorHandler ~ Invalid refresh token

@@ -9,8 +9,8 @@ const router = express.Router();
 
 router.post(
   "/auth/logout",
-  auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
-  validateRequest(AuthValidation.logOutZodSchema),
+  // auth(ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
+  // validateRequest(AuthValidation.logOutZodSchema),
   AuthController.logout
 );
 
