@@ -35,6 +35,7 @@ WishlistSchema.index(
   { expiresAt: 1 },
   { expireAfterSeconds: 0, partialFilterExpression: { userId: null } },
 );
+
 WishlistSchema.plugin(mongoosePlugin);
 
 const Wishlist = model('Wishlist', WishlistSchema);

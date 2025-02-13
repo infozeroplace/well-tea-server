@@ -1,21 +1,27 @@
-import { model, Schema } from "mongoose";
-import mongoosePlugin from "mongoose-aggregate-paginate-v2";
+import { model, Schema } from 'mongoose';
+import mongoosePlugin from 'mongoose-aggregate-paginate-v2';
 
 const CartSchema = Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       default: null,
     },
-    guestCartId: { type: String, default: null },
-    items: [
-      {
-        productId: { type: Schema.Types.ObjectId, ref: "Product" },
-        quantity: { type: Number, default: 1 },
-        price: { type: Number, required: true },
-      },
-    ],
+    guestId: { type: String, default: null },
+    items: {
+      type: [
+        {
+          productId: { type: Schema.Types.ObjectId, ref: 'Product' },
+          purchaseType: { type: String, required: true },
+          quantity: { type: Number, default: 1 },
+          unitPriceId: { type: String, required: true },
+          subscriptionId: { type: String, default: "" },
+          addedAt: { type: Date, default: Date.now },
+        },
+      ],
+      default: [],
+    },
     expiresAt: {
       type: Date,
       default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -26,11 +32,16 @@ const CartSchema = Schema(
     toJSON: {
       virtuals: true,
     },
-  }
+  },
+);
+
+CartSchema.index(
+  { expiresAt: 1 },
+  { expireAfterSeconds: 0, partialFilterExpression: { userId: null } },
 );
 
 CartSchema.plugin(mongoosePlugin);
 
-const Cart = model("Cart", CartSchema);
+const Cart = model('Cart', CartSchema);
 
 export default Cart;

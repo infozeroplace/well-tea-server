@@ -141,7 +141,6 @@ const wtw = async (req, res) => {
 
   let userId = null;
   let guestId = wtw_id;
-  let wishlist;
 
   const commonPipelines = [
     {

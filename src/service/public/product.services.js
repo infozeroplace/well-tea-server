@@ -57,6 +57,7 @@ const getRelatedProductList = async productIds => {
             input: '$unitPrices',
             as: 'unitPrice',
             in: {
+              _id: '$$unitPrice._id',
               unit: '$$unitPrice.unit',
               price: '$$unitPrice.price',
               salePrice: {
@@ -342,6 +343,7 @@ const getProduct = async slug => {
                   input: '$$product.unitPrices',
                   as: 'unitPrice',
                   in: {
+                    _id: '$$unitPrice._id',
                     unit: '$$unitPrice.unit',
                     price: '$$unitPrice.price',
                     salePrice: {
@@ -404,6 +406,7 @@ const getProduct = async slug => {
             input: '$unitPrices',
             as: 'unitPrice',
             in: {
+              _id: '$$unitPrice._id',
               unit: '$$unitPrice.unit',
               price: '$$unitPrice.price',
               salePrice: {
@@ -669,6 +672,7 @@ const getProductList = async (filters, paginationOptions) => {
             input: '$unitPrices',
             as: 'unitPrice',
             in: {
+              _id: '$$unitPrice._id',
               unit: '$$unitPrice.unit',
               price: '$$unitPrice.price',
               salePrice: {
