@@ -271,6 +271,7 @@ const wtc = async (req, res) => {
     const data = {
       ...payload,
       totalPrice: 0,
+      totalQuantity: 0,
     };
 
     const updatedItems = data.items.map(
@@ -340,6 +341,7 @@ const wtc = async (req, res) => {
         };
 
         data.totalPrice += totalPrice;
+        data.totalQuantity += quantity;
 
         return newItem;
       },

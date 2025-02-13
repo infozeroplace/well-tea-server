@@ -123,14 +123,23 @@ const login = catchAsync(async (req, res) => {
 const adminLogin = catchAsync(async (req, res) => {
   const { ...loginData } = req.body;
 
-  const result = await AuthService.adminLogin(loginData);
+  const { refreshToken, ...data } = await AuthService.adminLogin(loginData);
+
+  res.cookie("auth_refresh", refreshToken, {
+    domain: config.cookie_domain,
+    path: "/",
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    maxAge: 15 * 24 * 60 * 60 * 1000,
+  });
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Login successful!",
     meta: null,
-    data: result,
+    data,
   });
 });
 
