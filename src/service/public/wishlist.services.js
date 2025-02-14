@@ -196,6 +196,7 @@ const wtw = async (req, res) => {
                   input: '$unitPrices',
                   as: 'unitPrice',
                   in: {
+                    _id: '$$unitPrice._id',
                     unit: '$$unitPrice.unit',
                     price: '$$unitPrice.price',
                     salePrice: {
