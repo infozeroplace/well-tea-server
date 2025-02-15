@@ -12,7 +12,7 @@ const editPassword = async (payload, userId) => {
   if (!user.password || !(await user.matchPassword(currentPassword))) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      'Current password does not match!',
+      'password does not match!',
     );
   }
 

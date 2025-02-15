@@ -1,16 +1,18 @@
-import express from "express";
-import { AssortmentRoutes } from "./assortment.routes.js";
-import { BrewInstructionRoutes } from "./brewInstruction.routes.js";
-import { ProductRoutes } from "./product.routes.js";
-import { SystemRoutes } from "./system.routes.js";
-import { UploadRoutes } from "./upload.routes.js";
-import { MediaRoutes } from "./media.routes.js";
-import { CartRoutes } from "./cart.routes.js";
-import { WishlistRoutes } from "./wishlist.routes.js";
-import { CustomerRoutes } from "./customer.routes.js";
+import express from 'express';
+import { AssortmentRoutes } from './assortment.routes.js';
+import { BrewInstructionRoutes } from './brewInstruction.routes.js';
+import { CartRoutes } from './cart.routes.js';
+import { CustomerRoutes } from './customer.routes.js';
+import { MediaRoutes } from './media.routes.js';
+import { ProductRoutes } from './product.routes.js';
+import { ProfileRoutes } from './profile.routes.js';
+import { SystemRoutes } from './system.routes.js';
+import { UploadRoutes } from './upload.routes.js';
+import { WishlistRoutes } from './wishlist.routes.js';
 
 const router = express.Router();
 
+router.use(ProfileRoutes);
 router.use(CustomerRoutes);
 router.use(WishlistRoutes);
 router.use(CartRoutes);
