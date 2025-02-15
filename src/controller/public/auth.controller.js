@@ -1,8 +1,39 @@
-import httpStatus from "http-status";
-import config from "../../config/index.js";
-import { AuthService } from "../../service/public/auth.services.js";
-import catchAsync from "../../shared/catchAsync.js";
-import sendResponse from "../../shared/sendResponse.js";
+import httpStatus from 'http-status';
+import config from '../../config/index.js';
+import { AuthService } from '../../service/public/auth.services.js';
+import catchAsync from '../../shared/catchAsync.js';
+import sendResponse from '../../shared/sendResponse.js';
+
+const adminLogout = catchAsync(async (req, res) => {
+  const { token } = req.body;
+  const { auth } = req.cookies;
+
+  if (!auth) {
+    return sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'No session found, but logged out successfully!',
+      meta: null,
+      data: null,
+    });
+  }
+
+  res.clearCookie('auth', {
+    domain: config.cookie_domain,
+    path: '/',
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true,
+  });
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Logged out successfully!',
+    meta: null,
+    data: null,
+  });
+});
 
 const logout = catchAsync(async (req, res) => {
   const { token } = req.body;
@@ -12,24 +43,24 @@ const logout = catchAsync(async (req, res) => {
     return sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "No session found, but logged out successfully!",
+      message: 'No session found, but logged out successfully!',
       meta: null,
       data: null,
     });
   }
 
-  res.clearCookie("auth_refresh", {
+  res.clearCookie('auth_refresh', {
     domain: config.cookie_domain,
-    path: "/",
+    path: '/',
     httpOnly: true,
-    sameSite: "none",
+    sameSite: 'none',
     secure: true,
   });
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Logged out successfully!",
+    message: 'Logged out successfully!',
     meta: null,
     data: null,
   });
@@ -38,23 +69,26 @@ const logout = catchAsync(async (req, res) => {
 const resetPassword = catchAsync(async (req, res) => {
   const { ...resetPasswordData } = req.body;
 
-  const { refreshToken, ...data } = await AuthService.resetPassword(
-    resetPasswordData
-  );
+  const { refreshToken, ...data } =
+    await AuthService.resetPassword(resetPasswordData);
 
-  res.cookie("auth_refresh", refreshToken, {
-    domain: config.cookie_domain,
-    path: "/",
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-    maxAge: 15 * 24 * 60 * 60 * 1000,
-  });
+  res.cookie(
+    data.user.role === 'super_admin' ? 'auth' : 'auth_refresh',
+    refreshToken,
+    {
+      domain: config.cookie_domain,
+      path: '/',
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+      maxAge: 15 * 24 * 60 * 60 * 1000,
+    },
+  );
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Password reset successful!",
+    message: 'Password reset successful!',
     meta: null,
     data,
   });
@@ -68,7 +102,7 @@ const forgotPassword = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "An email has been sent!",
+    message: 'An email has been sent!',
     meta: null,
     data: null,
   });
@@ -79,11 +113,11 @@ const register = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.register(registerData);
 
-  res.cookie("auth_refresh", refreshToken, {
+  res.cookie('auth_refresh', refreshToken, {
     domain: config.cookie_domain,
-    path: "/",
+    path: '/',
     httpOnly: true,
-    sameSite: "none",
+    sameSite: 'none',
     secure: true,
     maxAge: 15 * 24 * 60 * 60 * 1000,
   });
@@ -91,7 +125,7 @@ const register = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Registration successful!",
+    message: 'Registration successful!',
     meta: null,
     data,
   });
@@ -102,11 +136,11 @@ const login = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.login(loginData);
 
-  res.cookie("auth_refresh", refreshToken, {
+  res.cookie('auth_refresh', refreshToken, {
     domain: config.cookie_domain,
-    path: "/",
+    path: '/',
     httpOnly: true,
-    sameSite: "none",
+    sameSite: 'none',
     secure: true,
     maxAge: 15 * 24 * 60 * 60 * 1000,
   });
@@ -114,7 +148,7 @@ const login = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Login successful!",
+    message: 'Login successful!',
     meta: null,
     data,
   });
@@ -125,11 +159,11 @@ const adminLogin = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.adminLogin(loginData);
 
-  res.cookie("auth_refresh", refreshToken, {
+  res.cookie('auth', refreshToken, {
     domain: config.cookie_domain,
-    path: "/",
+    path: '/',
     httpOnly: true,
-    sameSite: "none",
+    sameSite: 'none',
     secure: true,
     maxAge: 15 * 24 * 60 * 60 * 1000,
   });
@@ -137,7 +171,7 @@ const adminLogin = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Login successful!",
+    message: 'Login successful!',
     meta: null,
     data,
   });
@@ -148,11 +182,11 @@ const googleLogin = catchAsync(async (req, res) => {
 
   const { refreshToken, ...data } = await AuthService.googleLogin(code);
 
-  res.cookie("auth_refresh", refreshToken, {
+  res.cookie('auth_refresh', refreshToken, {
     domain: config.cookie_domain,
-    path: "/",
+    path: '/',
     httpOnly: true,
-    sameSite: "none",
+    sameSite: 'none',
     secure: true,
     maxAge: 15 * 24 * 60 * 60 * 1000,
   });
@@ -160,9 +194,23 @@ const googleLogin = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Login successful!",
+    message: 'Login successful!',
     meta: null,
     data,
+  });
+});
+
+const adminRefreshToken = catchAsync(async (req, res) => {
+  const { auth } = req.cookies;
+
+  const result = await AuthService.adminRefreshToken(auth, res);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Refresh token successfully!',
+    meta: null,
+    data: result,
   });
 });
 
@@ -174,13 +222,14 @@ const refreshToken = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Refresh token successfully!",
+    message: 'Refresh token successfully!',
     meta: null,
     data: result,
   });
 });
 
 export const AuthController = {
+  adminLogout,
   logout,
   resetPassword,
   forgotPassword,
@@ -188,5 +237,6 @@ export const AuthController = {
   login,
   adminLogin,
   googleLogin,
+  adminRefreshToken,
   refreshToken,
 };

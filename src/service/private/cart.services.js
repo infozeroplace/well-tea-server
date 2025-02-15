@@ -5,36 +5,42 @@ import Cart from '../../model/cart.model.js';
 const getCartList = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
 
+  filtersData['guestId'] = null;
+
   const andCondition = [];
 
   if (searchTerm) {
     andCondition.push({
-      $or: cartSearchableFields.map(field => ({
-        [field]: {
-          $regex: searchTerm,
-          $options: 'i',
-        },
-      })),
+      $or: cartSearchableFields.map(field => {
+        if (field === 'userId.firstName' || field === 'userId.lastName') {
+          return {
+            $expr: {
+              $regexMatch: {
+                input: {
+                  $concat: ['$userId.firstName', ' ', '$userId.lastName'],
+                },
+                regex: searchTerm,
+                options: 'i',
+              },
+            },
+          };
+        }
+
+        return {
+          [field]: {
+            $regex: searchTerm,
+            $options: 'i',
+          },
+        };
+      }),
     });
   }
 
   if (Object.keys(filtersData).length) {
     const filterHandlers = {
-      userId: (value) => {
-        console.log(value)
-        const filetypes = value.split(",");
+      guestId: value => {
         return {
-            userId: {
-            $in: filetypes,
-          },
-        };
-      },
-      guestId: (value) => {
-        const medias = value.split(",");
-        return {
-            guestId: {
-            $in: medias,
-          },
+          guestId: { $eq: value },
         };
       },
       default: (field, value) => ({
@@ -46,7 +52,7 @@ const getCartList = async (filters, paginationOptions) => {
       andCondition.push({
         $and: Object.entries(filtersData).map(([field, value]) => {
           const handler = filterHandlers[field] || filterHandlers.default;
-          return handler(field === "default" ? [field, value] : value);
+          return handler(field === 'default' ? [field, value] : value);
         }),
       });
     }
@@ -78,6 +84,73 @@ const getCartList = async (filters, paginationOptions) => {
       },
     },
     { $unwind: { path: '$userId', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'products',
+        let: { productIds: '$items.productId' }, // Pass product IDs
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $in: ['$_id', '$$productIds'] }, // Match product IDs
+                  { $eq: ['$isPublished', true] }, // Only published products
+                ],
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'media', // Assuming your media collection is named "media"
+              localField: 'thumbnails',
+              foreignField: '_id',
+              as: 'thumbnails',
+            },
+          },
+          {
+            $group: {
+              _id: '$_id',
+              title: { $first: '$title' },
+              sku: { $first: '$sku' },
+              thumbnails: { $first: '$thumbnails' },
+            },
+          },
+        ],
+        as: 'productData',
+      },
+    },
+    {
+      $addFields: {
+        items: {
+          $map: {
+            input: '$items',
+            as: 'item',
+            in: {
+              $mergeObjects: [
+                '$$item',
+                {
+                  $arrayElemAt: [
+                    {
+                      $filter: {
+                        input: '$productData',
+                        as: 'prod',
+                        cond: { $eq: ['$$prod._id', '$$item.productId'] },
+                      },
+                    },
+                    0,
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        productData: 0,
+      },
+    },
     {
       $match: whereConditions,
     },

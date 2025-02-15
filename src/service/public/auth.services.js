@@ -1,30 +1,30 @@
-import bcrypt from "bcrypt";
-import { OAuth2Client } from "google-auth-library";
-import httpStatus from "http-status";
-import config from "../../config/index.js";
-import ApiError from "../../error/ApiError.js";
-import { dateFormatter } from "../../helper/dateFormatter.js";
-import { jwtHelpers } from "../../helper/jwtHelpers.js";
-import User from "../../model/user.model.js";
+import bcrypt from 'bcrypt';
+import { OAuth2Client } from 'google-auth-library';
+import httpStatus from 'http-status';
+import config from '../../config/index.js';
+import ApiError from '../../error/ApiError.js';
+import { dateFormatter } from '../../helper/dateFormatter.js';
+import { jwtHelpers } from '../../helper/jwtHelpers.js';
+import User from '../../model/user.model.js';
 import {
   sendAdminForgotPasswordLink,
   sendForgotPasswordLink,
-} from "../../shared/nodeMailer.js";
-import { generateUserId } from "../../utils/generateUserId.js";
+} from '../../shared/nodeMailer.js';
+import { generateUserId } from '../../utils/generateUserId.js';
 
 const oAuth2Client = new OAuth2Client(
   config.google_client_id,
   config.google_client_secret,
-  "postmessage"
+  'postmessage',
 );
 
-const resetPassword = async (payload) => {
+const resetPassword = async payload => {
   const { token, password } = payload;
 
   const isTokenExists = await User.findOne({ resetToken: token });
 
   if (!isTokenExists) {
-    throw new ApiError(httpStatus.FORBIDDEN, "Invalid token");
+    throw new ApiError(httpStatus.FORBIDDEN, 'Invalid token');
   }
 
   let verifiedUser = null;
@@ -32,16 +32,16 @@ const resetPassword = async (payload) => {
   try {
     verifiedUser = jwtHelpers.verifiedToken(token, config?.jwt?.secret);
   } catch (error) {
-    throw new ApiError(httpStatus.FORBIDDEN, "Token expired!");
+    throw new ApiError(httpStatus.FORBIDDEN, 'Token expired!');
   }
 
   const updatedUser = await User.findOneAndUpdate(
     { email: verifiedUser.email },
     {
-      resetToken: "",
+      resetToken: '',
       password: await bcrypt.hash(password, Number(config.bcrypt_salt_rounds)),
     },
-    { new: true }
+    { new: true },
   );
 
   // Create access token
@@ -53,7 +53,7 @@ const resetPassword = async (payload) => {
       blockStatus: updatedUser?.blockStatus,
     },
     config?.jwt?.secret,
-    config?.jwt?.expires_in
+    config?.jwt?.expires_in,
   );
 
   // Create refresh token
@@ -65,7 +65,7 @@ const resetPassword = async (payload) => {
       blockStatus: updatedUser?.blockStatus,
     },
     config?.jwt?.refresh_secret,
-    config?.jwt?.refresh_expires_in
+    config?.jwt?.refresh_expires_in,
   );
 
   updatedUser.isPasswordHas = updatedUser.password ? true : false;
@@ -80,13 +80,13 @@ const resetPassword = async (payload) => {
   };
 };
 
-const forgotPassword = async (payload) => {
+const forgotPassword = async payload => {
   const { email } = payload;
 
   const isUserExist = await User.findOne({ email });
 
   if (!isUserExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "We cannot find your email.");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'We cannot find your email.');
   }
 
   // Create access token
@@ -98,19 +98,19 @@ const forgotPassword = async (payload) => {
       blockStatus: isUserExist?.blockStatus,
     },
     config?.jwt?.secret,
-    config?.jwt?.email_expires_in
+    config?.jwt?.email_expires_in,
   );
 
   const updatedUser = await User.findOneAndUpdate(
     { email },
     { resetToken: accessToken },
-    { new: true }
+    { new: true },
   );
 
   const name = `${updatedUser.firstName} ${updatedUser.lastName}`;
 
   if (updatedUser.resetToken) {
-    if (updatedUser.role !== "admin" && updatedUser.role !== "super_admin") {
+    if (updatedUser.role !== 'super_admin') {
       await sendForgotPasswordLink(email, name, accessToken);
     } else {
       await sendAdminForgotPasswordLink(email, name, accessToken);
@@ -118,16 +118,16 @@ const forgotPassword = async (payload) => {
   } else {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
-      "Internal Server Error"
+      'Internal Server Error',
     );
   }
 };
 
-const register = async (payload) => {
+const register = async payload => {
   const isEmailExist = await User.findOne({ email: payload.email });
 
   if (isEmailExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Email already exists!!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already exists!!');
   }
 
   const createdUser = await User.create({
@@ -146,7 +146,7 @@ const register = async (payload) => {
       blockStatus: createdUser?.blockStatus,
     },
     config?.jwt?.secret,
-    config?.jwt?.expires_in
+    config?.jwt?.expires_in,
   );
 
   // Create refresh token
@@ -158,12 +158,12 @@ const register = async (payload) => {
       blockStatus: createdUser?.blockStatus,
     },
     config?.jwt?.refresh_secret,
-    config?.jwt?.refresh_expires_in
+    config?.jwt?.refresh_expires_in,
   );
 
   const updatedUser = await User.findOneAndUpdate(
     { email: createdUser?.email },
-    { new: true }
+    { new: true },
   );
 
   createdUser.isPasswordHas = createdUser.password ? true : false;
@@ -178,28 +178,28 @@ const register = async (payload) => {
   };
 };
 
-const login = async (payload) => {
+const login = async payload => {
   const { email, password } = payload;
   const isUserExistWithoutLean = await User.findOne({ email });
   const isUserExist = await User.findOne({ email }).lean();
 
   if (!isUserExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "User does not exist");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist');
   }
 
   if (
     !isUserExistWithoutLean.password ||
     !(await isUserExistWithoutLean.matchPassword(password))
   ) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid ID or password!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid ID or password!');
   }
 
   if (
-    isUserExist.role === "moderator" ||
-    isUserExist.role === "admin" ||
-    isUserExist.role === "super_admin"
+    isUserExist.role === 'moderator' ||
+    isUserExist.role === 'admin' ||
+    isUserExist.role === 'super_admin'
   ) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Moderators cannot login!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Moderators cannot login!');
   }
 
   // Create access token
@@ -211,7 +211,7 @@ const login = async (payload) => {
       blockStatus: isUserExist?.blockStatus,
     },
     config?.jwt?.secret,
-    config?.jwt?.expires_in
+    config?.jwt?.expires_in,
   );
 
   // Create refresh token
@@ -223,7 +223,7 @@ const login = async (payload) => {
       blockStatus: isUserExist?.blockStatus,
     },
     config?.jwt?.refresh_secret,
-    config?.jwt?.refresh_expires_in
+    config?.jwt?.refresh_expires_in,
   );
 
   isUserExist.isPasswordHas = isUserExist.password ? true : false;
@@ -238,25 +238,25 @@ const login = async (payload) => {
   };
 };
 
-const adminLogin = async (payload) => {
+const adminLogin = async payload => {
   const { email, password } = payload;
 
   const isUserExist = await User.findOne({ email });
 
   if (!isUserExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "User does not exist");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist');
   }
 
   if (
-    isUserExist.role !== "moderator" &&
-    isUserExist.role !== "super_admin" &&
-    isUserExist.role !== "admin"
+    isUserExist.role !== 'moderator' &&
+    isUserExist.role !== 'super_admin' &&
+    isUserExist.role !== 'admin'
   ) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id or password!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Id or password!');
   }
 
   if (!isUserExist.password || !(await isUserExist.matchPassword(password))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid ID or password!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid ID or password!');
   }
 
   // Create access token
@@ -268,7 +268,7 @@ const adminLogin = async (payload) => {
       blockStatus: isUserExist?.blockStatus,
     },
     config?.jwt?.secret,
-    config?.jwt?.expires_in
+    config?.jwt?.expires_in,
   );
 
   // Create refresh token
@@ -280,7 +280,7 @@ const adminLogin = async (payload) => {
       blockStatus: isUserExist?.blockStatus,
     },
     config?.jwt?.refresh_secret,
-    config?.jwt?.refresh_expires_in
+    config?.jwt?.refresh_expires_in,
   );
 
   // Remove the password
@@ -293,7 +293,7 @@ const adminLogin = async (payload) => {
   };
 };
 
-const googleLogin = async (code) => {
+const googleLogin = async code => {
   // Finding jwt token here from google
   const {
     tokens: {
@@ -318,7 +318,7 @@ const googleLogin = async (code) => {
 
   // Google authenticating that user is verified or not
   if (!email_verified) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "User is not verified");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User is not verified');
   }
 
   // Checking that is the user already exits or not in the database
@@ -326,11 +326,11 @@ const googleLogin = async (code) => {
 
   if (
     isUserExists &&
-    (isUserExists.role === "moderator" ||
-      isUserExists.role === "admin" ||
-      isUserExists.role === "super_admin")
+    (isUserExists.role === 'moderator' ||
+      isUserExists.role === 'admin' ||
+      isUserExists.role === 'super_admin')
   ) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Moderators cannot login!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Moderators cannot login!');
   }
 
   if (isUserExists) {
@@ -343,7 +343,7 @@ const googleLogin = async (code) => {
         blockStatus: isUserExists?.blockStatus,
       },
       config?.jwt?.secret,
-      config?.jwt?.expires_in
+      config?.jwt?.expires_in,
     );
 
     // Create refresh token
@@ -355,7 +355,7 @@ const googleLogin = async (code) => {
         blockStatus: isUserExists?.blockStatus,
       },
       config?.jwt?.refresh_secret,
-      config?.jwt?.refresh_expires_in
+      config?.jwt?.refresh_expires_in,
     );
 
     isUserExists.isPasswordHas = isUserExists.password ? true : false;
@@ -372,8 +372,8 @@ const googleLogin = async (code) => {
     const createdUser = await User.create({
       userId: await generateUserId(),
       email: email,
-      firstName: given_name || ".",
-      lastName: family_name || ".",
+      firstName: given_name || '.',
+      lastName: family_name || '.',
       isSocialLogin: true,
     });
 
@@ -390,7 +390,7 @@ const googleLogin = async (code) => {
         blockStatus: createdUser?.blockStatus,
       },
       config?.jwt?.secret,
-      config?.jwt?.expires_in
+      config?.jwt?.expires_in,
     );
 
     // Create refresh token
@@ -402,7 +402,7 @@ const googleLogin = async (code) => {
         blockStatus: createdUser?.blockStatus,
       },
       config?.jwt?.refresh_secret,
-      config?.jwt?.refresh_expires_in
+      config?.jwt?.refresh_expires_in,
     );
 
     createdUser.isPasswordHas = createdUser.password ? true : false;
@@ -415,23 +415,23 @@ const googleLogin = async (code) => {
   }
 };
 
-const refreshToken = async (refreshToken, res) => {
+const adminRefreshToken = async (refreshToken, res) => {
   let verifiedToken = null;
 
   try {
     verifiedToken = jwtHelpers.verifiedToken(
       refreshToken,
-      config?.jwt?.refresh_secret
+      config?.jwt?.refresh_secret,
     );
   } catch (err) {
-    res.clearCookie("auth_refresh", {
+    res.clearCookie('auth', {
       domain: config.cookie_domain,
       httpOnly: true,
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
     });
 
-    throw new ApiError(httpStatus.FORBIDDEN, "Invalid refresh token");
+    throw new ApiError(httpStatus.FORBIDDEN, 'Invalid refresh token');
   }
 
   const { userId } = verifiedToken;
@@ -439,14 +439,14 @@ const refreshToken = async (refreshToken, res) => {
   const isUserExist = await User.findOne({ userId: userId }).lean();
 
   if (!isUserExist) {
-    res.clearCookie("auth_refresh", {
+    res.clearCookie('auth', {
       domain: config.cookie_domain,
       httpOnly: true,
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
     });
 
-    throw new ApiError(httpStatus.BAD_REQUEST, "User does not exist");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist');
   }
 
   // generate new token
@@ -458,7 +458,64 @@ const refreshToken = async (refreshToken, res) => {
       blockStatus: isUserExist?.blockStatus,
     },
     config?.jwt?.secret,
-    config?.jwt?.expires_in
+    config?.jwt?.expires_in,
+  );
+
+  isUserExist.isPasswordHas = isUserExist.password ? true : false;
+
+  // Remove the password
+  isUserExist.password = undefined;
+
+  return {
+    accessToken: newAccessToken,
+    user: isUserExist,
+  };
+};
+
+const refreshToken = async (refreshToken, res) => {
+  let verifiedToken = null;
+
+  try {
+    verifiedToken = jwtHelpers.verifiedToken(
+      refreshToken,
+      config?.jwt?.refresh_secret,
+    );
+  } catch (err) {
+    res.clearCookie('auth_refresh', {
+      domain: config.cookie_domain,
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+
+    throw new ApiError(httpStatus.FORBIDDEN, 'Invalid refresh token');
+  }
+
+  const { userId } = verifiedToken;
+  // If the user already deleted then delete the refresh token
+  const isUserExist = await User.findOne({ userId: userId }).lean();
+
+  if (!isUserExist) {
+    res.clearCookie('auth_refresh', {
+      domain: config.cookie_domain,
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist');
+  }
+
+  // generate new token
+  const newAccessToken = jwtHelpers.createToken(
+    {
+      role: isUserExist?.role,
+      userId: isUserExist?.userId,
+      email: isUserExist?.email,
+      blockStatus: isUserExist?.blockStatus,
+    },
+    config?.jwt?.secret,
+    config?.jwt?.expires_in,
   );
 
   isUserExist.isPasswordHas = isUserExist.password ? true : false;
@@ -479,5 +536,6 @@ export const AuthService = {
   login,
   adminLogin,
   googleLogin,
+  adminRefreshToken,
   refreshToken,
 };

@@ -429,7 +429,7 @@ const wtc = async (req, res) => {
   if (!guestId) {
     guestId = await genCartId();
 
-    const createdCart = await Cart.create({ guestId });
+    const createdCart = await Cart.create({ guestId, userId: null });
 
     res.cookie('wtc_id', guestId, {
       domain: config.cookie_domain,

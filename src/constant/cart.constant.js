@@ -5,4 +5,4 @@ export const cartSearchableFields = [
   'userId.email',
 ];
 
-export const cartFilterableField = ['searchTerm', 'userId', 'guestId'];
+export const cartFilterableField = ['searchTerm'];

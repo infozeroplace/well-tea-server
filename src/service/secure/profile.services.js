@@ -1,8 +1,8 @@
-import bcrypt from "bcrypt";
-import httpStatus from "http-status";
-import config from "../../config/index.js";
-import ApiError from "../../error/ApiError.js";
-import User from "../../model/user.model.js";
+import bcrypt from 'bcrypt';
+import httpStatus from 'http-status';
+import config from '../../config/index.js';
+import ApiError from '../../error/ApiError.js';
+import User from '../../model/user.model.js';
 
 const editPasswordForSocialUser = async (payload, userId) => {
   const { newPassword } = payload;
@@ -12,10 +12,10 @@ const editPasswordForSocialUser = async (payload, userId) => {
     {
       password: await bcrypt.hash(
         newPassword,
-        Number(config.bcrypt_salt_rounds)
+        Number(config.bcrypt_salt_rounds),
       ),
     },
-    { new: true }
+    { new: true },
   );
 
   result.isPasswordHas = result.password ? true : false;
@@ -33,7 +33,7 @@ const editPassword = async (payload, userId) => {
   if (!user.password || !(await user.matchPassword(currentPassword))) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "Current password does not match!"
+      'Current password does not match!',
     );
   }
 
@@ -42,10 +42,10 @@ const editPassword = async (payload, userId) => {
     {
       password: await bcrypt.hash(
         newPassword,
-        Number(config.bcrypt_salt_rounds)
+        Number(config.bcrypt_salt_rounds),
       ),
     },
-    { new: true }
+    { new: true },
   );
 
   result.isPasswordHas = result.password ? true : false;
@@ -58,37 +58,21 @@ const editPassword = async (payload, userId) => {
 const editProfile = async (payload, userId) => {
   const existingUser = await User.findOne({ userId });
 
-  if (payload.email && payload.email !== existingUser.email) {
-    const isExistEmail = await User.findOne({ email: payload.email });
+  if (!existingUser)
+    throw new ApiError(httpStatus.BAD_REQUEST, 'user not found!');
+  const { email, ...rest } = payload;
 
-    if (isExistEmail) {
-      throw new ApiError(httpStatus.BAD_REQUEST, "email already exists!");
-    } else {
-      const result = await User.findOneAndUpdate(
-        { userId },
-        { $set: { ...payload } },
-        { new: true, upsert: true }
-      );
+  const result = await User.findOneAndUpdate(
+    { userId },
+    { $set: { ...rest } },
+    { new: true, upsert: true },
+  );
 
-      result.isPasswordHas = result.password ? true : false;
+  result.isPasswordHas = result.password ? true : false;
 
-      result.password = undefined;
+  result.password = undefined;
 
-      return result;
-    }
-  } else {
-    const result = await User.findOneAndUpdate(
-      { userId },
-      { $set: { ...payload } },
-      { new: true, upsert: true }
-    );
-
-    result.isPasswordHas = result.password ? true : false;
-
-    result.password = undefined;
-
-    return result;
-  }
+  return result;
 };
 
 export const ProfileService = {

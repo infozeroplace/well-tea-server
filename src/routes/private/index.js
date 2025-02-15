@@ -6,9 +6,13 @@ import { SystemRoutes } from "./system.routes.js";
 import { UploadRoutes } from "./upload.routes.js";
 import { MediaRoutes } from "./media.routes.js";
 import { CartRoutes } from "./cart.routes.js";
+import { WishlistRoutes } from "./wishlist.routes.js";
+import { CustomerRoutes } from "./customer.routes.js";
 
 const router = express.Router();
 
+router.use(CustomerRoutes);
+router.use(WishlistRoutes);
 router.use(CartRoutes);
 router.use(MediaRoutes);
 router.use(BrewInstructionRoutes);
