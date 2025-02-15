@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OTP Verification</title>
+  </head>
+  <body
+    style="
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+    "
+  >
+    <!-- Logo -->
+    <div style="text-align: center; padding-bottom: 20px">
+      <img src="<%= logo %>" alt="<%= alternateText %>" style="width: 150px" />
+    </div>
+
+    <!-- OTP Section -->
+    <section
+      style="
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      "
+    >
+      <h2 style="color: #333">Your OTP Code</h2>
+
+      <p>Your One-Time Password (OTP) for verification is:</p>
+
+      <p
+        style="
+          font-size: 24px;
+          font-weight: bold;
+          color: #007bff;
+          margin: 20px 0;
+        "
+      >
+        <%= otp %>
+      </p>
+
+      <p>
+        Please enter this code to proceed. This OTP is valid for
+        <strong>2 minutes</strong>.
+      </p>
+
+      <p>
+        If you didn’t request this, please ignore this email or contact our
+        support team.
+      </p>
+
+      <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0" />
+
+      <p>If you need help, reach out to us at:</p>
+      <p>
+        <a
+          href="mailto:<%= config.support_mail_address %>"
+          style="color: #007bff; text-decoration: none; font-weight: bold"
+        >
+          <%= config.support_mail_address %>
+        </a>
+      </p>
+
+      <p>Best regards,</p>
+      <p><strong>The Church Logo Support Team</strong></p>
+    </section>
+
+    <!-- Footer -->
+    <footer
+      style="text-align: center; font-size: 14px; color: #777; margin-top: 20px"
+    >
+      <p>
+        © <%= new Date().getFullYear() %> Church Logo. All rights reserved.
+      </p>
+    </footer>
+  </body>
+</html>

@@ -9,9 +9,11 @@ import { ProfileRoutes } from './profile.routes.js';
 import { SystemRoutes } from './system.routes.js';
 import { UploadRoutes } from './upload.routes.js';
 import { WishlistRoutes } from './wishlist.routes.js';
+import { OtpRoutes } from './otp.routes.js';
 
 const router = express.Router();
 
+router.use(OtpRoutes);
 router.use(ProfileRoutes);
 router.use(CustomerRoutes);
 router.use(WishlistRoutes);

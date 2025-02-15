@@ -1,37 +1,42 @@
-import dotenv from "dotenv";
-import path from "path";
+import dotenv from 'dotenv';
+import path from 'path';
 
-dotenv.config({ path: path.join(process.cwd(), ".env") });
+dotenv.config({ path: path.join(process.cwd(), '.env') });
 
 const config = {
   env: process.env.NODE_ENV,
   port:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? process.env.PRODUCTION_PORT
       : process.env.DEVELOPMENT_PORT,
 
   database_url:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? process.env.PRODUCTION_DATABASE_URL
       : process.env.DEVELOPMENT_DATABASE_URL,
 
   frontend_base_url:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? process.env.PRODUCTION_FRONTEND_BASE_URL
       : process.env.DEVELOPMENT_FRONTEND_BASE_URL_DEV,
 
   admin_frontend_base_url:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? process.env.PRODUCTION_ADMIN_FRONTEND_BASE_URL
       : process.env.DEVELOPMENT_ADMIN_FRONTEND_BASE_URL_DEV,
 
+  server_url:
+    process.env.NODE_ENV === 'production'
+      ? process.env.PRODUCTION_SERVER_URL
+      : process.env.DEVELOPMENT_SERVER_URL,
+
   cookie_domain:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? process.env.PRODUCTION_COOKIE_DOMAIN
       : process.env.DEVELOPMENT_COOKIE_DOMAIN,
 
   origins:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? [
           process.env.PRODUCTION_FRONTEND_BASE_URL,
           process.env.PRODUCTION_ADMIN_FRONTEND_BASE_URL,
@@ -44,17 +49,17 @@ const config = {
         ],
 
   stripe_secret_key:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? process.env.STRIPE_SECRET_KEY_PROD
       : process.env.STRIPE_SECRET_KEY_DEV,
 
   stripe_publishable_key:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? process.env.STRIPE_PUBLISHABLE_KEY_PROD
       : process.env.STRIPE_PUBLISHABLE_KEY_DEV,
 
   stripe_endpoint_secret_key:
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === 'production'
       ? process.env.STRIPE_ENDPOINT_SECRET_KEY_PROD
       : process.env.STRIPE_ENDPOINT_SECRET_KEY_DEV,
 

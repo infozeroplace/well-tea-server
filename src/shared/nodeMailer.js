@@ -1,16 +1,17 @@
-import ejs from "ejs";
-import httpStatus from "http-status";
-import nodemailer from "nodemailer";
-import path from "path";
-import { fileURLToPath } from "url";
-import config from "../config/index.js";
-import ApiError from "../error/ApiError.js";
+import ejs from 'ejs';
+import httpStatus from 'http-status';
+import nodemailer from 'nodemailer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import config from '../config/index.js';
+import ApiError from '../error/ApiError.js';
+import { System } from '../model/system.model.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const transporter = nodemailer.createTransport({
-  host: "churchlogo.co",
+  host: 'churchlogo.co',
   port: 587,
   secure: false,
   auth: {
@@ -22,8 +23,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendOrderDetailsToAdmin = async (order) => {
-  const templatePath = path.join(__dirname, "../views/orderDetails.ejs");
+export const sendOrderDetailsToAdmin = async order => {
+  const templatePath = path.join(__dirname, '../views/orderDetails.ejs');
   const newOrder = {
     ...order.toObject(),
   };
@@ -35,7 +36,7 @@ export const sendOrderDetailsToAdmin = async (order) => {
       const mailOptions = {
         from: config.support_mail_address,
         to: config.support_mail_address,
-        subject: "Order Details",
+        subject: 'Order Details',
         html: template,
       };
       try {
@@ -44,7 +45,7 @@ export const sendOrderDetailsToAdmin = async (order) => {
       } catch (error) {
         throw new ApiError(
           httpStatus.INTERNAL_SERVER_ERROR,
-          "Internal Server Error"
+          'Internal Server Error',
         );
       }
     }
@@ -52,7 +53,7 @@ export const sendOrderDetailsToAdmin = async (order) => {
 };
 
 export const sendOrderInvoiceToCustomer = async (invoice, email, logo) => {
-  const templatePath = path.join(__dirname, "../views/orderInvoice.ejs");
+  const templatePath = path.join(__dirname, '../views/orderInvoice.ejs');
   const newInvoice = {
     ...invoice,
     logo,
@@ -65,7 +66,7 @@ export const sendOrderInvoiceToCustomer = async (invoice, email, logo) => {
       const mailOptions = {
         from: `"ChurchLogo" <${config.invoice_mail_address}>`,
         to: email,
-        subject: "Invoice",
+        subject: 'Invoice',
         html: template,
       };
       try {
@@ -74,7 +75,7 @@ export const sendOrderInvoiceToCustomer = async (invoice, email, logo) => {
       } catch (error) {
         throw new ApiError(
           httpStatus.INTERNAL_SERVER_ERROR,
-          "Internal Server Error"
+          'Internal Server Error',
         );
       }
     }
@@ -85,7 +86,7 @@ export const sendEmailVerificationLink = async (email, name, token) => {
   const mailOptions = {
     from: `"ChurchLogo" <${config.support_mail_address}>`,
     to: email,
-    subject: "Email Verification",
+    subject: 'Email Verification',
     html: `<div style="width: 100%; padding: 20px; font-size: 16px; font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
   <h3>Dear, ${name}</h3>
   <p>
@@ -147,7 +148,7 @@ export const sendEmailVerificationLink = async (email, name, token) => {
   } catch (error) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
-      "Internal Server Error"
+      'Internal Server Error',
     );
   }
 };
@@ -156,7 +157,7 @@ export const sendForgotPasswordLink = async (email, name, token) => {
   const mailOptions = {
     from: `"ChurchLogo" <${config.support_mail_address}>`,
     to: email,
-    subject: "Reset Your WellTea Password",
+    subject: 'Reset Your WellTea Password',
     html: `
       <div style="width: 100%; padding: 20px 10px; font-size: 18px; font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
         <h3>Hello, ${name}</h3>
@@ -225,17 +226,16 @@ export const sendForgotPasswordLink = async (email, name, token) => {
   } catch (error) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
-      "Failed to send reset password email"
+      'Failed to send reset password email',
     );
   }
 };
-
 
 export const sendAdminForgotPasswordLink = async (email, name, token) => {
   const mailOptions = {
     from: `"ChurchLogo" <${config.support_mail_address}>`,
     to: email,
-    subject: "Reset Your Admin Password - Church Logo Dashboard",
+    subject: 'Reset Your Admin Password - Church Logo Dashboard',
     html: `
       <div style="width: 100%; padding: 20px; font-size: 16px; font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <h3>Dear, ${name}</h3>
@@ -289,8 +289,47 @@ export const sendAdminForgotPasswordLink = async (email, name, token) => {
   } catch (error) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
-      "Internal Server Error"
+      'Internal Server Error',
     );
   }
 };
 
+export const sendOtpToEmailChangeAdmin = async (email, otp) => {
+  const { logo } = await System.findOne({
+    systemId: 'system-1',
+  }).populate({
+    path: 'logo',
+    select: 'filepath alternateText',
+  });
+
+  const templatePath = path.join(__dirname, '../views/otp-email.ejs');
+
+  const data = {
+    config,
+    logo: config.server_url + logo.filepath,
+    alternateText: logo.alternateText,
+    otp,
+  };
+
+  ejs.renderFile(templatePath, data, async (err, template) => {
+    if (err) {
+      console.log(err);
+    } else {
+      const mailOptions = {
+        from: `"ChurchLogo" <${config.support_mail_address}>`,
+        to: email,
+        subject: 'Your OTP Code',
+        html: template,
+      };
+      try {
+        const info = await transporter.sendMail(mailOptions);
+        return info;
+      } catch (error) {
+        throw new ApiError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'Internal Server Error',
+        );
+      }
+    }
+  });
+};
