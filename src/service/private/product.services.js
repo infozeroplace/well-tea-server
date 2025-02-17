@@ -1,19 +1,24 @@
-import httpStatus from "http-status";
-import mongoose from "mongoose";
-import { productSearchableFields } from "../../constant/product.constant.js";
-import ApiError from "../../error/ApiError.js";
-import { PaginationHelpers } from "../../helper/paginationHelper.js";
-import Product from "../../model/products.model.js";
+import httpStatus from 'http-status';
+import mongoose from 'mongoose';
+import {
+  mediaLookupPipeline,
+  mediaUnset,
+  productSearchableFields,
+} from '../../constant/product.constant.js';
+import ApiError from '../../error/ApiError.js';
+import { PaginationHelpers } from '../../helper/paginationHelper.js';
+import Product from '../../model/products.model.js';
+import escapeRegex from '../../utils/escapeRegex.js';
 
 const { ObjectId } = mongoose.Types;
 
-const editProduct = async (payload) => {
+const editProduct = async payload => {
   const { id, ...data } = payload;
 
   const existingProduct = await Product.findById(id);
 
   if (!existingProduct)
-    throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Product not found!');
 
   const result = await Product.findOneAndUpdate({ _id: id }, data, {
     new: true,
@@ -22,7 +27,7 @@ const editProduct = async (payload) => {
   return result;
 };
 
-const getProduct = async (id) => {
+const getProduct = async id => {
   const pipeline = [
     {
       $match: {
@@ -31,116 +36,116 @@ const getProduct = async (id) => {
     },
     {
       $group: {
-        _id: "$_id",
-        urlParameter: { $first: "$urlParameter" },
-        sku: { $first: "$sku" },
-        title: { $first: "$title" },
-        longDescription: { $first: "$longDescription" },
-        shortDescription: { $first: "$shortDescription" },
-        metaTitle: { $first: "$metaTitle" },
-        metaDescription: { $first: "$metaDescription" },
-        thumbnails: { $first: "$thumbnails" },
-        slideImages: { $first: "$slideImages" },
-        category: { $first: "$category" },
-        attribute: { $first: "$attribute" },
-        productType: { $first: "$productType" },
-        teaFormat: { $first: "$teaFormat" },
-        teaFlavor: { $first: "$teaFlavor" },
-        teaIngredient: { $first: "$teaIngredient" },
-        teaBenefit: { $first: "$teaBenefit" },
-        origin: { $first: "$origin" },
-        originLocation: { $first: "$originLocation" },
-        youtubeLink: { $first: "$youtubeLink" },
-        isPublished: { $first: "$isPublished" },
-        isStock: { $first: "$isStock" },
-        isNewProduct: { $first: "$isNewProduct" },
-        isBestSeller: { $first: "$isBestSeller" },
-        isFeatured: { $first: "$isFeatured" },
-        isSale: { $first: "$isSale" },
-        isSubscription: { $first: "$isSubscription" },
-        isMultiDiscount: { $first: "$isMultiDiscount" },
-        sale: { $first: "$sale" },
-        subscriptionSale: { $first: "$subscriptionSale" },
-        multiDiscountQuantity: { $first: "$multiDiscountQuantity" },
-        multiDiscountAmount: { $first: "$multiDiscountAmount" },
-        unitPrices: { $first: "$unitPrices" },
-        subscriptions: { $first: "$subscriptions" },
-        availableAs: { $first: "$availableAs" },
-        addOns: { $first: "$addOns" },
-        brewInstruction: { $first: "$brewInstruction" },
+        _id: '$_id',
+        urlParameter: { $first: '$urlParameter' },
+        sku: { $first: '$sku' },
+        title: { $first: '$title' },
+        longDescription: { $first: '$longDescription' },
+        shortDescription: { $first: '$shortDescription' },
+        metaTitle: { $first: '$metaTitle' },
+        metaDescription: { $first: '$metaDescription' },
+        thumbnails: { $first: '$thumbnails' },
+        slideImages: { $first: '$slideImages' },
+        category: { $first: '$category' },
+        attribute: { $first: '$attribute' },
+        productType: { $first: '$productType' },
+        teaFormat: { $first: '$teaFormat' },
+        teaFlavor: { $first: '$teaFlavor' },
+        teaIngredient: { $first: '$teaIngredient' },
+        teaBenefit: { $first: '$teaBenefit' },
+        origin: { $first: '$origin' },
+        originLocation: { $first: '$originLocation' },
+        youtubeLink: { $first: '$youtubeLink' },
+        isPublished: { $first: '$isPublished' },
+        isStock: { $first: '$isStock' },
+        isNewProduct: { $first: '$isNewProduct' },
+        isBestSeller: { $first: '$isBestSeller' },
+        isFeatured: { $first: '$isFeatured' },
+        isSale: { $first: '$isSale' },
+        isSubscription: { $first: '$isSubscription' },
+        isMultiDiscount: { $first: '$isMultiDiscount' },
+        sale: { $first: '$sale' },
+        subscriptionSale: { $first: '$subscriptionSale' },
+        multiDiscountQuantity: { $first: '$multiDiscountQuantity' },
+        multiDiscountAmount: { $first: '$multiDiscountAmount' },
+        unitPrices: { $first: '$unitPrices' },
+        subscriptions: { $first: '$subscriptions' },
+        availableAs: { $first: '$availableAs' },
+        addOns: { $first: '$addOns' },
+        brewInstruction: { $first: '$brewInstruction' },
       },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "thumbnails",
-        foreignField: "_id",
-        as: "thumbnails",
+        from: 'media',
+        localField: 'thumbnails',
+        foreignField: '_id',
+        as: 'thumbnails',
       },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "slideImages",
-        foreignField: "_id",
-        as: "slideImages",
+        from: 'media',
+        localField: 'slideImages',
+        foreignField: '_id',
+        as: 'slideImages',
       },
     },
     {
       $lookup: {
-        from: "products",
-        localField: "availableAs",
-        foreignField: "_id",
-        as: "availableAs",
+        from: 'products',
+        localField: 'availableAs',
+        foreignField: '_id',
+        as: 'availableAs',
       },
     },
     {
       $lookup: {
-        from: "products",
-        localField: "addOns",
-        foreignField: "_id",
-        as: "addOns",
+        from: 'products',
+        localField: 'addOns',
+        foreignField: '_id',
+        as: 'addOns',
       },
     },
     {
       $lookup: {
-        from: "brewinstructions",
-        localField: "brewInstruction",
-        foreignField: "_id",
-        as: "brewInstruction",
+        from: 'brewinstructions',
+        localField: 'brewInstruction',
+        foreignField: '_id',
+        as: 'brewInstruction',
       },
     },
     {
       $addFields: {
         availableAs: {
           $map: {
-            input: "$availableAs",
-            as: "product",
+            input: '$availableAs',
+            as: 'product',
             in: {
-              title: "$$product.title",
-              thumbnails: "$$product.thumbnails",
-              _id: "$$product._id",
+              title: '$$product.title',
+              thumbnails: '$$product.thumbnails',
+              _id: '$$product._id',
             },
           },
         },
         addOns: {
           $map: {
-            input: "$addOns",
-            as: "product",
+            input: '$addOns',
+            as: 'product',
             in: {
-              title: "$$product.title",
-              thumbnails: "$$product.thumbnails",
-              _id: "$$product._id",
+              title: '$$product.title',
+              thumbnails: '$$product.thumbnails',
+              _id: '$$product._id',
             },
           },
         },
         brewInstruction: {
           $map: {
-            input: "$brewInstruction",
-            as: "brewinstructions",
+            input: '$brewInstruction',
+            as: 'brewinstructions',
             in: {
-              title: "$$brewinstructions.title",
-              _id: "$$brewinstructions._id",
+              title: '$$brewinstructions.title',
+              _id: '$$brewinstructions._id',
             },
           },
         },
@@ -154,7 +159,7 @@ const getProduct = async (id) => {
   const result = await Product.aggregate(pipeline);
 
   if (!result || result.length === 0) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Product not found!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Product not found!');
   }
 
   return result[0];
@@ -173,139 +178,55 @@ const getProductList = async (filters, paginationOptions) => {
 
   if (searchTerm) {
     andCondition.push({
-      $or: productSearchableFields.map((field) => ({
+      $or: productSearchableFields.map(field => ({
         [field]: {
-          $regex: searchTerm,
-          $options: "i",
+          $regex: escapeRegex(searchTerm),
+          $options: 'i',
         },
       })),
     });
   }
 
   if (Object.keys(filtersData).length) {
+    const splitter = val => val.split(',').map(x => x.toLowerCase().trim());
+
     const filterHandlers = {
-      category: (value) => {
-        const categories = value.split(",");
-        return {
-          category: {
-            $in: categories,
-          },
-        };
-      },
-      attribute: (value) => {
-        const attributes = value.split(",");
-        return {
-          attribute: {
-            $in: attributes,
-          },
-        };
-      },
-      productType: (value) => {
-        const productTypes = value.split(",");
-        return {
-          productType: {
-            $in: productTypes,
-          },
-        };
-      },
-      teaFormat: (value) => {
-        const teaFormats = value.split(",");
-        return {
-          teaFormat: {
-            $in: teaFormats,
-          },
-        };
-      },
-      teaFlavor: (value) => {
-        const teaFlavors = value.split(",");
-        return {
-          teaFlavor: {
-            $in: teaFlavors,
-          },
-        };
-      },
-      teaIngredient: (value) => {
-        const teaIngredients = value.split(",");
-        return {
-          teaIngredient: {
-            $in: teaIngredients,
-          },
-        };
-      },
-      teaBenefit: (value) => {
-        const teaBenefits = value.split(",");
-        return {
-          teaBenefit: {
-            $in: teaBenefits,
-          },
-        };
-      },
-      origin: (value) => {
-        const countries = value.split(",");
-        return {
-          origin: {
-            $in: countries,
-          },
-        };
-      },
-      isPublished: (value) => {
-        return {
-          isPublished: {
-            $in: [value === "true"],
-          },
-        };
-      },
-      isStock: (value) => {
-        return {
-          isStock: {
-            $in: [value === "true"],
-          },
-        };
-      },
-      isNewProduct: (value) => {
-        return {
-          isNewProduct: {
-            $in: [value === "true"],
-          },
-        };
-      },
-      isBestSeller: (value) => {
-        return {
-          isBestSeller: {
-            $in: [value === "true"],
-          },
-        };
-      },
-      isFeatured: (value) => {
-        return {
-          isFeatured: {
-            $in: [value === "true"],
-          },
-        };
-      },
-      isSale: (value) => {
-        return {
-          isSale: {
-            $in: [value === "true"],
-          },
-        };
-      },
-      isSubscription: (value) => {
-        return {
-          isSubscription: {
-            $in: [value === "true"],
-          },
-        };
-      },
-      isMultiDiscount: (value) => {
-        return {
-          isMultiDiscount: {
-            $in: [value === "true"],
-          },
-        };
-      },
-      default: (field, value) => ({
-        [field]: value,
+      category: val => ({
+        'category.assortment': { $in: splitter(val) },
+      }),
+      attribute: val => ({
+        'attribute.assortment': { $in: splitter(val) },
+      }),
+      productType: val => ({
+        'productType.assortment': { $in: splitter(val) },
+      }),
+      teaFormat: val => ({
+        'teaFormat.assortment': { $in: splitter(val) },
+      }),
+      teaFlavor: val => ({
+        'teaFlavor.assortment': { $in: splitter(val) },
+      }),
+      teaIngredient: val => ({
+        'teaIngredient.assortment': { $in: splitter(val) },
+      }),
+      teaBenefit: val => ({
+        'teaBenefit.assortment': { $in: splitter(val) },
+      }),
+      origin: val => ({ origin: { $in: splitter(val) } }),
+      isPublished: val => ({ isPublished: { $in: [val === 'true'] } }),
+      isStock: val => ({ isStock: { $in: [val === 'true'] } }),
+      isNewProduct: val => ({ isNewProduct: { $in: [val === 'true'] } }),
+      isBestSeller: val => ({ isBestSeller: { $in: [val === 'true'] } }),
+      isFeatured: val => ({ isFeatured: { $in: [val === 'true'] } }),
+      isSale: val => ({ isSale: { $in: [val === 'true'] } }),
+      isSubscription: val => ({
+        isSubscription: { $in: [val === 'true'] },
+      }),
+      isMultiDiscount: val => ({
+        isMultiDiscount: { $in: [val === 'true'] },
+      }),
+      default: (field, val) => ({
+        [field]: val,
       }),
     };
 
@@ -313,7 +234,7 @@ const getProductList = async (filters, paginationOptions) => {
       andCondition.push({
         $and: Object.entries(filtersData).map(([field, value]) => {
           const handler = filterHandlers[field] || filterHandlers.default;
-          return handler(field === "default" ? [field, value] : value);
+          return handler(field === 'default' ? [field, value] : value);
         }),
       });
     }
@@ -327,8 +248,8 @@ const getProductList = async (filters, paginationOptions) => {
   const sortConditions = {};
 
   if (sortBy && sortOrder) {
-    if (sortBy === "price") {
-      sortConditions["unitPrices.0.price"] = sortOrder;
+    if (sortBy === 'price') {
+      sortConditions['unitPrices.0.price'] = sortOrder;
     } else {
       sortConditions[sortBy] = sortOrder;
     }
@@ -336,37 +257,107 @@ const getProductList = async (filters, paginationOptions) => {
 
   const pipelines = [
     {
-      $match: whereConditions,
+      $lookup: {
+        from: 'media',
+        localField: 'thumbnails',
+        foreignField: '_id',
+        as: 'thumbnails',
+        pipeline: [mediaUnset],
+      },
     },
     {
       $lookup: {
-        from: "media",
-        localField: "thumbnails",
-        foreignField: "_id",
-        as: "thumbnails",
+        from: 'media',
+        localField: 'slideImages',
+        foreignField: '_id',
+        as: 'slideImages',
+        pipeline: [mediaUnset],
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'attribute',
+        foreignField: '_id',
+        as: 'attribute',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'productType',
+        foreignField: '_id',
+        as: 'productType',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaFormat',
+        foreignField: '_id',
+        as: 'teaFormat',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaFlavor',
+        foreignField: '_id',
+        as: 'teaFlavor',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaIngredient',
+        foreignField: '_id',
+        as: 'teaIngredient',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaBenefit',
+        foreignField: '_id',
+        as: 'teaBenefit',
+        pipeline: mediaLookupPipeline,
       },
     },
     {
       $addFields: {
         unitPrices: {
           $map: {
-            input: "$unitPrices",
-            as: "unitPrice",
+            input: '$unitPrices',
+            as: 'unitPrice',
             in: {
-              unit: "$$unitPrice.unit",
-              price: "$$unitPrice.price",
+              unit: '$$unitPrice.unit',
+              price: '$$unitPrice.price',
               salePrice: {
                 $cond: {
-                  if: "$isSale",
+                  if: '$isSale',
                   then: {
                     $round: [
                       {
                         $subtract: [
-                          "$$unitPrice.price",
+                          '$$unitPrice.price',
                           {
                             $multiply: [
-                              "$$unitPrice.price",
-                              { $divide: ["$sale", 100] },
+                              '$$unitPrice.price',
+                              { $divide: ['$sale', 100] },
                             ],
                           },
                         ],
@@ -379,16 +370,16 @@ const getProductList = async (filters, paginationOptions) => {
               },
               subscriptionPrice: {
                 $cond: {
-                  if: { $and: ["$isSubscription"] },
+                  if: { $and: ['$isSubscription'] },
                   then: {
                     $round: [
                       {
                         $subtract: [
-                          "$$unitPrice.price",
+                          '$$unitPrice.price',
                           {
                             $multiply: [
-                              "$$unitPrice.price",
-                              { $divide: ["$subscriptionSale", 100] },
+                              '$$unitPrice.price',
+                              { $divide: ['$subscriptionSale', 100] },
                             ],
                           },
                         ],
@@ -403,6 +394,9 @@ const getProductList = async (filters, paginationOptions) => {
           },
         },
       },
+    },
+    {
+      $match: whereConditions,
     },
     {
       $sort: sortConditions,
@@ -428,11 +422,11 @@ const getProductList = async (filters, paginationOptions) => {
   };
 };
 
-const deleteProducts = async (ids) => {
+const deleteProducts = async ids => {
   const products = await Product.find({ _id: { $in: ids } });
 
   if (!products.length) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Products not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Products not found');
   }
 
   // Delete products
@@ -441,11 +435,11 @@ const deleteProducts = async (ids) => {
   return result;
 };
 
-const deleteProduct = async (id) => {
+const deleteProduct = async id => {
   const isExistProduct = await Product.findById(id);
 
   if (!isExistProduct) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Product not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Product not found');
   }
 
   const result = await Product.findByIdAndDelete(id);
@@ -453,11 +447,11 @@ const deleteProduct = async (id) => {
   return result;
 };
 
-const addProduct = async (payload) => {
+const addProduct = async payload => {
   const result = await Product.create(payload);
 
   if (!result)
-    throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
 
   return result;
 };

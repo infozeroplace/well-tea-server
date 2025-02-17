@@ -302,6 +302,29 @@ const getProduct = async slug => {
         localField: 'availableAs',
         foreignField: '_id',
         as: 'availableAs',
+        pipeline: [
+          mediaUnset,
+          {
+            $lookup: {
+              from: 'assortments',
+              localField: 'teaFormat',
+              foreignField: '_id',
+              as: 'teaFormat',
+              pipeline: [
+                mediaUnset,
+                {
+                  $lookup: {
+                    from: 'media',
+                    localField: 'thumbnail',
+                    foreignField: '_id',
+                    as: 'thumbnail',
+                    pipeline: [mediaUnset],
+                  },
+                },
+              ],
+            },
+          },
+        ],
       },
     },
     {
