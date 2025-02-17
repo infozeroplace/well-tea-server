@@ -146,24 +146,96 @@ const wtw = async (req, res) => {
     {
       $lookup: {
         from: 'products',
-        let: { productIds: '$items.productId' }, // Pass product IDs
+        let: { productIds: '$items.productId' },
         pipeline: [
           {
             $match: {
               $expr: {
                 $and: [
-                  { $in: ['$_id', '$$productIds'] }, // Match product IDs
-                  { $eq: ['$isPublished', true] }, // Only published products
+                  { $in: ['$_id', '$$productIds'] },
+                  { $eq: ['$isPublished', true] },
                 ],
               },
             },
           },
           {
             $lookup: {
-              from: 'media', // Assuming your media collection is named "media"
+              from: 'media',
               localField: 'thumbnails',
               foreignField: '_id',
               as: 'thumbnails',
+            },
+          },
+          {
+            $lookup: {
+              from: 'assortments',
+              localField: 'attribute',
+              foreignField: '_id',
+              as: 'attribute',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'media',
+                    localField: 'thumbnail',
+                    foreignField: '_id',
+                    as: 'thumbnail',
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $lookup: {
+              from: 'assortments',
+              localField: 'category',
+              foreignField: '_id',
+              as: 'category',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'media',
+                    localField: 'thumbnail',
+                    foreignField: '_id',
+                    as: 'thumbnail',
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $lookup: {
+              from: 'assortments',
+              localField: 'productType',
+              foreignField: '_id',
+              as: 'productType',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'media',
+                    localField: 'thumbnail',
+                    foreignField: '_id',
+                    as: 'thumbnail',
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $lookup: {
+              from: 'assortments',
+              localField: 'teaFormat',
+              foreignField: '_id',
+              as: 'teaFormat',
+              pipeline: [
+                {
+                  $lookup: {
+                    from: 'media',
+                    localField: 'thumbnail',
+                    foreignField: '_id',
+                    as: 'thumbnail',
+                  },
+                },
+              ],
             },
           },
           {

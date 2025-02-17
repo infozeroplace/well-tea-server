@@ -6,6 +6,12 @@ import auth from "../../middleware/auth.js";
 const router = express.Router();
 
 router.put(
+  "/system/update-explore-tea-options",
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  SystemController.updateExploreTeaOptions
+);
+
+router.put(
   "/system/update-filter",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
   SystemController.updateFilter

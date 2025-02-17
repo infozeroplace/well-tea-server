@@ -1,16 +1,17 @@
-import httpStatus from "http-status";
-import { assortmentSearchableFields } from "../../constant/assortment.constant.js";
-import ApiError from "../../error/ApiError.js";
-import { PaginationHelpers } from "../../helper/paginationHelper.js";
-import Assortment from "../../model/assortment.model.js";
+import httpStatus from 'http-status';
+import { assortmentSearchableFields } from '../../constant/assortment.constant.js';
+import { mediaUnset } from '../../constant/product.constant.js';
+import ApiError from '../../error/ApiError.js';
+import { PaginationHelpers } from '../../helper/paginationHelper.js';
+import Assortment from '../../model/assortment.model.js';
 
-const deleteAssortments = async (ids) => {
+const deleteAssortments = async ids => {
   const result = await Assortment.deleteMany({
     _id: { $in: ids },
   });
 
   if (!result)
-    throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
 
   return result;
 };
@@ -20,17 +21,17 @@ const getAllAssortmentList = async () => {
   return result;
 };
 
-const deleteAssortment = async (payload) => {
+const deleteAssortment = async payload => {
   const { id } = payload;
 
   const isExisting = await Assortment.findById(id);
 
-  if (!isExisting) throw new ApiError(httpStatus.BAD_REQUEST, "Not found!");
+  if (!isExisting) throw new ApiError(httpStatus.BAD_REQUEST, 'Not found!');
 
   const result = await Assortment.findByIdAndDelete(id);
 
   if (!result)
-    throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
 
   return result;
 };
@@ -42,10 +43,10 @@ const getAssortmentList = async (filters, paginationOptions) => {
 
   if (searchTerm) {
     andCondition.push({
-      $or: assortmentSearchableFields.map((field) => ({
+      $or: assortmentSearchableFields.map(field => ({
         [field]: {
           $regex: searchTerm,
-          $options: "i",
+          $options: 'i',
         },
       })),
     });
@@ -71,6 +72,15 @@ const getAssortmentList = async (filters, paginationOptions) => {
   }
 
   const pipelines = [
+    {
+      $lookup: {
+        from: 'media',
+        localField: 'thumbnail',
+        foreignField: '_id',
+        as: 'thumbnail',
+        pipeline: [mediaUnset],
+      },
+    },
     {
       $match: whereConditions,
     },
@@ -98,11 +108,11 @@ const getAssortmentList = async (filters, paginationOptions) => {
   };
 };
 
-const addAssortment = async (payload) => {
+const addAssortment = async payload => {
   const result = await Assortment.create(payload);
 
   if (!result)
-    throw new ApiError(httpStatus.BAD_REQUEST, "Something went wrong!");
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
 
   return result;
 };

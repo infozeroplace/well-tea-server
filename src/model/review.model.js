@@ -15,7 +15,7 @@ const ReviewSchema = Schema(
       type: Number,
       min: [1, "Too small"],
       max: [5, "Too big"],
-      required: [true, "Rating point is required!"],
+      required: [true, "rating point is required!"],
     },
     approved: {
       type: Boolean,
@@ -28,7 +28,7 @@ const ReviewSchema = Schema(
     reviewText: {
       type: String,
       trim: true,
-      required: [true, "Review is required!"],
+      required: [true, "review is required!"],
     },
   },
   {

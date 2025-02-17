@@ -1,18 +1,11 @@
 import { System } from '../../model/system.model.js';
 
 const getTeaTypes = async () => {
-  return [
-    'green tea',
-    'black tea',
-    'organic tea',
-    'oolong tea',
-    'herbal tea',
-    'white tea',
-    'pureh tea',
-    'jasmine tea',
-    'flowering tea',
-    'yellow tea',
-  ];
+  const system = await System.findOne({ systemId: 'system-1' }).populate(
+    'exploreTeaOptions',
+  );
+
+  return system.exploreTeaOptions.map(a => a.assortment);
 };
 
 const getSystemConfig = async () => {

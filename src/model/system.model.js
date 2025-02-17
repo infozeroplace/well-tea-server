@@ -1,18 +1,18 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose';
 
 const SystemSchema = Schema(
   {
     systemId: {
       type: String,
-      default: "system-1",
+      default: 'system-1',
     },
     logo: {
       type: Schema.Types.ObjectId,
-      ref: "Media",
+      ref: 'Media',
     },
     secondaryLogo: {
       type: Schema.Types.ObjectId,
-      ref: "Media",
+      ref: 'Media',
     },
     filters: {
       type: [
@@ -38,7 +38,7 @@ const SystemSchema = Schema(
         {
           bannerImagePath: {
             type: Schema.Types.ObjectId,
-            ref: "Media",
+            ref: 'Media',
           },
           bannerImageTitle: String,
           bannerImageDescription: String,
@@ -54,11 +54,11 @@ const SystemSchema = Schema(
           description: String,
           iconPath: {
             type: Schema.Types.ObjectId,
-            ref: "Media",
+            ref: 'Media',
           },
           imagePath: {
             type: Schema.Types.ObjectId,
-            ref: "Media",
+            ref: 'Media',
           },
         },
       ],
@@ -70,7 +70,7 @@ const SystemSchema = Schema(
           description: String,
           iconPath: {
             type: Schema.Types.ObjectId,
-            ref: "Media",
+            ref: 'Media',
           },
         },
       ],
@@ -82,7 +82,7 @@ const SystemSchema = Schema(
         category: String,
         thumbnail: {
           type: Schema.Types.ObjectId,
-          ref: "Media",
+          ref: 'Media',
         },
       },
       offerTwo: {
@@ -91,7 +91,7 @@ const SystemSchema = Schema(
         category: String,
         thumbnail: {
           type: Schema.Types.ObjectId,
-          ref: "Media",
+          ref: 'Media',
         },
       },
       offerThree: {
@@ -100,7 +100,7 @@ const SystemSchema = Schema(
         category: String,
         thumbnail: {
           type: Schema.Types.ObjectId,
-          ref: "Media",
+          ref: 'Media',
         },
       },
       offerFour: {
@@ -109,7 +109,7 @@ const SystemSchema = Schema(
         category: String,
         thumbnail: {
           type: Schema.Types.ObjectId,
-          ref: "Media",
+          ref: 'Media',
         },
       },
     },
@@ -120,8 +120,11 @@ const SystemSchema = Schema(
       buttonUrl: String,
       bannerImage: {
         type: Schema.Types.ObjectId,
-        ref: "Media",
+        ref: 'Media',
       },
+    },
+    exploreTeaOptions: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Assortment' }],
     },
     topNotifications: [String],
     privacyPolicy: String,
@@ -136,9 +139,9 @@ const SystemSchema = Schema(
     toJSON: {
       virtuals: true,
     },
-  }
+  },
 );
 
-const System = model("System", SystemSchema);
+const System = model('System', SystemSchema);
 
 export { System };
