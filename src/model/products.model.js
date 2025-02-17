@@ -1,5 +1,5 @@
-import { Schema, model } from "mongoose";
-import mongoosePlugin from "mongoose-aggregate-paginate-v2";
+import { Schema, model } from 'mongoose';
+import mongoosePlugin from 'mongoose-aggregate-paginate-v2';
 
 const ProductSchema = Schema(
   {
@@ -8,59 +8,47 @@ const ProductSchema = Schema(
       unique: true,
       trim: true,
       index: true,
-      required: [true, "URL parameter is required"],
-      set: (value) =>
-        value
-          .trim()
-          // .replace(/[^a-zA-Z0-9\s]/g, "")
-          // .replace(/\s+/g, " ")
-          .toLowerCase()
-          .replace(/ /g, "-"),
+      required: [true, 'URL parameter is required'],
+      set: value => value.trim().toLowerCase().replace(/ /g, '-'),
     },
     sku: {
       type: String,
       unique: true,
       trim: true,
       index: true,
-      required: [true, "SKU is required"],
-      set: (value) =>
-        value
-          .trim()
-          // .replace(/[^a-zA-Z0-9\s]/g, "")
-          // .replace(/\s+/g, " ")
-          .toLowerCase(),
-      // .replace(/ /g, "-"),
+      required: [true, 'SKU is required'],
+      set: value => value.trim().toLowerCase(),
     },
     title: {
       type: String,
       trim: true,
-      required: [true, "Title is required"],
+      required: [true, 'Title is required'],
     },
     longDescription: {
       type: String,
       trim: true,
-      required: [true, "longDescription is required"],
+      required: [true, 'longDescription is required'],
     },
     shortDescription: {
       type: String,
       trim: true,
-      required: [true, "shortDescription is required"],
+      required: [true, 'shortDescription is required'],
     },
     metaTitle: {
       type: String,
       trim: true,
-      required: [true, "metaTitle is required"],
+      required: [true, 'metaTitle is required'],
     },
     metaDescription: {
       type: String,
       trim: true,
-      required: [true, "metaDescription is required"],
+      required: [true, 'metaDescription is required'],
     },
     thumbnails: {
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "Media",
+          ref: 'Media',
         },
       ],
       default: [],
@@ -69,115 +57,90 @@ const ProductSchema = Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "Media",
+          ref: 'Media',
         },
       ],
       default: [],
     },
     category: {
-      type: [String],
-      required: [true, "Category is required!"],
-      set: (values) =>
-        values.map((value) =>
-          value
-            .trim()
-            // .replace(/[^a-zA-Z0-9\s]/g, "")
-            // .replace(/\s+/g, " ")
-            .toLowerCase()
-        ),
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Assortment',
+        },
+      ],
+      required: [true, 'Category is required!'],
+      set: values => values.map(value => value.trim().toLowerCase()),
     },
     attribute: {
-      type: [String],
-      set: (values) =>
-        values.map((value) =>
-          value
-            .trim()
-            // .replace(/[^a-zA-Z0-9\s]/g, "")
-            // .replace(/\s+/g, " ")
-            .toLowerCase()
-        ),
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Assortment',
+        },
+      ],
+      set: values => values.map(value => value.trim().toLowerCase()),
     },
     productType: {
-      type: [String],
-      required: [true, "Product type is required!"],
-      set: (values) =>
-        values.map((value) =>
-          value
-            .trim()
-            // .replace(/[^a-zA-Z0-9\s]/g, "")
-            // .replace(/\s+/g, " ")
-            .toLowerCase()
-        ),
+      required: [true, 'product type is required!'],
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Assortment',
+        },
+      ],
+      set: values => values.map(value => value.trim().toLowerCase()),
     },
     teaFormat: {
-      type: [String],
-      set: (values) =>
-        values.map((value) =>
-          value
-            .trim()
-            // .replace(/[^a-zA-Z0-9\s]/g, "")
-            // .replace(/\s+/g, " ")
-            .toLowerCase()
-        ),
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Assortment',
+        },
+      ],
+      set: values => values.map(value => value.trim().toLowerCase()),
     },
     teaFlavor: {
-      type: [String],
-      set: (values) =>
-        values.map((value) =>
-          value
-            .trim()
-            // .replace(/[^a-zA-Z0-9\s]/g, "")
-            // .replace(/\s+/g, " ")
-            .toLowerCase()
-        ),
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Assortment',
+        },
+      ],
+      set: values => values.map(value => value.trim().toLowerCase()),
     },
     teaIngredient: {
-      type: [String],
-      set: (values) =>
-        values.map((value) =>
-          value
-            .trim()
-            // .replace(/[^a-zA-Z0-9\s]/g, "")
-            // .replace(/\s+/g, " ")
-            .toLowerCase()
-        ),
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Assortment',
+        },
+      ],
+      set: values => values.map(value => value.trim().toLowerCase()),
     },
     teaBenefit: {
-      type: [String],
-      set: (values) =>
-        values.map((value) =>
-          value
-            .trim()
-            // .replace(/[^a-zA-Z0-9\s]/g, "")
-            // .replace(/\s+/g, " ")
-            .toLowerCase()
-        ),
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Assortment',
+        },
+      ],
+      set: values => values.map(value => value.trim().toLowerCase()),
     },
     origin: {
       type: [String],
-      set: (values) =>
-        values.map((value) =>
-          value
-            .trim()
-            // .replace(/[^a-zA-Z0-9\s]/g, "")
-            // .replace(/\s+/g, " ")
-            .toLowerCase()
-        ),
+      set: values => values.map(value => value.trim().toLowerCase()),
       default: [],
     },
     originLocation: {
       type: String,
       trim: true,
-      set: (value) =>
-        value
-          .trim()
-          // .replace(/\s+/g, " ")
-          .toLowerCase(),
+      set: value => value.trim().toLowerCase(),
     },
     youtubeLink: {
       type: String,
       trim: true,
-      set: (value) => value.trim(),
+      set: value => value.trim(),
     },
     isPublished: {
       type: Boolean,
@@ -235,7 +198,7 @@ const ProductSchema = Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "Review",
+          ref: 'Review',
         },
       ],
       default: [],
@@ -244,7 +207,7 @@ const ProductSchema = Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "Product",
+          ref: 'Product',
         },
       ],
       default: [],
@@ -253,7 +216,7 @@ const ProductSchema = Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "Product",
+          ref: 'Product',
         },
       ],
       default: [],
@@ -262,18 +225,18 @@ const ProductSchema = Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "BrewInstruction",
+          ref: 'BrewInstruction',
         },
       ],
       default: [],
     },
     unitPrices: {
       type: [{ unit: String, price: Number }],
-      required: [true, "Unit price is required"],
+      required: [true, 'Unit price is required'],
     },
     subscriptions: {
       type: [{ weeks: String, days: Number }],
-      required: [true, "Subscriptions is required"],
+      required: [true, 'Subscriptions is required'],
     },
   },
   {
@@ -281,11 +244,11 @@ const ProductSchema = Schema(
     toJSON: {
       virtuals: true,
     },
-  }
+  },
 );
 
 ProductSchema.plugin(mongoosePlugin);
 
-const Product = model("Product", ProductSchema);
+const Product = model('Product', ProductSchema);
 
 export default Product;

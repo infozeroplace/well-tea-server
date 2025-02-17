@@ -1,6 +1,10 @@
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
-import { productSearchableFields } from '../../constant/product.constant.js';
+import {
+  mediaLookupPipeline,
+  mediaUnset,
+  productSearchableFields,
+} from '../../constant/product.constant.js';
 import ApiError from '../../error/ApiError.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
 import Product from '../../model/products.model.js';
@@ -187,6 +191,7 @@ const getProduct = async slug => {
         localField: 'thumbnails',
         foreignField: '_id',
         as: 'thumbnails',
+        pipeline: [mediaUnset],
       },
     },
     {
@@ -195,6 +200,70 @@ const getProduct = async slug => {
         localField: 'slideImages',
         foreignField: '_id',
         as: 'slideImages',
+        pipeline: [mediaUnset],
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'attribute',
+        foreignField: '_id',
+        as: 'attribute',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'productType',
+        foreignField: '_id',
+        as: 'productType',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaFormat',
+        foreignField: '_id',
+        as: 'teaFormat',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaFlavor',
+        foreignField: '_id',
+        as: 'teaFlavor',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaIngredient',
+        foreignField: '_id',
+        as: 'teaIngredient',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaBenefit',
+        foreignField: '_id',
+        as: 'teaBenefit',
+        pipeline: mediaLookupPipeline,
       },
     },
     {
@@ -225,6 +294,22 @@ const getProduct = async slug => {
         localField: 'addOns.slideImages',
         foreignField: '_id',
         as: 'addOns.slideImages',
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'availableAs',
+        foreignField: '_id',
+        as: 'availableAs',
+      },
+    },
+    {
+      $lookup: {
+        from: 'brewinstructions',
+        localField: 'brewInstruction',
+        foreignField: '_id',
+        as: 'brewInstruction',
       },
     },
     {
@@ -291,22 +376,6 @@ const getProduct = async slug => {
             },
           },
         },
-      },
-    },
-    {
-      $lookup: {
-        from: 'products',
-        localField: 'availableAs',
-        foreignField: '_id',
-        as: 'availableAs',
-      },
-    },
-    {
-      $lookup: {
-        from: 'brewinstructions',
-        localField: 'brewInstruction',
-        foreignField: '_id',
-        as: 'brewInstruction',
       },
     },
     {
@@ -489,71 +558,33 @@ const getProductList = async (filters, paginationOptions) => {
   }
 
   if (Object.keys(filtersData).length) {
+    const splitter = val => val.split(',').map(x => x.toLowerCase().trim());
+
     const filterHandlers = {
-      category: value => {
-        const categories = value.split(',');
-        return {
-          category: {
-            $in: categories,
-          },
-        };
-      },
-      attribute: value => {
-        const attributes = value.split(',');
-        return {
-          attribute: {
-            $in: attributes,
-          },
-        };
-      },
-      productType: value => {
-        const productTypes = value.split(',');
-        return {
-          productType: {
-            $in: productTypes,
-          },
-        };
-      },
-      teaFormat: value => {
-        const teaFormats = value.split(',');
-        return {
-          teaFormat: {
-            $in: teaFormats,
-          },
-        };
-      },
-      teaFlavor: value => {
-        const teaFlavors = value.split(',');
-        return {
-          teaFlavor: {
-            $in: teaFlavors,
-          },
-        };
-      },
-      teaIngredient: value => {
-        const teaIngredients = value.split(',');
-        return {
-          teaIngredient: {
-            $in: teaIngredients,
-          },
-        };
-      },
-      teaBenefit: value => {
-        const teaBenefits = value.split(',');
-        return {
-          teaBenefit: {
-            $in: teaBenefits,
-          },
-        };
-      },
-      origin: value => {
-        const countries = value.split(',');
-        return {
-          origin: {
-            $in: countries,
-          },
-        };
-      },
+      category: val => ({
+        'category.assortment': { $in: splitter(val) },
+      }),
+      attribute: val => ({
+        'attribute.assortment': { $in: splitter(val) },
+      }),
+      productType: val => ({
+        'productType.assortment': { $in: splitter(val) },
+      }),
+      teaFormat: val => ({
+        'teaFormat.assortment': { $in: splitter(val) },
+      }),
+      teaFlavor: val => ({
+        'teaFlavor.assortment': { $in: splitter(val) },
+      }),
+      teaIngredient: val => ({
+        'teaIngredient.assortment': { $in: splitter(val) },
+      }),
+      teaBenefit: val => ({
+        'teaBenefit.assortment': { $in: splitter(val) },
+      }),
+      origin: val => ({
+        origin: { $in: splitter(val) },
+      }),
       price: value => {
         const [min, max] = value.split('-').map(Number);
         return {
@@ -645,16 +676,14 @@ const getProductList = async (filters, paginationOptions) => {
     }
   }
 
-  const pipelines = [
-    {
-      $match: whereConditions,
-    },
+  const pipeline = [
     {
       $lookup: {
         from: 'media',
         localField: 'thumbnails',
         foreignField: '_id',
         as: 'thumbnails',
+        pipeline: [mediaUnset],
       },
     },
     {
@@ -663,6 +692,70 @@ const getProductList = async (filters, paginationOptions) => {
         localField: 'slideImages',
         foreignField: '_id',
         as: 'slideImages',
+        pipeline: [mediaUnset],
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'category',
+        foreignField: '_id',
+        as: 'category',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'attribute',
+        foreignField: '_id',
+        as: 'attribute',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'productType',
+        foreignField: '_id',
+        as: 'productType',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaFormat',
+        foreignField: '_id',
+        as: 'teaFormat',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaFlavor',
+        foreignField: '_id',
+        as: 'teaFlavor',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaIngredient',
+        foreignField: '_id',
+        as: 'teaIngredient',
+        pipeline: mediaLookupPipeline,
+      },
+    },
+    {
+      $lookup: {
+        from: 'assortments',
+        localField: 'teaBenefit',
+        foreignField: '_id',
+        as: 'teaBenefit',
+        pipeline: mediaLookupPipeline,
       },
     },
     {
@@ -725,6 +818,9 @@ const getProductList = async (filters, paginationOptions) => {
       },
     },
     {
+      $match: whereConditions,
+    },
+    {
       $sort: sortConditions,
     },
   ];
@@ -734,7 +830,7 @@ const getProductList = async (filters, paginationOptions) => {
     limit,
   };
 
-  const result = await Product.aggregatePaginate(pipelines, options);
+  const result = await Product.aggregatePaginate(pipeline, options);
 
   const { docs, totalDocs } = result;
 

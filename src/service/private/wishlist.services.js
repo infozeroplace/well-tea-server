@@ -5,11 +5,10 @@ import Wishlist from '../../model/wishlist.model.js';
 const getWishlist = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
 
-  filtersData['guestId'] = null; // Ensure filtering out guest wishlists
+  filtersData['guestId'] = null;
 
   const andCondition = [];
 
-  /*** ✅ 1. Fixing Search by First Name + Last Name ***/
   if (searchTerm) {
     andCondition.push({
       $or: wishlistSearchableFields.map(field => {
@@ -37,44 +36,50 @@ const getWishlist = async (filters, paginationOptions) => {
     });
   }
 
-  /*** ✅ 2. Fixing Filters Handling ***/
   if (Object.keys(filtersData).length) {
-    andCondition.push({
-      $and: Object.entries(filtersData).map(([field, value]) => ({
+    const filterHandlers = {
+      guestId: value => {
+        return {
+          guestId: { $eq: value },
+        };
+      },
+      default: (field, value) => ({
         [field]: value,
-      })),
-    });
+      }),
+    };
+
+    if (Object.keys(filtersData).length) {
+      andCondition.push({
+        $and: Object.entries(filtersData).map(([field, value]) => {
+          const handler = filterHandlers[field] || filterHandlers.default;
+          return handler(field === 'default' ? [field, value] : value);
+        }),
+      });
+    }
   }
 
   const whereConditions = andCondition.length > 0 ? { $and: andCondition } : {};
 
-  /*** ✅ 3. Fix Pagination ***/
   const { page, limit, sortBy, sortOrder } =
     PaginationHelpers.calculationPagination(paginationOptions);
 
   const sortConditions = sortBy && sortOrder ? { [sortBy]: sortOrder } : {};
 
-  /*** ✅ 4. Fix Wishlist Query Pipelines ***/
   const pipelines = [
-    /*** ✅ Lookup User without including `password` ***/
     {
       $lookup: {
         from: 'users',
         localField: 'userId',
         foreignField: '_id',
         as: 'userId',
+        pipeline: [
+          {
+            $unset: 'password',
+          },
+        ],
       },
     },
-    {
-      $unwind: { path: '$userId', preserveNullAndEmptyArrays: true },
-    },
-    {
-      $project: {
-        'userId.password': 0, // ✅ Exclude password properly
-      },
-    },
-
-    /*** ✅ Lookup Products & Media ***/
+    { $unwind: { path: '$userId', preserveNullAndEmptyArrays: true } },
     {
       $lookup: {
         from: 'products',
@@ -99,19 +104,17 @@ const getWishlist = async (filters, paginationOptions) => {
             },
           },
           {
-            $project: {
-              _id: 1,
-              title: 1,
-              sku: 1,
-              thumbnails: 1,
+            $group: {
+              _id: '$_id',
+              title: { $first: '$title' },
+              sku: { $first: '$sku' },
+              thumbnails: { $first: '$thumbnails' },
             },
           },
         ],
         as: 'productData',
       },
     },
-
-    /*** ✅ 5. Fix Merging `items` with Product Data ***/
     {
       $addFields: {
         items: {
@@ -119,40 +122,31 @@ const getWishlist = async (filters, paginationOptions) => {
             input: '$items',
             as: 'item',
             in: {
-              productId: '$$item.productId',
-              unitPriceId: '$$item.unitPriceId',
-              purchaseType: '$$item.purchaseType',
-              subscriptionId: '$$item.subscriptionId',
-              quantity: '$$item.quantity',
-              addedAt: '$$item.addedAt',
-
-              // ✅ Merge product data if available
-              product: {
-                $arrayElemAt: [
-                  {
-                    $filter: {
-                      input: '$productData',
-                      as: 'prod',
-                      cond: { $eq: ['$$prod._id', '$$item.productId'] },
+              $mergeObjects: [
+                '$$item',
+                {
+                  $arrayElemAt: [
+                    {
+                      $filter: {
+                        input: '$productData',
+                        as: 'prod',
+                        cond: { $eq: ['$$prod._id', '$$item.productId'] },
+                      },
                     },
-                  },
-                  0,
-                ],
-              },
+                    0,
+                  ],
+                },
+              ],
             },
           },
         },
       },
     },
-
-    /*** ✅ 6. Remove Unnecessary Fields ***/
     {
       $project: {
-        productData: 0, // ✅ Remove temporary productData
+        productData: 0,
       },
     },
-
-    /*** ✅ 7. Apply Filtering ***/
     {
       $match: whereConditions,
     },
@@ -164,7 +158,6 @@ const getWishlist = async (filters, paginationOptions) => {
     sort: sortConditions,
   };
 
-  /*** ✅ 8. Run Aggregation with Pagination ***/
   const result = await Wishlist.aggregatePaginate(pipelines, options);
 
   const { docs, totalDocs } = result;

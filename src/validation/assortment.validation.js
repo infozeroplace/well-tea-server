@@ -1,11 +1,12 @@
-import { z } from "zod";
-import { assortments } from "../constant/assortment.constant.js";
+import { z } from 'zod';
+import { assortments } from '../constant/assortment.constant.js';
 
 const addAssortmentSchema = z.object({
   body: z.object({
-    assortment: z.string({ required_error: "Assortment is required" }),
+    assortment: z.string({ required_error: 'Assortment is required' }),
+    thumbnail: z.string().nullable().optional(),
     assortmentType: z.enum([...assortments], {
-      required_error: "Assortment type is required",
+      required_error: 'Assortment type is required',
     }),
   }),
 });
