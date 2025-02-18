@@ -3,6 +3,10 @@ import httpStatus from 'http-status';
 import config from '../../config/index.js';
 import ApiError from '../../error/ApiError.js';
 
+const test = async () => {
+  console.log('object')
+}
+
 const subscribe = async payload => {
   const { email } = payload;
 
@@ -36,5 +40,6 @@ const subscribe = async payload => {
 };
 
 export const NewsletterService = {
+  test,
   subscribe,
 };
