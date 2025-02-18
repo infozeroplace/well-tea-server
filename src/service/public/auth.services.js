@@ -1,3 +1,4 @@
+import axios from 'axios';
 import bcrypt from 'bcrypt';
 import { OAuth2Client } from 'google-auth-library';
 import httpStatus from 'http-status';
@@ -128,6 +129,30 @@ const register = async payload => {
 
   if (isEmailExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already exists!!');
+  }
+
+  if (payload.newsletter) {
+    const data = {
+      email_address: payload.email,
+      status: 'subscribed',
+      merge_fields: {
+        FNAME: payload.firstName,
+        LNAME: payload.lastName,
+      },
+    };
+
+    const jsonData = JSON.stringify(data);
+
+    await axios.post(
+      `https://${config.mailchimp_server_prefix}.api.mailchimp.com/3.0/lists/${config.mailchimp_audience_id}/members`,
+      jsonData,
+      {
+        headers: {
+          Authorization: `apikey ${config.mailchimp_api_key}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
   }
 
   const createdUser = await User.create({
@@ -324,12 +349,7 @@ const googleLogin = async code => {
   // Checking that is the user already exits or not in the database
   const isUserExists = await User.findOne({ email: email }).lean();
 
-  if (
-    isUserExists &&
-    (isUserExists.role === 'moderator' ||
-      isUserExists.role === 'admin' ||
-      isUserExists.role === 'super_admin')
-  ) {
+  if (isUserExists && isUserExists.role === 'super_admin') {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Moderators cannot login!');
   }
 
@@ -369,6 +389,28 @@ const googleLogin = async code => {
       user: isUserExists,
     };
   } else {
+    const data = {
+      email_address: email,
+      status: 'subscribed',
+      merge_fields: {
+        FNAME: given_name,
+        LNAME: family_name,
+      },
+    };
+
+    const jsonData = JSON.stringify(data);
+
+    await axios.post(
+      `https://${config.mailchimp_server_prefix}.api.mailchimp.com/3.0/lists/${config.mailchimp_audience_id}/members`,
+      jsonData,
+      {
+        headers: {
+          Authorization: `apikey ${config.mailchimp_api_key}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
     const createdUser = await User.create({
       userId: await generateUserId(),
       email: email,

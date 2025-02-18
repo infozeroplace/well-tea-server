@@ -73,27 +73,19 @@ const config = {
     email_expires_in: process.env.JWT_EMAIL_EXPIRES_IN,
   },
 
-  refresh_token_name: process.env.REFRESH_TOKEN_NAME,
-  refresh_token_domain: process.env.REFRESH_TOKEN_DOMAIN,
-
   info_mail_address: process.env.INFO_MAIL_ADDRESS,
   support_mail_address: process.env.SUPPORT_MAIL_ADDRESS,
   invoice_mail_address: process.env.INVOICE_MAIL_ADDRESS,
-  contact_mail_address: process.env.CONTACT_MAIL_ADDRESS,
-  payment_mail_address: process.env.PAYMENT_MAIL_ADDRESS,
-  service_mail_address: process.env.SERVICE_MAIL_ADDRESS,
   nodemailer_pass: process.env.NODEMAILER_PASS,
 
   google_client_id: process.env.GOOGLE_CLIENT_ID,
   google_client_secret: process.env.GOOGLE_CLIENT_SECRET,
 
-  cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
-  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
-
-  default_admin_pass: process.env.DEFAULT_ADMIN_PASS,
-
   super_admin_role: process.env.SUPER_ADMIN_ROLE,
+
+  mailchimp_api_key: process.env.MAILCHIMP_API_KEY,
+  mailchimp_audience_id: process.env.MAILCHIMP_AUDIENCE_ID,
+  mailchimp_server_prefix: process.env.MAILCHIMP_SERVER_PREFIX,
 };
 
 export default config;
