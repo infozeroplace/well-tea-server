@@ -68,6 +68,10 @@ const UserSchema = Schema(
     resetToken: {
       type: String,
     },
+    rewardPoints: {
+      type: Number,
+      default: 200,
+    },
   },
   {
     timestamps: true,

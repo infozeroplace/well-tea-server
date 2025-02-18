@@ -7,7 +7,7 @@ import handleMongoServerError from '../error/handleMongoServerError.js';
 import handleStripeError from '../error/handleStripeError.js';
 import handleValidationError from '../error/handleValidationError.js';
 import handleZodError from '../error/handleZodError.js';
-import { errorLogger } from '../shared/logger.js';
+// import { errorLogger } from '../shared/logger.js';
 
 const globalErrorHandler = (
   error, // <= All the error comes through  this error
@@ -19,8 +19,8 @@ const globalErrorHandler = (
    While "development" mode here it will print the error. And while "production" mode it will store the error log and also it'll print the error because in the "errorLogger" function instructions are given to print on console. 
    */
   config.env === 'development'
-    ? `❌👮‍♀️ globalErrorHandler ~`
-    : errorLogger.error(`❌❌ globalErrorHandler ~`, error);
+    ? console.error(`❌👮‍♀️ globalErrorHandler ~`)
+    : console.error(`❌❌ globalErrorHandler ~`, error);
   // ..................
 
   /**
