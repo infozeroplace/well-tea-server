@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\error\\.7f814306bcb1e71f309338daa319acbd7a61966c-audit.json",
+    "files": [
+        {
+            "date": 1739891163848,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\error\\WT-2025-18-02-21-error.log",
+            "hash": "b38148831d9ba14fb85f1d41ee0388fc716b112c02b2dff522d8c22ee1e3275c"
+        }
+    ],
+    "hashType": "sha256"
+}

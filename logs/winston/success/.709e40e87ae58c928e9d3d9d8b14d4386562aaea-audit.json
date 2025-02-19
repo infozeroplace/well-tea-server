@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\.709e40e87ae58c928e9d3d9d8b14d4386562aaea-audit.json",
+    "files": [
+        {
+            "date": 1739891163842,
+            "name": "C:\\Users\\ruman\\Desktop\\website\\well-tea-server\\logs\\winston\\success\\WT-2025-18-02-21-success.log",
+            "hash": "c7080aaeadc09ba1cd380a3d003fe2d92f0a422e1afdc6192432d854b1cbe786"
+        }
+    ],
+    "hashType": "sha256"
+}

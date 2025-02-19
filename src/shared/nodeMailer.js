@@ -23,6 +23,54 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+export const sendPromotionalEmail = async () => {
+  const emailTemplate = `
+  <div style="font-family: Arial, sans-serif; text-align: center; background-color: #f9f9f9; padding: 20px;">
+    <div style="background: #ffffff; padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+      <h2 style="color: #4CAF50;">🎉 Welcome to WellTea – Your Perfect Cup Awaits!</h2>
+      <p style="font-size: 16px; color: #333;">Hello Tea Lover,</p>
+      <p style="font-size: 16px; color: #555;">We’re thrilled to have you join the WellTea family! To celebrate, we’re giving you an exclusive <strong>25% OFF</strong> your first order. ☕✨</p>
+      <div style="background: #f3f3f3; padding: 15px; border-radius: 5px; margin: 15px 0;">
+        <p style="margin: 5px 0;">🌿 <strong>Premium Teas</strong>, Handpicked for You</p>
+        <p style="margin: 5px 0;">🛍️ <strong>25% Off</strong> Your First Purchase</p>
+        <p style="margin: 5px 0;">🚚 <strong>Fast & Fresh</strong> Delivery to Your Door</p>
+      </div>
+      <p style="font-size: 18px; font-weight: bold; color: #d35400;">Use Code: <span style="background: #ffeb3b; padding: 5px 10px; border-radius: 5px;">WELCOME25</span> at checkout and start your tea journey today!</p>
+      <a href="https://welltea.zeroplace.co" 
+        style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-size: 18px; margin-top: 10px;">
+        🛒 Shop Now & Save 25%
+      </a>
+      <p style="font-size: 14px; color: #888; margin-top: 15px;">Hurry! This offer won’t last forever.</p>
+      <br/>
+      <p style="font-size: 16px; color: #333;"><em>Sip, Relax & Enjoy,</em></p>
+      <p style="font-size: 16px; font-weight: bold; color: #333;">The WellTea Team</p>
+      <br/>
+      <p style="font-size: 12px; color: #888;">P.S. Need recommendations? Our tea experts are here to help! 💌 <a href="mailto:support@welltea.com" style="color: #888;">Reply to this email anytime.</a></p>
+    </div>
+  </div>
+`;
+
+  const mailOptions = {
+    from: `"WellTea" <${config.support_mail_address}>`,
+    to: 'rumanislam48@gmail.com',
+    subject: '🔥 Exclusive Offer: Your Order Details & More!',
+    headers: {
+      'List-Unsubscribe': '<mailto:unsubscribe@yourstore.com>',
+    },
+    html: emailTemplate,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    return info;
+  } catch (error) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Failed to send reset password email',
+    );
+  }
+};
+
 export const sendOrderDetailsToAdmin = async order => {
   const templatePath = path.join(__dirname, '../views/orderDetails.ejs');
   const newOrder = {
@@ -80,77 +128,6 @@ export const sendOrderInvoiceToCustomer = async (invoice, email, logo) => {
       }
     }
   });
-};
-
-export const sendEmailVerificationLink = async (email, name, token) => {
-  const mailOptions = {
-    from: `"ChurchLogo" <${config.support_mail_address}>`,
-    to: email,
-    subject: 'Email Verification',
-    html: `<div style="width: 100%; padding: 20px; font-size: 16px; font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-  <h3>Dear, ${name}</h3>
-  <p>
-    Thank you for joining Church Logo! To complete your registration and activate your account, 
-    please verify your email address by clicking the link below <strong style="font-weight: 700;">within 15 minutes</strong>:
-  </p>
-
-  <p style="margin: 30px 0;">
-    <a 
-      href="${config.frontend_base_url}/verify-email/${token}" 
-      target="_blank" 
-      style="
-        padding: 12px 24px;
-        background-color: #348edb;
-        color: #ffffff;
-        text-decoration: none;
-        font-weight: bold;
-        border-radius: 5px;
-        display: inline-block;
-      "
-    >
-      Verify Email Address
-    </a>
-  </p>
-
-  <p>
-    Verifying your email ensures you have uninterrupted access to your account and our exclusive member features.
-  </p>
-
-  <p>
-    If you encounter any issues or have questions, please don't hesitate to contact us at 
-    <a href="mailto:${config.support_mail_address}" style="color: #348edb; text-decoration: none;">${config.support_mail_address}</a>
-  </p>
-
-  <p>
-    We’re glad to have you on board and look forward to serving you.
-  </p>
-
-  <p style="margin: 40px 0 0;">
-    Warm regards, <br />
-    <strong>The Church Logo Support Team</strong>
-  </p>
-
-  <footer style="margin-top: 40px; font-size: 14px; color: #777;">
-    <a 
-      href="${config.frontend_base_url}" 
-      target="_blank" 
-      style="color: #348edb; text-decoration: none; font-weight: bold;"
-    >
-      www.churchlogo.co
-    </a>
-  </footer>
-</div>`,
-  };
-
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    return info;
-  } catch (error) {
-    throw new ApiError(
-      httpStatus.INTERNAL_SERVER_ERROR,
-      'Internal Server Error',
-    );
-  }
 };
 
 export const sendForgotPasswordLink = async (email, name, token) => {
