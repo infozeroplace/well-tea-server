@@ -5,124 +5,133 @@ import config from '../../config/index.js';
 import { newsletterSearchableFields } from '../../constant/newsletter.constant.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
 
+const prefix = config.mailchimp_server_prefix;
+const audienceId = config.mailchimp_audience_id;
+const apikey = config.mailchimp_api_key;
+
+const headers = {
+  Authorization: `apikey ${apikey}`,
+};
+
+const sendBulkEmail = async emails => {
+  try {
+    const {
+      data: { id: segmentId },
+    } = await axios.post(
+      `https://${prefix}.api.mailchimp.com/3.0/lists/${audienceId}/segments`,
+      {
+        name: 'Selected Contacts Segment',
+        options: {
+          match: 'any',
+          conditions: emails.map(email => ({
+            field: "merge_fields.EMAIL",
+            condition_type: 'Equals',
+            value: email,
+          })),
+        },
+      },
+      { headers },
+    );
+  } catch (error) {
+    console.log(error);
+  }
+
+  const {
+    data: { id: campaignId },
+  } = await axios.post(
+    `https://${prefix}.api.mailchimp.com/3.0/campaigns`,
+    {
+      type: 'regular',
+      recipients: {
+        list_id: audienceId,
+        segment_opts: { saved_segment_id: segmentId },
+      },
+      settings: {
+        subject_line: '📢 Special Offer for You!',
+        title: '📢 Special Offer for You!',
+        from_name: 'WellTea',
+        reply_to: 'rumanislam0429@gmail.com',
+      },
+    },
+    { headers },
+  );
+
+  const contentData = {
+    html: `<h1>Hello!</h1><p>We have a special offer for you.</p>`,
+  };
+
+  await axios.put(
+    `https://${prefix}.api.mailchimp.com/3.0/campaigns/${campaignId}/content`,
+    contentData,
+    { headers },
+  );
+
+  await axios.post(
+    `https://${prefix}.api.mailchimp.com/3.0/campaigns/${campaignId}/actions/send`,
+    {},
+    { headers },
+  );
+};
+
 const getSubscribedUsers = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
 
-  // Step 1: Create conditions for search term
-  const andCondition = [];
-
-  if (searchTerm) {
-    andCondition.push({
-      $or: newsletterSearchableFields.map(field => ({
-        [field]: {
-          $regex: searchTerm,
-          $options: 'i',
-        },
-      })),
-    });
-  }
-
-  // Step 2: Add other filter conditions
-  if (Object.keys(filtersData).length) {
-    andCondition.push({
-      $and: Object.entries(filtersData).map(([field, value]) => ({
-        [field]: value,
-      })),
-    });
-  }
-
-  // Step 4: Handle pagination
   const { page, limit, sortBy, sortOrder } =
     PaginationHelpers.calculationPagination(paginationOptions);
 
-  // Step 5: Sorting options
-  const sortConditions = {};
-
-  if (sortBy && sortOrder) {
-    sortConditions[sortBy] = sortOrder;
-  }
-
-  // Step 6: Define Mailchimp API request params (pagination, sorting)
   const params = {
-    offset: (page - 1) * limit, // Calculate the offset for pagination
-    count: limit, // Set the limit for the number of members to fetch
+    offset: (page - 1) * limit,
+    count: limit,
   };
 
-  // If any filters or sort conditions are needed, add them to the params here
-  // Mailchimp API has some limited sorting and filtering options, but we can apply them on our end
-  if (searchTerm || filtersData.status) {
-    // For simplicity, assume we do the filtering manually
-    // We will request the members first and filter them later (as the API does not allow complex filtering directly)
-  }
+  const memberUrl = `https://${prefix}.api.mailchimp.com/3.0/lists/${audienceId}/members?status=subscribed`;
 
-  const response = await axios.get(
-    `https://${config.mailchimp_server_prefix}.api.mailchimp.com/3.0/lists/${config.mailchimp_audience_id}/members`,
-    {
-      headers: {
-        Authorization: `apikey ${config.mailchimp_api_key}`,
-      },
-      params,
-    },
-  );
+  const listUrl = `https://${prefix}.api.mailchimp.com/3.0/lists/${audienceId}`;
 
-  // Step 7: Map over the response data to match the desired format
+  const response = await axios.get(memberUrl, {
+    headers,
+    params,
+  });
+
+  const listResponse = await axios.get(listUrl, { headers });
+
   const contacts = response.data.members.map(member => ({
     email: member.email_address,
     status: member.status,
-    firstName: member.merge_fields.FNAME,
-    lastName: member.merge_fields.LNAME,
+    firstName: member.merge_fields.FNAME || '',
+    lastName: member.merge_fields.LNAME || '',
   }));
 
-  // Step 8: Apply any additional filter/sorting logic (like search term) manually
-  const filteredContacts = contacts.filter(contact => {
-    let matches = true;
+  let filteredContacts = contacts;
 
-    if (searchTerm) {
-      matches = newsletterSearchableFields.some(
-        field =>
-          contact[field] &&
-          contact[field].toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-    }
+  if (searchTerm) {
+    const normalizedSearchTerms = searchTerm.trim().toLowerCase().split(' ');
 
-    if (filtersData.status && contact.status !== filtersData.status) {
-      matches = false;
-    }
-
-    return matches;
-  });
-
-  // Step 9: Handle pagination, sorting, and return results
-  const sortedContacts = filteredContacts.sort((a, b) => {
-    if (sortBy && sortOrder) {
-      const fieldA = a[sortBy] ?? null; // Use null for missing fields
-      const fieldB = b[sortBy] ?? null;
-
-      if (fieldA === null) return 1; // Push null values to the end
-      if (fieldB === null) return -1;
-
-      const compareResult = fieldA.toString().localeCompare(fieldB.toString());
-      return sortOrder === 'asc' ? compareResult : -compareResult;
-    }
-    return 0;
-  });
-
-  const paginatedContacts = sortedContacts.slice(
-    (page - 1) * limit,
-    page * limit,
-  );
+    filteredContacts = filteredContacts.filter(contact =>
+      newsletterSearchableFields.some(field => {
+        if (contact[field]) {
+          const normalizedField = contact[field].trim().toLowerCase();
+          return normalizedSearchTerms.every(term =>
+            normalizedField.includes(term),
+          );
+        }
+        return false;
+      }),
+    );
+  }
 
   return {
     meta: {
       page,
       limit,
-      totalDocs: filteredContacts.length,
+      totalDocs: listResponse.data.stats.member_count,
     },
-    data: paginatedContacts,
+    data: filteredContacts,
   };
 };
 
 export const NewsletterService = {
+  sendBulkEmail,
   getSubscribedUsers,
 };
 

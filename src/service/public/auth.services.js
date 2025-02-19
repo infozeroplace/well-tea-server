@@ -19,6 +19,36 @@ const oAuth2Client = new OAuth2Client(
   'postmessage',
 );
 
+const registerForNewsletter = async payload => {
+  const { email, firstName, lastName } = payload;
+
+  try {
+    const data = {
+      email_address: email,
+      status: 'subscribed',
+      merge_fields: {
+        FNAME: firstName,
+        LNAME: lastName,
+      },
+    };
+
+    const jsonData = JSON.stringify(data);
+
+    await axios.post(
+      `https://${config.mailchimp_server_prefix}.api.mailchimp.com/3.0/lists/${config.mailchimp_audience_id}/members`,
+      jsonData,
+      {
+        headers: {
+          Authorization: `apikey ${config.mailchimp_api_key}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+  } catch (error) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'something went wrong');
+  }
+};
+
 const resetPassword = async payload => {
   const { token, password } = payload;
 
@@ -131,30 +161,6 @@ const register = async payload => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already exists!!');
   }
 
-  if (payload.newsletter) {
-    const data = {
-      email_address: payload.email,
-      status: 'subscribed',
-      merge_fields: {
-        FNAME: payload.firstName,
-        LNAME: payload.lastName,
-      },
-    };
-
-    const jsonData = JSON.stringify(data);
-
-    await axios.post(
-      `https://${config.mailchimp_server_prefix}.api.mailchimp.com/3.0/lists/${config.mailchimp_audience_id}/members`,
-      jsonData,
-      {
-        headers: {
-          Authorization: `apikey ${config.mailchimp_api_key}`,
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-  }
-
   const createdUser = await User.create({
     userId: await generateUserId(),
     ...payload,
@@ -195,6 +201,14 @@ const register = async payload => {
 
   // Remove the password
   createdUser.password = undefined;
+
+  if (payload.newsletter) {
+    await registerForNewsletter({
+      email: payload.email,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+    });
+  }
 
   return {
     accessToken,
@@ -389,28 +403,6 @@ const googleLogin = async code => {
       user: isUserExists,
     };
   } else {
-    const data = {
-      email_address: email,
-      status: 'subscribed',
-      merge_fields: {
-        FNAME: given_name,
-        LNAME: family_name,
-      },
-    };
-
-    const jsonData = JSON.stringify(data);
-
-    await axios.post(
-      `https://${config.mailchimp_server_prefix}.api.mailchimp.com/3.0/lists/${config.mailchimp_audience_id}/members`,
-      jsonData,
-      {
-        headers: {
-          Authorization: `apikey ${config.mailchimp_api_key}`,
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-
     const createdUser = await User.create({
       userId: await generateUserId(),
       email: email,
@@ -448,6 +440,12 @@ const googleLogin = async code => {
     );
 
     createdUser.isPasswordHas = createdUser.password ? true : false;
+
+    await registerForNewsletter({
+      email: email,
+      firstName: given_name,
+      lastName: family_name,
+    });
 
     return {
       accessToken,

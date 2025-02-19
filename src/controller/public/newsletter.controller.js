@@ -3,20 +3,6 @@ import { NewsletterService } from '../../service/public/newsletter.services.js';
 import catchAsync from '../../shared/catchAsync.js';
 import sendResponse from '../../shared/sendResponse.js';
 
-const test = catchAsync(async (req, res) => {
-  const { ...data } = req.body;
-
-  await NewsletterService.test(data);
-
-  return sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'test successfully',
-    meta: null,
-    data: null,
-  });
-});
-
 const subscribe = catchAsync(async (req, res) => {
   const { ...data } = req.body;
 
@@ -32,6 +18,5 @@ const subscribe = catchAsync(async (req, res) => {
 });
 
 export const NewsletterController = {
-  test,
   subscribe,
 };

@@ -1,3 +1,3 @@
 export const newsletterSearchableFields = ['firstName', 'lastName', 'email'];
 
-export const newsletterFilterableField = ['searchTerm', 'status'];
+export const newsletterFilterableField = ['searchTerm'];

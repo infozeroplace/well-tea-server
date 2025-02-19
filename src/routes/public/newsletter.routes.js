@@ -5,12 +5,6 @@ import { NewsletterValidation } from '../../validation/newsletter.validation.js'
 const router = express.Router();
 
 router.post(
-  '/newsletter/test',
-  // validateRequest(NewsletterValidation.emailZodSchema),
-  NewsletterController.test,
-);
-
-router.post(
   '/newsletter/subscribe',
   validateRequest(NewsletterValidation.emailZodSchema),
   NewsletterController.subscribe,

@@ -27,17 +27,19 @@ export const sendPromotionalEmail = async () => {
   const emailTemplate = `
   <div style="font-family: Arial, sans-serif; text-align: center; background-color: #f9f9f9; padding: 20px;">
     <div style="background: #ffffff; padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-      <h2 style="color: #4CAF50;">🎉 Welcome to WellTea – Your Perfect Cup Awaits!</h2>
+      <h2>Lower costs with Fluid compute</h2>
       <p style="font-size: 16px; color: #333;">Hello Tea Lover,</p>
-      <p style="font-size: 16px; color: #555;">We’re thrilled to have you join the WellTea family! To celebrate, we’re giving you an exclusive <strong>25% OFF</strong> your first order. ☕✨</p>
+      <p style="font-size: 16px; color: #555;">We’re giving you an exclusive <strong>25% OFF</strong> your first order. ☕✨</p>
       <div style="background: #f3f3f3; padding: 15px; border-radius: 5px; margin: 15px 0;">
-        <p style="margin: 5px 0;">🌿 <strong>Premium Teas</strong>, Handpicked for You</p>
+        <p style="margin: 5px 0;">🌿 <strong>Premium Teas</strong> Handpicked for You</p>
         <p style="margin: 5px 0;">🛍️ <strong>25% Off</strong> Your First Purchase</p>
-        <p style="margin: 5px 0;">🚚 <strong>Fast & Fresh</strong> Delivery to Your Door</p>
+        <p style="margin: 5px 0;">🚚 <strong>Fast & Fresh</strong> Delivery</p>
       </div>
-      <p style="font-size: 18px; font-weight: bold; color: #d35400;">Use Code: <span style="background: #ffeb3b; padding: 5px 10px; border-radius: 5px;">WELCOME25</span> at checkout and start your tea journey today!</p>
-      <a href="https://welltea.zeroplace.co" 
-        style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-size: 18px; margin-top: 10px;">
+      <p style="font-size: 18px; font-weight: bold; color: #d35400;">
+        Use Code: <span style="background: #ffeb3b; padding: 5px 10px; border-radius: 5px;">WELCOME25</span>
+      </p>
+      <a href="https://docs.google.com/spreadsheets/d/1BDpDicUDzQsENGwBv_PfO29MqNZ8qBO_E_URASZIVGc/edit?gid=0#gid=0" 
+        style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 18px; margin-top: 10px;">
         🛒 Shop Now & Save 25%
       </a>
       <p style="font-size: 14px; color: #888; margin-top: 15px;">Hurry! This offer won’t last forever.</p>
@@ -45,7 +47,13 @@ export const sendPromotionalEmail = async () => {
       <p style="font-size: 16px; color: #333;"><em>Sip, Relax & Enjoy,</em></p>
       <p style="font-size: 16px; font-weight: bold; color: #333;">The WellTea Team</p>
       <br/>
-      <p style="font-size: 12px; color: #888;">P.S. Need recommendations? Our tea experts are here to help! 💌 <a href="mailto:support@welltea.com" style="color: #888;">Reply to this email anytime.</a></p>
+      <p style="font-size: 12px; color: #888;">
+        P.S. Need recommendations? Our tea experts are here to help! 💌 <a href="mailto:support@welltea.com">Reply to this email anytime.</a>
+      </p>
+      <br/>
+      <p style="font-size: 12px; color: #888;">
+        Don't want these emails? <a href="mailto:unsubscribe@churchlogo.co">Unsubscribe here</a>.
+      </p>
     </div>
   </div>
 `;
@@ -53,9 +61,9 @@ export const sendPromotionalEmail = async () => {
   const mailOptions = {
     from: `"WellTea" <${config.support_mail_address}>`,
     to: 'rumanislam48@gmail.com',
-    subject: '🔥 Exclusive Offer: Your Order Details & More!',
+    subject: 'Fluid compute is now available—up to 85% lower compute costs',
     headers: {
-      'List-Unsubscribe': '<mailto:unsubscribe@yourstore.com>',
+      'List-Unsubscribe': '<mailto:unsubscribe@churchlogo.co>',
     },
     html: emailTemplate,
   };
