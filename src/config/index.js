@@ -86,6 +86,7 @@ const config = {
   mailchimp_api_key: process.env.MAILCHIMP_API_KEY,
   mailchimp_audience_id: process.env.MAILCHIMP_AUDIENCE_ID,
   mailchimp_server_prefix: process.env.MAILCHIMP_SERVER_PREFIX,
+  mailchimp_email: process.env.MAILCHIMP_EMAIL,
 };
 
 export default config;

@@ -7,9 +7,19 @@ import pick from '../../shared/pick.js';
 import sendResponse from '../../shared/sendResponse.js';
 
 const sendBulkEmail = catchAsync(async (req, res) => {
-  const { emails } = req.body;
+  await NewsletterService.sendBulkEmail(req.body);
 
-  const result = await NewsletterService.sendBulkEmail(emails);
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'email has been sent',
+    meta: null,
+    data: null,
+  });
+});
+
+const sendSpecificBulkEmail = catchAsync(async (req, res) => {
+  await NewsletterService.sendSpecificBulkEmail(req.body);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -40,5 +50,6 @@ const getSubscribedUsers = catchAsync(async (req, res) => {
 
 export const NewsletterController = {
   sendBulkEmail,
+  sendSpecificBulkEmail,
   getSubscribedUsers,
 };

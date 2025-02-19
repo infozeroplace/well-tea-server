@@ -6,9 +6,15 @@ import { NewsletterValidation } from '../../validation/newsletter.validation.js'
 const router = express.Router();
 
 router.post(
-  '/newsletter/send-specific-bulk-email',
+  '/newsletter/send-bulk-email',
   validateRequest(NewsletterValidation.sendBulkEmailZodSchema),
   NewsletterController.sendBulkEmail,
+);
+
+router.post(
+  '/newsletter/send-specific-bulk-email',
+  validateRequest(NewsletterValidation.sendSpecificBulkEmailZodSchema),
+  NewsletterController.sendSpecificBulkEmail,
 );
 
 router.get(
