@@ -18,9 +18,9 @@ const globalErrorHandler = (
   /**
    While "development" mode here it will print the error. And while "production" mode it will store the error log and also it'll print the error because in the "errorLogger" function instructions are given to print on console. 
    */
-  config.env === 'development'
-    ? `❌👮‍♀️ globalErrorHandler ~`
-    : console.error(`❌❌ globalErrorHandler ~`, error);
+  // config.env === 'development'
+  //   ? `❌👮‍♀️ globalErrorHandler ~`
+  //   : console.error(`❌❌ globalErrorHandler ~`, error);
   // ..................
 
   /**
