@@ -279,20 +279,19 @@ const login = async payload => {
 
 const adminLogin = async payload => {
   const { email, password } = payload;
+  console.log(payload)
 
   const isUserExist = await User.findOne({ email });
+  console.log(isUserExist)
 
   if (!isUserExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist');
   }
 
-  if (
-    isUserExist.role !== 'moderator' &&
-    isUserExist.role !== 'super_admin' &&
-    isUserExist.role !== 'admin'
-  ) {
+  if (isUserExist.role !== 'super_admin') {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Id or password!');
   }
+  console.log(isUserExist.password)
 
   if (!isUserExist.password || !(await isUserExist.matchPassword(password))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid ID or password!');
