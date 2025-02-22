@@ -268,7 +268,6 @@ const wtc = async (req, res) => {
   ];
 
   const calcItems = payload => {
-    console.log(payload)
     const data = {
       ...payload,
       totalPrice: 0,
@@ -294,7 +293,6 @@ const wtc = async (req, res) => {
         multiDiscountQuantity,
         multiDiscountAmount,
       }) => {
-        console.log(unitPrices, " 296");
         const unitPrice = {
           ...unitPrices.find(i => i._id.toString() === unitPriceId),
         };
@@ -317,7 +315,6 @@ const wtc = async (req, res) => {
 
         const unit = unitPrice.unit;
 
-        console.log(subscriptions, " 319");
         const subscription =
           subscriptions.find(i => i._id.toString() === subscriptionId)?.weeks ||
           '';
