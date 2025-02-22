@@ -268,6 +268,7 @@ const wtc = async (req, res) => {
   ];
 
   const calcItems = payload => {
+    console.log(payload)
     const data = {
       ...payload,
       totalPrice: 0,
