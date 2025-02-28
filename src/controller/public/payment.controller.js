@@ -3,6 +3,20 @@ import { PaymentService } from '../../service/public/payment.services.js';
 import catchAsync from '../../shared/catchAsync.js';
 import sendResponse from '../../shared/sendResponse.js';
 
+const updatePaymentIntent = catchAsync(async (req, res) => {
+  const { ...data } = req.body;
+
+  const result = await PaymentService.updatePaymentIntent(data);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'successful',
+    meta: null,
+    data: result,
+  });
+});
+
 const createPaymentIntent = catchAsync(async (req, res) => {
   const { ...data } = req.body;
   const { auth_refresh } = req.cookies;
@@ -12,7 +26,7 @@ const createPaymentIntent = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Payment intent successful',
+    message: 'successful',
     meta: null,
     data: result,
   });
@@ -27,13 +41,14 @@ const stripeWebhookHandler = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Done',
+    message: 'successful',
     meta: null,
     data: null,
   });
 });
 
 export const PaymentController = {
+  updatePaymentIntent,
   createPaymentIntent,
   stripeWebhookHandler,
 };

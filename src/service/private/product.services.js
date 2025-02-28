@@ -13,16 +13,24 @@ import escapeRegex from '../../utils/escapeRegex.js';
 const { ObjectId } = mongoose.Types;
 
 const editProduct = async payload => {
-  const { id, ...data } = payload;
+  const { id, thumbnails, slideImages, ...data } = payload;
 
   const existingProduct = await Product.findById(id);
 
   if (!existingProduct)
     throw new ApiError(httpStatus.BAD_REQUEST, 'Product not found!');
 
-  const result = await Product.findOneAndUpdate({ _id: id }, data, {
-    new: true,
-  });
+  const result = await Product.findOneAndUpdate(
+    { _id: id },
+    {
+      $set: {
+        ...data, // Update all fields dynamically
+        thumbnails: thumbnails, // Force update for reordered array
+        slideImages: slideImages, // Force update for reordered array
+      },
+    },
+    { new: true },
+  );
 
   return result;
 };

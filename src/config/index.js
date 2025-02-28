@@ -87,6 +87,9 @@ const config = {
   mailchimp_audience_id: process.env.MAILCHIMP_AUDIENCE_ID,
   mailchimp_server_prefix: process.env.MAILCHIMP_SERVER_PREFIX,
   mailchimp_email: process.env.MAILCHIMP_EMAIL,
+
+  royal_mail_client_id: process.env.ROYAL_MAIL_CLIENT_ID,
+  royal_mail_client_secret: process.env.ROYAL_MAIL_CLIENT_SECRET,
 };
 
 export default config;
