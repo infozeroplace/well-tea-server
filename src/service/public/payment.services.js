@@ -8,28 +8,40 @@ import updateTempOrder from '../../utils/updateTempOrder.js';
 
 const endpointSecret = config.stripe_endpoint_secret_key;
 
-const updatePaymentIntent = async payload => {
+const updatePaymentIntent = async (payload, token) => {
+  let verifiedToken = token;
+
+  if (verifiedToken)
+    verifiedToken = jwtHelpers.verifiedToken(
+      verifiedToken,
+      config?.jwt?.refresh_secret,
+    );
+
   const paymentIntent = await stripe.paymentIntents.retrieve(payload.id);
 
   const { total } = await updateTempOrder(
     payload,
     paymentIntent.metadata.orderId,
+    verifiedToken?.userId,
   );
 
   await stripe.paymentIntents.update(payload.id, {
-    amount: Math.round(total * 100),
+    amount: Number(Math.round(total * 100).toFixed(2)),
   });
 };
 
 const createPaymentIntent = async (payload, token) => {
-  const verifiedToken = jwtHelpers.verifiedToken(
-    token,
-    config?.jwt?.refresh_secret,
-  );
+  let verifiedToken = token;
+
+  if (verifiedToken)
+    verifiedToken = jwtHelpers.verifiedToken(
+      verifiedToken,
+      config?.jwt?.refresh_secret,
+    );
 
   const { email, firstName, lastName, total, orderId } = await createTempOrder(
     payload,
-    verifiedToken.userId,
+    verifiedToken?.userId,
   );
 
   const customer = await stripe.customers.create({
@@ -39,7 +51,7 @@ const createPaymentIntent = async (payload, token) => {
 
   const paymentIntent = await stripe.paymentIntents.create({
     currency: 'gbp',
-    amount: Math.round(total * 100),
+    amount: Number(Math.round(total * 100).toFixed(2)),
     customer: customer.id,
     automatic_payment_methods: {
       enabled: true,
@@ -47,7 +59,6 @@ const createPaymentIntent = async (payload, token) => {
     metadata: {
       orderId,
     },
-    receipt_email: email,
   });
 
   return {

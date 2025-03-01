@@ -751,9 +751,6 @@ const wt = async (req, res) => {
   }
 
   if (userId) {
-    // ✅ User is logged in – find their cart
-    let userCart = await Cart.findOne({ userId });
-
     // ✅ User is logged in – find their wishlist
     let userWishlist = await Wishlist.findOne({ userId });
 
@@ -764,11 +761,15 @@ const wt = async (req, res) => {
       const guestWishlist = await Wishlist.findOne({ guestId });
 
       if (guestCart) {
-        // Merge guest cart into user cart
+        // Find the user's cart
+        let userCart = await Cart.findOne({ userId });
+
         if (!userCart) {
-          // No user cart? Convert guest cart to user cart
-          userCart = new Cart({ userId, items: guestCart.items });
+          // No user cart? Convert guest cart to user cart by updating guestCart with userId
+          guestCart.userId = userId;
+          await guestCart.save();
         } else {
+          // Merge guest cart items into user cart
           guestCart.items.forEach(guestItem => {
             const existingItem = userCart.items.find(
               item =>
@@ -783,13 +784,18 @@ const wt = async (req, res) => {
             if (existingItem) {
               existingItem.quantity += guestItem.quantity; // Merge quantities
             } else {
-              userCart.items.push(guestItem);
+              userCart.items.push(guestItem); // Add guest cart items to user cart
             }
           });
-        }
 
-        await userCart.save();
-        await Cart.deleteOne({ guestId }); // ✅ Delete guest cart after merging
+          // Save updated user cart
+          await userCart.save();
+
+          // ✅ Instead of deleting guest cart, update it to belong to the user
+          guestCart.userId = userId;
+          guestCart.items = userCart.items; // Sync guest cart with user cart items
+          await guestCart.save();
+        }
       }
 
       if (guestWishlist) {

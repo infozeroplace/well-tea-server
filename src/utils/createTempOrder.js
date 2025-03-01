@@ -263,12 +263,12 @@ const createTempOrder = async (payload, userId) => {
   const items = cartData.items;
   const subtotal = cartData.totalPrice;
   const shipping = method.cost;
-  const total = subtotal + shipping;
+  const total = Number((subtotal + shipping).toFixed(2));
 
   const orderId = await generateOrderId();
 
   const orderData = {
-    email,
+    email: email || "",
     orderId,
     user: user ? user._id : user,
     cart: new ObjectId(cartId),
@@ -285,9 +285,9 @@ const createTempOrder = async (payload, userId) => {
   await TempOrder.create(orderData);
 
   return {
-    email,
-    firstName: shippingAddress.firstName,
-    lastName: shippingAddress.lastName,
+    email: email || "",
+    firstName: shippingAddress?.firstName || '',
+    lastName: shippingAddress?.lastName || '',
     total,
     orderId,
   };

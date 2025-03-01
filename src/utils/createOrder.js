@@ -39,7 +39,7 @@ const createOrder = async (orderId, paymentIntentId) => {
     items: existingOrder.items,
   };
 
-  const createdOrder = await Order.create(newOrder);
+  await Order.create(newOrder);
 
   await Cart.findOneAndUpdate(
     { _id: existingOrder.cart },

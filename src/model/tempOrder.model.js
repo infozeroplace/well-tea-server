@@ -13,7 +13,6 @@ const TempOrderSchema = Schema(
         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
         'invalid email format',
       ],
-      required: [true, 'email is required'],
     },
     orderId: {
       type: String,
@@ -39,11 +38,9 @@ const TempOrderSchema = Schema(
     },
     shippingAddress: {
       type: address,
-      required: [true, 'shipping address is required'],
     },
     billingAddress: {
       type: address,
-      required: [true, 'billing address is required'],
     },
     customerNotes: {
       type: String,

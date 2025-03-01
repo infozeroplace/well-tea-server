@@ -5,8 +5,9 @@ import sendResponse from '../../shared/sendResponse.js';
 
 const updatePaymentIntent = catchAsync(async (req, res) => {
   const { ...data } = req.body;
+  const { auth_refresh } = req.cookies;
 
-  const result = await PaymentService.updatePaymentIntent(data);
+  const result = await PaymentService.updatePaymentIntent(data, auth_refresh);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,

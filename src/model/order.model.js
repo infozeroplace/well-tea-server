@@ -42,7 +42,6 @@ const OrderSchema = Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: [true, 'user id is required'],
     },
     cart: {
       type: Schema.Types.ObjectId,

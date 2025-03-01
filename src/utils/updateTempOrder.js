@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Cart from '../model/cart.model.js';
 import ShippingMethod from '../model/shippingMethod.js';
 import TempOrder from '../model/tempOrder.model.js';
+import User from '../model/user.model.js';
 
 const { ObjectId } = mongoose.Types;
 
@@ -228,11 +229,16 @@ const calcItems = payload => {
   return data;
 };
 
-const updateTempOrder = async (payload, orderId) => {
+const updateTempOrder = async (payload, orderId, userId) => {
   const { email, billingAddress, shippingAddress, shippingMethodId } = payload;
 
+  let user = null;
+  if (userId) {
+    user = await User.findOne({ userId });
+  }
+  
   const tempOrder = await TempOrder.findOne({ orderId });
-
+  
   const pipelines = [
     {
       $match: {
@@ -243,7 +249,7 @@ const updateTempOrder = async (payload, orderId) => {
   ];
 
   const { docs } = await Cart.aggregatePaginate(pipelines);
-
+  
   const cartData = calcItems(docs[0]);
 
   const shippingMethod = await ShippingMethod.findOne({
@@ -256,12 +262,14 @@ const updateTempOrder = async (payload, orderId) => {
 
   const subtotal = cartData.totalPrice;
   const shipping = method.cost;
-  const total = subtotal + shipping;
+  const total = Number((subtotal + shipping).toFixed(2));
 
-  await TempOrder.findOneAndUpdate(
+ const result = await TempOrder.findOneAndUpdate(
     { orderId },
     {
       $set: {
+        user: user ? user._id : user,
+        customerType: user ? 'user' : 'guest',
         email,
         billingAddress,
         shippingAddress,
@@ -272,7 +280,6 @@ const updateTempOrder = async (payload, orderId) => {
       },
     },
   );
-
   return {
     total,
   };
