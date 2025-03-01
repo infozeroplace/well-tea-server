@@ -12,9 +12,13 @@ import { ShippingRoutes } from './shipping.routes.js';
 import { SystemRoutes } from './system.routes.js';
 import { UploadRoutes } from './upload.routes.js';
 import { WishlistRoutes } from './wishlist.routes.js';
+import { CouponRoutes } from './coupon.routes.js';
+import { OrderRoutes } from './order.routes.js';
 
 const router = express.Router();
 
+router.use(OrderRoutes);
+router.use(CouponRoutes);
 router.use(ShippingRoutes);
 router.use(NewsletterRoutes);
 router.use(OtpRoutes);

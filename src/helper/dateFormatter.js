@@ -27,7 +27,7 @@ const getBstTime = () => {
   return { time, date: new Date(date).toDateString() };
 };
 
-const getDates = () => {
+export const getDates = () => {
   const date = new Date();
   const UTC = date.toISOString();
   const dateString = date.toDateString(); // Local date in simple format

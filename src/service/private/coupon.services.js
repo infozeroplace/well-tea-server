@@ -1,0 +1,25 @@
+import httpStatus from 'http-status';
+import ApiError from '../../error/ApiError.js';
+import { getDates } from '../../helper/dateFormatter.js';
+import Coupon from '../../model/coupon.model.js';
+
+const addCoupon = async payload => {
+  const { coupon, eligibleUsers, discount, expiresAt } = payload;
+  const isExist = await Coupon.findOne({ coupon });
+
+  if (isExist)
+    throw new ApiError(httpStatus.BAD_REQUEST, 'coupon already exists!');
+
+  const result = await Coupon.create({
+    coupon,
+    eligibleUsers,
+    discount,
+    expiresAt: getDates(expiresAt).UTC,
+  });
+
+  return result;
+};
+
+export const CouponService = {
+  addCoupon,
+};

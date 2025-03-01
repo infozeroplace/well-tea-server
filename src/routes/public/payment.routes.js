@@ -3,6 +3,8 @@ import { PaymentController } from '../../controller/public/payment.controller.js
 
 const router = express.Router();
 
+// router.post('/payment/apply-coupon', PaymentController.updatePaymentIntent);
+
 router.post(
   '/payment/update-payment-intent',
   PaymentController.updatePaymentIntent,

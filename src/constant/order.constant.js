@@ -1,6 +1,7 @@
 export const orderSearchableFields = [
   'email',
   'orderId',
+  'transactionId',
   'user.userId',
   'user.email',
   'user.firstName',
