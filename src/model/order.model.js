@@ -11,7 +11,6 @@ const OrderSchema = Schema(
   {
     email: {
       type: String,
-      unique: true,
       trim: true,
       index: true,
       match: [
@@ -78,6 +77,11 @@ const OrderSchema = Schema(
       required: [true, 'payment status is required'],
     },
     customerNotes: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    coupon: {
       type: String,
       trim: true,
       default: '',

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Cart from '../model/cart.model.js';
+import Coupon from '../model/coupon.model.js';
 import ShippingMethod from '../model/shippingMethod.js';
 import TempOrder from '../model/tempOrder.model.js';
 import User from '../model/user.model.js';
@@ -230,15 +231,23 @@ const calcItems = payload => {
 };
 
 const updateTempOrder = async (payload, orderId, userId) => {
-  const { email, billingAddress, shippingAddress, shippingMethodId } = payload;
+  const {
+    email,
+    billingAddress,
+    shippingAddress,
+    shippingMethodId,
+    coupon = '',
+  } = payload;
 
   let user = null;
   if (userId) {
     user = await User.findOne({ userId });
   }
-  
+
   const tempOrder = await TempOrder.findOne({ orderId });
-  
+
+  const existingCoupon = await Coupon.findOne({ coupon });
+
   const pipelines = [
     {
       $match: {
@@ -249,7 +258,7 @@ const updateTempOrder = async (payload, orderId, userId) => {
   ];
 
   const { docs } = await Cart.aggregatePaginate(pipelines);
-  
+
   const cartData = calcItems(docs[0]);
 
   const shippingMethod = await ShippingMethod.findOne({
@@ -260,17 +269,19 @@ const updateTempOrder = async (payload, orderId, userId) => {
     m => m._id.toString() === shippingMethodId.toString(),
   );
 
-  const subtotal = cartData.totalPrice;
-  const shipping = method.cost;
-  const total = Number((subtotal + shipping).toFixed(2));
+  const subtotal = cartData?.totalPrice || 0;
+  const shipping = method?.cost || 0;
+  const discount = existingCoupon?.discount || 0;
+  const total = Number((subtotal + shipping - discount).toFixed(2));
 
- const result = await TempOrder.findOneAndUpdate(
+  const result = await TempOrder.findOneAndUpdate(
     { orderId },
     {
       $set: {
         user: user ? user._id : user,
         customerType: user ? 'user' : 'guest',
         email,
+        coupon,
         billingAddress,
         shippingAddress,
         shippingMethod: shippingMethodId,

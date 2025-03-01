@@ -24,21 +24,21 @@ const auth =
 
       const user = await User.findOne({ userId: verifiedUser.userId });
 
-      if (user && user.role === "user" && user.blockStatus) {
+      if (user && user?.role === "user" && user?.blockStatus) {
         throw new ApiError(httpStatus.FORBIDDEN, "You've been blocked!");
       }
 
       req.user = {
-        role: user.role,
-        userId: user.userId,
-        email: user.email,
-        blockStatus: user.blockStatus,
-        iat: verifiedUser.iat,
-        exp: verifiedUser.exp,
+        role: user?.role,
+        userId: user?.userId,
+        email: user?.email,
+        blockStatus: user?.blockStatus,
+        iat: verifiedUser?.iat,
+        exp: verifiedUser?.exp,
       };
 
       // guard of role
-      if (requiredRoles.length && !requiredRoles.includes(user.role)) {
+      if (requiredRoles?.length && !requiredRoles.includes(user?.role)) {
         throw new ApiError(httpStatus.UNAUTHORIZED, "UNAUTHORIZED ACCESS!");
       }
 

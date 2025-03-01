@@ -1,6 +1,5 @@
 import httpStatus from 'http-status';
 import ApiError from '../../error/ApiError.js';
-import { getDates } from '../../helper/dateFormatter.js';
 import Coupon from '../../model/coupon.model.js';
 
 const addCoupon = async payload => {
@@ -14,7 +13,7 @@ const addCoupon = async payload => {
     coupon,
     eligibleUsers,
     discount,
-    expiresAt: getDates(expiresAt).UTC,
+    expiresAt: new Date(expiresAt),
   });
 
   return result;

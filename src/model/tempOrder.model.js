@@ -47,6 +47,11 @@ const TempOrderSchema = Schema(
       trim: true,
       default: '',
     },
+    coupon: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     customerType: {
       type: String,
       trim: true,
