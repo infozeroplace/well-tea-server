@@ -281,7 +281,7 @@ const updateTempOrder = async (payload, orderId, userId) => {
         user: user ? user._id : user,
         customerType: user ? 'user' : 'guest',
         email,
-        coupon,
+        coupon: existingCoupon?.coupon || "",
         billingAddress,
         shippingAddress,
         shippingMethod: shippingMethodId,

@@ -7,6 +7,24 @@ import { CouponValidation } from '../../validation/coupon.validation.js';
 
 const router = express.Router();
 
+router.delete(
+  '/coupon/delete-coupons',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  CouponController.deleteCoupons,
+);
+
+router.delete(
+  '/coupon/delete-coupon',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  CouponController.deleteCoupon,
+);
+
+router.get(
+  '/coupon/list',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  CouponController.getList,
+);
+
 router.post(
   '/coupon/add-coupon',
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
