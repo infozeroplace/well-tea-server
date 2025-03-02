@@ -3,6 +3,7 @@ import { couponSearchableFields } from '../../constant/coupon.constant.js';
 import ApiError from '../../error/ApiError.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
 import Coupon from '../../model/coupon.model.js';
+import User from '../../model/user.model.js';
 
 const deleteCoupons = async ids => {
   const result = await Coupon.deleteMany({
@@ -112,15 +113,23 @@ const getList = async (filters, paginationOptions) => {
 };
 
 const addCoupon = async payload => {
-  const { coupon, eligibleUsers, discount, expiresAt } = payload;
+  const { coupon, eligibleUsers, discount, expiresAt, isAll } = payload;
+
   const isExist = await Coupon.findOne({ coupon });
 
   if (isExist)
     throw new ApiError(httpStatus.BAD_REQUEST, 'coupon already exists!');
 
+  let updatedUsers = eligibleUsers;
+
+  if (isAll) {
+    const users = await User.find({});
+    updatedUsers = users.map(u => u._id);
+  }
+
   const result = await Coupon.create({
     coupon,
-    eligibleUsers,
+    eligibleUsers: updatedUsers,
     discount,
     expiresAt: new Date(expiresAt),
   });

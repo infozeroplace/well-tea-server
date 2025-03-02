@@ -6,9 +6,11 @@ import { PaymentRoutes } from './payment.routes.js';
 import { ProductRoutes } from './product.routes.js';
 import { ShippingRoutes } from './shipping.routes.js';
 import { SystemRoutes } from './system.routes.js';
+import { BlogRoutes } from './blog.routes.js';
 
 const router = express.Router();
 
+router.use(BlogRoutes);
 router.use(CommonRoutes);
 router.use(PaymentRoutes);
 router.use(ShippingRoutes);

@@ -4,6 +4,12 @@ import ApiError from '../../error/ApiError.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
 import User from '../../model/user.model.js';
 
+const getCustomerFullList = async () => {
+  const result = await User.find().select('-password');
+
+  return result;
+};
+
 const updateStatus = async id => {
   const existingUser = await User.findOne({ _id: id });
 
@@ -87,20 +93,6 @@ const getCustomerList = async (filters, paginationOptions) => {
     {
       $match: whereConditions,
     },
-    // {
-    //   $lookup: {
-    //     from: 'orders',
-    //     localField: '_id',
-    //     foreignField: 'user',
-    //     as: 'orders',
-    //   },
-    // },
-    // {
-    //   $project: {
-    //     password: 0,
-    //     'orders.password': 0,
-    //   },
-    // },
     {
       $sort: sortConditions,
     },
@@ -125,6 +117,7 @@ const getCustomerList = async (filters, paginationOptions) => {
 };
 
 export const CustomerService = {
+  getCustomerFullList,
   updateStatus,
   getCustomerList,
 };

@@ -6,6 +6,18 @@ import catchAsync from '../../shared/catchAsync.js';
 import pick from '../../shared/pick.js';
 import sendResponse from '../../shared/sendResponse.js';
 
+const getCustomerFullList = catchAsync(async (req, res) => {
+  const result = await CustomerService.getCustomerFullList();
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'retrieved successfully',
+    meta: null,
+    data: result,
+  });
+});
+
 const getCustomerList = catchAsync(async (req, res) => {
   const filters = pick(req.query, customerFilterableField);
   const paginationOptions = pick(req.query, paginationFields);
@@ -18,7 +30,7 @@ const getCustomerList = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Customer list retrieved successfully',
+    message: 'retrieved successfully',
     meta,
     data,
   });
@@ -38,6 +50,7 @@ const updateStatus = catchAsync(async (req, res) => {
 });
 
 export const CustomerController = {
+  getCustomerFullList,
   updateStatus,
   getCustomerList,
 };

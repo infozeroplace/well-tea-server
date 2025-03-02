@@ -6,6 +6,12 @@ import auth from '../../middleware/auth.js';
 const router = express.Router();
 
 router.get(
+  '/customer/full-list',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  CustomerController.getCustomerFullList,
+);
+
+router.get(
   '/customer/list',
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
   CustomerController.getCustomerList,
