@@ -11,17 +11,17 @@ const router = express.Router();
 //   BlogController.editBlog
 // );
 
-// router.delete(
-//   "/blog/delete-blogs",
-//   auth(ENUM_USER_ROLE.SUPER_ADMIN),
-//   BlogController.deleteBlogs
-// );
+router.delete(
+  '/blog/delete-blogs',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  BlogController.deleteBlogs,
+);
 
-// router.get(
-//   "/blog/blog-list",
-//   auth(ENUM_USER_ROLE.SUPER_ADMIN),
-//   BlogController.blogList
-// );
+router.get(
+  '/blog/blog-list',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  BlogController.blogList,
+);
 
 router.post(
   '/blog/add',
@@ -29,16 +29,12 @@ router.post(
   BlogController.addBlog,
 );
 
-// router.delete(
-//   "/blog/delete-blog/:id",
-//   auth(ENUM_USER_ROLE.SUPER_ADMIN),
-//   BlogController.deleteBlog
-// );
+router.delete(
+  '/blog/delete-blog/:id',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  BlogController.deleteBlog,
+);
 
-// router.get(
-//   "/blog/:id",
-//   auth(ENUM_USER_ROLE.SUPER_ADMIN),
-//   BlogController.blog
-// );
+router.get('/blog/:id', auth(ENUM_USER_ROLE.SUPER_ADMIN), BlogController.blog);
 
 export const BlogRoutes = router;

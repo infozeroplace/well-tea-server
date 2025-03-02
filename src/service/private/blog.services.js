@@ -1,5 +1,8 @@
 import httpStatus from 'http-status';
+import { blogSearchableFields } from '../../constant/blog.constant.js';
+import { mediaUnset } from '../../constant/product.constant.js';
 import ApiError from '../../error/ApiError.js';
+import { PaginationHelpers } from '../../helper/paginationHelper.js';
 import Blog from '../../model/blog.model.js';
 
 // const editBlog = async payload => {
@@ -20,106 +23,109 @@ import Blog from '../../model/blog.model.js';
 //   return result;
 // };
 
-// const blog = async id => {
-//   const result = await Blog.findOne({ _id: id });
+const blog = async id => {
+  const result = await Blog.findOne({ _id: id }).populate('thumbnail');
 
-//   if (!result) throw new ApiError(httpStatus.BAD_REQUEST, 'Blog not found!');
+  if (!result) throw new ApiError(httpStatus.BAD_REQUEST, 'Blog not found!');
 
-//   return result;
-// };
+  return result;
+};
 
-// const deleteBlogs = async ids => {
-//   const exists = await Blog.find({ _id: { $in: ids } });
+const deleteBlogs = async ids => {
+  const exists = await Blog.find({ _id: { $in: ids } });
 
-//   if (!exists.length) throw new ApiError(httpStatus.BAD_REQUEST, 'Not found!');
+  if (!exists.length) throw new ApiError(httpStatus.BAD_REQUEST, 'Not found!');
 
-//   const result = await Blog.deleteMany({
-//     _id: { $in: ids },
-//   });
+  const result = await Blog.deleteMany({
+    _id: { $in: ids },
+  });
 
-//   if (!result)
-//     throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+  if (!result)
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
 
-//   for (const elem of exists) {
-//     await removeImage(elem.thumbnail);
-//   }
+  return result;
+};
 
-//   return result;
-// };
+const deleteBlog = async id => {
+  const exist = await Blog.findById(id);
 
-// const deleteBlog = async id => {
-//   const exist = await Blog.findById(id);
+  if (!exist) throw new ApiError(httpStatus.BAD_REQUEST, 'Not found!');
 
-//   if (!exist) throw new ApiError(httpStatus.BAD_REQUEST, 'Not found!');
+  const result = await Blog.deleteOne({ _id: id });
 
-//   const result = await Blog.deleteOne({ _id: id });
+  if (!result)
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
 
-//   if (!result)
-//     throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+  return result;
+};
 
-//   await removeImage(exist.thumbnail);
+const blogList = async (filters, paginationOptions) => {
+  const { searchTerm, ...filtersData } = filters;
 
-//   return result;
-// };
+  const andCondition = [];
 
-// const blogList = async (filters, paginationOptions) => {
-//   const { searchTerm, ...filtersData } = filters;
+  if (searchTerm) {
+    andCondition.push({
+      $or: blogSearchableFields.map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+      })),
+    });
+  }
 
-//   const andCondition = [];
+  if (Object.keys(filtersData).length) {
+    andCondition.push({
+      $and: Object.entries(filtersData).map(([field, value]) => ({
+        [field]: value,
+      })),
+    });
+  }
 
-//   if (searchTerm) {
-//     andCondition.push({
-//       $or: blogSearchableFields.map(field => ({
-//         [field]: {
-//           $regex: searchTerm,
-//           $options: 'i',
-//         },
-//       })),
-//     });
-//   }
+  const whereConditions = andCondition.length > 0 ? { $and: andCondition } : {};
 
-//   if (Object.keys(filtersData).length) {
-//     andCondition.push({
-//       $and: Object.entries(filtersData).map(([field, value]) => ({
-//         [field]: value,
-//       })),
-//     });
-//   }
+  const { page, limit, sortBy, sortOrder } =
+    PaginationHelpers.calculationPagination(paginationOptions);
 
-//   const whereConditions = andCondition.length > 0 ? { $and: andCondition } : {};
+  const sortConditions = {};
 
-//   const { page, limit, sortBy, sortOrder } =
-//     PaginationHelpers.calculationPagination(paginationOptions);
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
 
-//   const sortConditions = {};
+  const pipelines = [
+    {
+      $lookup: {
+        from: 'media',
+        localField: 'thumbnail',
+        foreignField: '_id',
+        as: 'thumbnail',
+        pipeline: [mediaUnset],
+      },
+    },
+    {
+      $match: whereConditions,
+    },
+  ];
 
-//   if (sortBy && sortOrder) {
-//     sortConditions[sortBy] = sortOrder;
-//   }
+  const options = {
+    page: page,
+    limit: limit,
+    sort: sortConditions,
+  };
 
-//   const pipelines = [
-//     {
-//       $match: whereConditions,
-//     },
-//   ];
+  const { docs, totalDocs } = await Blog.aggregatePaginate(pipelines, options);
 
-//   const options = {
-//     page: page,
-//     limit: limit,
-//     sort: sortConditions,
-//   };
-
-//   const { docs, totalDocs } = await Blog.aggregatePaginate(pipelines, options);
-
-//   return {
-//     meta: {
-//       page,
-//       limit,
-//       totalDocs,
-//     },
-//     data: docs,
-//   };
-// };
+  return {
+    meta: {
+      page,
+      limit,
+      totalDocs,
+    },
+    data: docs,
+  };
+};
 
 const addBlog = async payload => {
   const { ...data } = payload;
@@ -134,9 +140,9 @@ const addBlog = async payload => {
 
 export const BlogService = {
   // editBlog,
-  // blog,
-  // deleteBlogs,
-  // deleteBlog,
-  // blogList,
+  blog,
+  deleteBlogs,
+  deleteBlog,
+  blogList,
   addBlog,
 };
