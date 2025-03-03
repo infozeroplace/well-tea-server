@@ -327,14 +327,14 @@ const getProduct = async slug => {
         ],
       },
     },
-    {
-      $lookup: {
-        from: 'brewinstructions',
-        localField: 'brewInstruction',
-        foreignField: '_id',
-        as: 'brewInstruction',
-      },
-    },
+    // {
+    //   $lookup: {
+    //     from: 'brewinstructions',
+    //     localField: 'brewInstruction',
+    //     foreignField: '_id',
+    //     as: 'brewInstruction',
+    //   },
+    // },
     {
       $group: {
         _id: '$_id',

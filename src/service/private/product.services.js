@@ -115,14 +115,14 @@ const getProduct = async id => {
         as: 'addOns',
       },
     },
-    {
-      $lookup: {
-        from: 'brewinstructions',
-        localField: 'brewInstruction',
-        foreignField: '_id',
-        as: 'brewInstruction',
-      },
-    },
+    // {
+    //   $lookup: {
+    //     from: 'brewinstructions',
+    //     localField: 'brewInstruction',
+    //     foreignField: '_id',
+    //     as: 'brewInstruction',
+    //   },
+    // },
     {
       $addFields: {
         availableAs: {
@@ -147,16 +147,16 @@ const getProduct = async id => {
             },
           },
         },
-        brewInstruction: {
-          $map: {
-            input: '$brewInstruction',
-            as: 'brewinstructions',
-            in: {
-              title: '$$brewinstructions.title',
-              _id: '$$brewinstructions._id',
-            },
-          },
-        },
+        // brewInstruction: {
+        //   $map: {
+        //     input: '$brewInstruction',
+        //     as: 'brewinstructions',
+        //     in: {
+        //       title: '$$brewinstructions.title',
+        //       _id: '$$brewinstructions._id',
+        //     },
+        //   },
+        // },
       },
     },
     {

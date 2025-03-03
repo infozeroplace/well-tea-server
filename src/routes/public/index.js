@@ -7,9 +7,11 @@ import { ProductRoutes } from './product.routes.js';
 import { ShippingRoutes } from './shipping.routes.js';
 import { SystemRoutes } from './system.routes.js';
 import { BlogRoutes } from './blog.routes.js';
+import { TestRoutes } from './test.routes.js';
 
 const router = express.Router();
 
+router.use(TestRoutes);
 router.use(BlogRoutes);
 router.use(CommonRoutes);
 router.use(PaymentRoutes);

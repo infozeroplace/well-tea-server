@@ -221,14 +221,18 @@ const ProductSchema = Schema(
       ],
       default: [],
     },
+    // brewInstruction: {
+    //   type: [
+    //     {
+    //       type: Schema.Types.ObjectId,
+    //       ref: 'BrewInstruction',
+    //     },
+    //   ],
+    //   default: [],
+    // },
     brewInstruction: {
-      type: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'BrewInstruction',
-        },
-      ],
-      default: [],
+      type: String,
+      trim: true,
     },
     unitPrices: {
       type: [{ unit: String, price: Number }],
