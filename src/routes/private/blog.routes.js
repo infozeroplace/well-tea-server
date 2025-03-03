@@ -5,11 +5,11 @@ import auth from '../../middleware/auth.js';
 
 const router = express.Router();
 
-// router.put(
-//   "/blog/edit",
-//   auth(ENUM_USER_ROLE.SUPER_ADMIN),
-//   BlogController.editBlog
-// );
+router.put(
+  '/blog/edit',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  BlogController.editBlog,
+);
 
 router.delete(
   '/blog/delete-blogs',

@@ -5,23 +5,21 @@ import ApiError from '../../error/ApiError.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
 import Blog from '../../model/blog.model.js';
 
-// const editBlog = async payload => {
-//   const { id, ...data } = payload;
+const editBlog = async payload => {
+  const { id, ...data } = payload;
 
-//   const exist = await Blog.findById(id);
+  const exist = await Blog.findById(id);
 
-//   if (!exist) throw new ApiError(httpStatus.BAD_REQUEST, 'Not found!');
+  if (!exist) throw new ApiError(httpStatus.BAD_REQUEST, 'Not found!');
 
-//   const result = await Blog.findOneAndUpdate(
-//     { _id: id },
-//     { $set: { ...data } },
-//     { new: true, upsert: true },
-//   );
+  const result = await Blog.findOneAndUpdate(
+    { _id: id },
+    { $set: { ...data } },
+    { new: true, upsert: true },
+  );
 
-//   if (data.thumbnail !== exist.thumbnail) await removeImage(exist.thumbnail);
-
-//   return result;
-// };
+  return result;
+};
 
 const blog = async id => {
   const result = await Blog.findOne({ _id: id }).populate('thumbnail');
@@ -104,6 +102,7 @@ const blogList = async (filters, paginationOptions) => {
         pipeline: [mediaUnset],
       },
     },
+    { $unwind: { path: '$thumbnail' } },
     {
       $match: whereConditions,
     },
@@ -139,7 +138,7 @@ const addBlog = async payload => {
 };
 
 export const BlogService = {
-  // editBlog,
+  editBlog,
   blog,
   deleteBlogs,
   deleteBlog,

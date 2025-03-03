@@ -6,17 +6,17 @@ import catchAsync from '../../shared/catchAsync.js';
 import pick from '../../shared/pick.js';
 import sendResponse from '../../shared/sendResponse.js';
 
-// const editBlog = catchAsync(async (req, res) => {
-//   const result = await BlogService.editBlog(req.body);
+const editBlog = catchAsync(async (req, res) => {
+  const result = await BlogService.editBlog(req.body);
 
-//   return sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Blog edited successfully',
-//     meta: null,
-//     data: null,
-//   });
-// });
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'blog edited successfully',
+    meta: null,
+    data: null,
+  });
+});
 
 const blog = catchAsync(async (req, res) => {
   const { id } = req.params;
@@ -84,7 +84,7 @@ const addBlog = catchAsync(async (req, res) => {
 });
 
 export const BlogController = {
-  // editBlog,
+  editBlog,
   blog,
   deleteBlogs,
   deleteBlog,
