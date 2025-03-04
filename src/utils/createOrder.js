@@ -13,8 +13,7 @@ import {
 import generateInvoiceId from './generateInvoiceId.js';
 
 const createOrder = async (orderId, paymentIntentId) => {
-  try {
-    const existingOrder = await TempOrder.findOne({ orderId }).lean();
+  const existingOrder = await TempOrder.findOne({ orderId }).lean();
 
   const name = `${existingOrder.shippingAddress.firstName} ${
     existingOrder.shippingAddress.lastName
@@ -78,11 +77,8 @@ const createOrder = async (orderId, paymentIntentId) => {
 
   const superAdmin = await User.findOne({ role: config.super_admin_role });
 
-  await sendOrderDetailsToAdmin(newInvoice, superAdmin.email);
-  await sendOrderInvoiceToCustomer(newInvoice);
-  } catch (error) {
-    console.log("error ", error)
-  }
+  await sendOrderDetailsToAdmin(createdInvoice, superAdmin.email);
+  await sendOrderInvoiceToCustomer(createdInvoice);
 };
 
 export default createOrder;
