@@ -13,7 +13,8 @@ import {
 import generateInvoiceId from './generateInvoiceId.js';
 
 const createOrder = async (orderId, paymentIntentId) => {
-  const existingOrder = await TempOrder.findOne({ orderId }).lean();
+  try {
+    const existingOrder = await TempOrder.findOne({ orderId }).lean();
 
   const name = `${existingOrder.shippingAddress.firstName} ${
     existingOrder.shippingAddress.lastName
@@ -49,12 +50,8 @@ const createOrder = async (orderId, paymentIntentId) => {
     items: existingOrder.items,
   };
 
- try {
   await Order.create(newOrder);
   console.log('newOrder 53', newOrder)
- } catch (error) {
-  console.log('error 56', error)
- }
 
   await Cart.findOneAndUpdate(
     { _id: existingOrder.cart },
@@ -83,6 +80,9 @@ const createOrder = async (orderId, paymentIntentId) => {
 
   await sendOrderDetailsToAdmin(newInvoice, superAdmin.email);
   await sendOrderInvoiceToCustomer(newInvoice);
+  } catch (error) {
+    console.log("error ", error)
+  }
 };
 
 export default createOrder;
