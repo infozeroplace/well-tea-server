@@ -19,8 +19,10 @@ const createOrder = async (orderId, paymentIntentId) => {
     existingOrder.shippingAddress.lastName
   }`;
 
-  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  console.log('name 22', name)
 
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  console.log('name 25', paymentIntent)
   const invoiceId = await generateInvoiceId();
 
   const newInvoice = {
@@ -37,6 +39,7 @@ const createOrder = async (orderId, paymentIntentId) => {
   };
 
   const createdInvoice = await Invoice.create(newInvoice);
+  console.log('createdInvoice 42', createdInvoice)
 
   const newOrder = {
     ...existingOrder,
@@ -47,12 +50,13 @@ const createOrder = async (orderId, paymentIntentId) => {
   };
 
   await Order.create(newOrder);
+  console.log('newOrder 53', newOrder)
 
   await Cart.findOneAndUpdate(
     { _id: existingOrder.cart },
     { $set: { items: [] } },
   );
-
+  console.log('Cart 59')
   if (existingOrder.coupon && existingOrder.user) {
     const user = await User.findById(existingOrder.user);
 
@@ -61,6 +65,7 @@ const createOrder = async (orderId, paymentIntentId) => {
       { $push: { usedUsers: user._id } },
     );
   }
+  console.log('Coupon 68')
 
   if (existingOrder.user) {
     await User.findByIdAndUpdate(existingOrder.user, {
