@@ -75,7 +75,6 @@ const handleWebhookEvent = async (data, sig) => {
   const { orderId } = metadata;
 
   if (event.type === 'payment_intent.succeeded') {
-    console.log('payment_intent.succeeded 78')
     await createOrder(orderId, id);
     return;
   } else if (event.type === 'payment_intent.payment_failed') {
