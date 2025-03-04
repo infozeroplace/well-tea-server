@@ -4,15 +4,12 @@ import catchAsync from '../../shared/catchAsync.js';
 import sendResponse from '../../shared/sendResponse.js';
 
 const test = catchAsync(async (req, res) => {
-  const { ...data } = req.body;
-  const { auth_refresh } = req.cookies;
-
-  const result = await TestService.test(data, auth_refresh);
+  const result = await TestService.test(req.body);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'successful',
+    message: 'successfully',
     meta: null,
     data: result,
   });

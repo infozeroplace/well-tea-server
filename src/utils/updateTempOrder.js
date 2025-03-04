@@ -178,9 +178,9 @@ const calcItems = payload => {
       const price =
         purchaseType === 'one_time'
           ? isSale
-            ? unitPrice.salePrice
-            : unitPrice.price
-          : unitPrice.subscriptionPrice;
+            ? Number(unitPrice.salePrice.toFixed(2))
+            : Number(unitPrice.price.toFixed(2))
+          : Number(unitPrice.subscriptionPrice.toFixed(2));
 
       const tPrice = price * quantity;
       const subtractPrice = isMultiDiscount
@@ -189,7 +189,7 @@ const calcItems = payload => {
           : 0
         : 0;
 
-      const totalPrice = tPrice - subtractPrice;
+      const totalPrice = Number((tPrice - subtractPrice).toFixed(2));
 
       const unit = unitPrice.unit;
 
@@ -233,10 +233,10 @@ const calcItems = payload => {
 const updateTempOrder = async (payload, orderId, userId) => {
   const {
     email,
+    coupon = '',
     billingAddress,
     shippingAddress,
     shippingMethodId,
-    coupon = '',
   } = payload;
 
   let user = null;
@@ -269,28 +269,33 @@ const updateTempOrder = async (payload, orderId, userId) => {
     m => m._id.toString() === shippingMethodId.toString(),
   );
 
-  const subtotal = cartData?.totalPrice || 0;
-  const shipping = method?.cost || 0;
-  const discount = existingCoupon?.discount || 0;
+  const items = cartData.items;
+  const subtotal = Number(cartData?.totalPrice.toFixed(2)) || 0;
+  const shipping = Number(method?.cost.toFixed(2)) || 0;
+  const discount = Number(existingCoupon?.discount.toFixed(2)) || 0;
   const total = Number((subtotal + shipping - discount).toFixed(2));
 
-  const result = await TempOrder.findOneAndUpdate(
+  const updatedOrder = {
+    user: user ? user._id : user,
+    customerType: user ? 'user' : 'guest',
+    email,
+    coupon: existingCoupon?.coupon || '',
+    billingAddress,
+    shippingAddress,
+    shippingMethod: shippingMethodId,
+    subtotal,
+    shipping,
+    total,
+    items,
+  };
+
+  await TempOrder.findOneAndUpdate(
     { orderId },
     {
-      $set: {
-        user: user ? user._id : user,
-        customerType: user ? 'user' : 'guest',
-        email,
-        coupon: existingCoupon?.coupon || "",
-        billingAddress,
-        shippingAddress,
-        shippingMethod: shippingMethodId,
-        subtotal,
-        shipping,
-        total,
-      },
+      $set: updatedOrder,
     },
   );
+
   return {
     total,
   };

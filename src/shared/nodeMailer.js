@@ -79,20 +79,17 @@ export const sendPromotionalEmail = async () => {
   }
 };
 
-export const sendOrderDetailsToAdmin = async order => {
-  const templatePath = path.join(__dirname, '../views/orderDetails.ejs');
-  const newOrder = {
-    ...order.toObject(),
-  };
+export const sendOrderDetailsToAdmin = async (invoice, email) => {
+  const templatePath = path.join(__dirname, '../views/orderInvoice.ejs');
 
-  ejs.renderFile(templatePath, newOrder, async (err, template) => {
+  ejs.renderFile(templatePath, invoice, async (err, template) => {
     if (err) {
       console.log(err);
     } else {
       const mailOptions = {
-        from: config.support_mail_address,
-        to: config.support_mail_address,
-        subject: 'Order Details',
+        from: `"ChurchLogo" <${config.invoice_mail_address}>`,
+        to: email,
+        subject: 'Invoice',
         html: template,
       };
       try {
@@ -108,20 +105,16 @@ export const sendOrderDetailsToAdmin = async order => {
   });
 };
 
-export const sendOrderInvoiceToCustomer = async (invoice, email, logo) => {
+export const sendOrderInvoiceToCustomer = async invoice => {
   const templatePath = path.join(__dirname, '../views/orderInvoice.ejs');
-  const newInvoice = {
-    ...invoice,
-    logo,
-  };
 
-  ejs.renderFile(templatePath, newInvoice, async (err, template) => {
+  ejs.renderFile(templatePath, invoice, async (err, template) => {
     if (err) {
       console.log(err);
     } else {
       const mailOptions = {
         from: `"ChurchLogo" <${config.invoice_mail_address}>`,
-        to: email,
+        to: invoice.email,
         subject: 'Invoice',
         html: template,
       };

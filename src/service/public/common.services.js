@@ -1,12 +1,154 @@
 import httpStatus from 'http-status';
+import { stripe } from '../../app.js';
 import config from '../../config/index.js';
 import ApiError from '../../error/ApiError.js';
 import { jwtHelpers } from '../../helper/jwtHelpers.js';
 import updateCart from '../../helper/updateCart.js';
 import Cart from '../../model/cart.model.js';
+import Coupon from '../../model/coupon.model.js';
+import ShippingMethod from '../../model/shippingMethod.js';
+import TempOrder from '../../model/tempOrder.model.js';
 import User from '../../model/user.model.js';
 import Wishlist from '../../model/wishlist.model.js';
 import genGuestId from '../../utils/genGuestId.js';
+
+const pipeline = [
+  {
+    $lookup: {
+      from: 'products',
+      let: { productIds: '$items.productId' }, // Pass product IDs
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $and: [
+                { $in: ['$_id', '$$productIds'] }, // Match product IDs
+                { $eq: ['$isPublished', true] }, // Only published products
+              ],
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'media', // Assuming your media collection is named "media"
+            localField: 'thumbnails',
+            foreignField: '_id',
+            as: 'thumbnails',
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+            urlParameter: { $first: '$urlParameter' },
+            title: { $first: '$title' },
+            thumbnails: { $first: '$thumbnails' },
+            isSale: { $first: '$isSale' },
+            isSubscription: { $first: '$isSubscription' },
+            isMultiDiscount: { $first: '$isMultiDiscount' },
+            sale: { $first: '$sale' },
+            subscriptionSale: { $first: '$subscriptionSale' },
+            multiDiscountQuantity: { $first: '$multiDiscountQuantity' },
+            multiDiscountAmount: { $first: '$multiDiscountAmount' },
+            unitPrices: { $first: '$unitPrices' },
+            subscriptions: { $first: '$subscriptions' },
+          },
+        },
+        {
+          $addFields: {
+            unitPrices: {
+              $map: {
+                input: '$unitPrices',
+                as: 'unitPrice',
+                in: {
+                  _id: '$$unitPrice._id',
+                  unit: '$$unitPrice.unit',
+                  price: '$$unitPrice.price',
+                  salePrice: {
+                    $cond: {
+                      if: '$isSale',
+                      then: {
+                        $round: [
+                          {
+                            $subtract: [
+                              '$$unitPrice.price',
+                              {
+                                $multiply: [
+                                  '$$unitPrice.price',
+                                  { $divide: ['$sale', 100] },
+                                ],
+                              },
+                            ],
+                          },
+                          2,
+                        ],
+                      },
+                      else: 0,
+                    },
+                  },
+                  subscriptionPrice: {
+                    $cond: {
+                      if: '$isSubscription',
+                      then: {
+                        $round: [
+                          {
+                            $subtract: [
+                              '$$unitPrice.price',
+                              {
+                                $multiply: [
+                                  '$$unitPrice.price',
+                                  { $divide: ['$subscriptionSale', 100] },
+                                ],
+                              },
+                            ],
+                          },
+                          2,
+                        ],
+                      },
+                      else: 0,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+      as: 'productData',
+    },
+  },
+  {
+    $addFields: {
+      items: {
+        $map: {
+          input: '$items',
+          as: 'item',
+          in: {
+            $mergeObjects: [
+              '$$item',
+              {
+                $arrayElemAt: [
+                  {
+                    $filter: {
+                      input: '$productData',
+                      as: 'prod',
+                      cond: { $eq: ['$$prod._id', '$$item.productId'] },
+                    },
+                  },
+                  0,
+                ],
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+  {
+    $project: {
+      productData: 0,
+    },
+  },
+];
 
 const calcItems = payload => {
   const data = {
@@ -41,9 +183,9 @@ const calcItems = payload => {
       const price =
         purchaseType === 'one_time'
           ? isSale
-            ? unitPrice.salePrice
-            : unitPrice.price
-          : unitPrice.subscriptionPrice;
+            ? Number(unitPrice.salePrice.toFixed(2))
+            : Number(unitPrice.price.toFixed(2))
+          : Number(unitPrice.subscriptionPrice.toFixed(2));
 
       const tPrice = price * quantity;
       const subtractPrice = isMultiDiscount
@@ -52,7 +194,7 @@ const calcItems = payload => {
           : 0
         : 0;
 
-      const totalPrice = tPrice - subtractPrice;
+      const totalPrice = Number((tPrice - subtractPrice).toFixed(2));
 
       const unit = unitPrice.unit;
 
@@ -93,9 +235,67 @@ const calcItems = payload => {
   return data;
 };
 
+const updateTempOrder = async (paymentIntentId, shippingMethodId, coupon) => {
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  const orderId = paymentIntent.metadata.orderId;
+
+  const tempOrder = await TempOrder.findOne({ orderId });
+  const existingCoupon = await Coupon.findOne({ coupon });
+
+  const pipelines = [
+    {
+      $match: {
+        _id: tempOrder.cart,
+      },
+    },
+    ...pipeline,
+  ];
+
+  const { docs } = await Cart.aggregatePaginate(pipelines);
+
+  const cartData = calcItems(docs[0]);
+
+  const shippingMethod = await ShippingMethod.findOne({
+    'methods._id': shippingMethodId,
+  });
+
+  const method = shippingMethod.methods.find(
+    m => m._id.toString() === shippingMethodId.toString(),
+  );
+
+  const items = cartData.items;
+  const subtotal = Number(cartData?.totalPrice.toFixed(2)) || 0;
+  const shipping = Number(method?.cost.toFixed(2)) || 0;
+  const discount = Number(existingCoupon?.discount.toFixed(2)) || 0;
+  const total = Number((subtotal + shipping - discount).toFixed(2));
+
+  const updatedOrder = {
+    coupon: existingCoupon?.coupon || '',
+    shippingMethod: shippingMethodId,
+    subtotal,
+    shipping,
+    total,
+    items,
+  };
+
+  await TempOrder.findOneAndUpdate(
+    { orderId },
+    {
+      $set: updatedOrder,
+    },
+  );
+
+  await stripe.paymentIntents.update(paymentIntentId, {
+    amount: Number(Math.round(total * 100).toFixed(2)),
+  });
+};
+
 const addToCart = async (req, res) => {
   const { wtg_id, auth_refresh } = req.cookies;
   const {
+    paymentIntentId = '',
+    shippingMethodId = '',
+    coupon = '',
     productId,
     actionType,
     purchaseType,
@@ -193,7 +393,7 @@ const addToCart = async (req, res) => {
       }
     }
 
-    return updateCart(
+    const updatedCartData = await updateCart(
       userCart,
       productId,
       actionType,
@@ -202,6 +402,12 @@ const addToCart = async (req, res) => {
       unitPriceId,
       subscriptionId,
     );
+
+    if (paymentIntentId && shippingMethodId) {
+      await updateTempOrder(paymentIntentId, shippingMethodId);
+    }
+
+    return updatedCartData;
   }
 
   // ✅ Guest Cart Logic
@@ -232,7 +438,7 @@ const addToCart = async (req, res) => {
   const guestCart = await Cart.findOne({ guestId });
   if (!guestCart) throw new ApiError(httpStatus.FORBIDDEN, 'Cart not found');
 
-  return updateCart(
+  const updatedCartData = await updateCart(
     guestCart,
     productId,
     actionType,
@@ -241,6 +447,12 @@ const addToCart = async (req, res) => {
     unitPriceId,
     subscriptionId,
   );
+
+  if (paymentIntentId && shippingMethodId) {
+    await updateTempOrder(paymentIntentId, shippingMethodId);
+  }
+
+  return updatedCartData;
 };
 
 const addToWishlist = async (req, res) => {

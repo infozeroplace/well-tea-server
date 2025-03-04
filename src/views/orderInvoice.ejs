@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Invoice</title>
+
+    <style type="text/css">
+      /* Logo Styles */
+      .logo {
+        font-family: 'Georgia', serif;
+        font-size: 32px;
+        font-weight: bold;
+        color: #47634D;
+        display: flex;
+        align-items: center;
+      }
+      .logo .text {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      /* Container Styles */
+      .container {
+        max-width: 850px;
+        margin: 20px auto;
+        padding: 30px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+      }
+      .container .header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+      }
+      .container .header .header__left {
+        text-align: left;
+        width: 100%;
+      }
+      .container .header .header__right {
+        text-align: right;
+        width: 100%;
+      }
+      .container .header .header__right h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .container .header .header__right p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #555;
+      }
+      .container .date {
+        width: 100%;
+        border-top: 1px solid rgb(216, 216, 216);
+        border-bottom: 1px solid rgb(216, 216, 216);
+        padding: 10px 0;
+        margin-bottom: 20px;
+      }
+      .container .date p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #555;
+      }
+
+      .container .address__container {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+      }
+      .container .address__container .address__container__left,
+      .container .address__container .address__container__right {
+        width: 50%;
+      }
+      .container .address__container .address__container__left {
+        text-align: left;
+      }
+      .container .address__container .address__container__right {
+        text-align: right;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      table thead tr th {
+        padding: 10px;
+        border: 1px solid #ddd;
+        background-color: #f4f4f4;
+        text-align: left;
+      }
+      table thead tr th.th__right {
+        text-align: right;
+      }
+      table tbody tr td {
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+      table tbody tr td.td__right {
+        text-align: right;
+      }
+
+      /* Media Query for Mobile Devices */
+      @media screen and (max-width: 768px) {
+        .container .header {
+          flex-direction: column;
+          text-align: center;
+        }
+        .container .header .header__left {
+          margin-bottom: 10px;
+        }
+        .container .header .header__right {
+          text-align: center;
+        }
+        .container .address__container {
+          flex-direction: column;
+        }
+        .container .address__container .address__container__left,
+        .container .address__container .address__container__right {
+          width: 100%;
+          text-align: center;
+          margin-bottom: 10px;
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    "
+  >
+    <div class="container">
+      <div class="header">
+        <div class="header__left">
+          <div class="logo">
+            <div class="text">Well Tea</div>
+          </div>
+        </div>
+        <div class="header__right">
+          <h1>Invoice</h1>
+          <p>Invoice ID: <strong><%= invoiceId %></strong></p>
+          <p>Transaction ID: <strong><%= transactionId %></strong></p>
+        </div>
+      </div>
+
+      <div class="date">
+        <p><strong>Date:</strong> <%= new Date(createdAt).toLocaleDateString() %></p>
+      </div>
+
+      <div class="address__container">
+        <div class="address__container__left">
+          <p><strong>Invoiced To:</strong></p>
+          <p>Name: <%= name %></p>
+          <p>Email: <%= email %></p>
+          <p>Phone: <%= phone %></p>
+        </div>
+        <div class="address__container__right">
+          <p>Order ID: <strong><%= orderId %></strong></p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Unit</th>
+            <th>Quantity</th>
+            <th class="th__right">Price</th>
+            <th class="th__right">Total</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% items.forEach(function(item) { %>
+          <tr>
+            <td><%= item.title %></td>
+            <td><%= item.unit %></td>
+            <td><%= item.quantity %></td>
+            <td class="td__right">$<%= item.price.toFixed(2) %></td>
+            <td class="td__right">$<%= item.totalPrice.toFixed(2) %></td>
+          </tr>
+          <% }) %>
+          <tr>
+            <td colspan="4" class="td__right"><strong>Subtotal:</strong></td>
+            <td class="td__right">$<%= subtotal.toFixed(2) %></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="td__right"><strong>Shipping:</strong></td>
+            <td class="td__right">$<%= shipping.toFixed(2) %></td>
+          </tr>
+          <tr>
+            <td colspan="4" class="td__right"><strong>Total:</strong></td>
+            <td class="td__right">$<%= total.toFixed(2) %></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p
+        style="
+          font-size: 12px;
+          text-align: center;
+          color: #888;
+          margin-top: 20px;
+        "
+      >
+        NOTE: This is a computer-generated receipt and does not require a
+        physical signature.
+      </p>
+    </div>
+  </body>
+</html>

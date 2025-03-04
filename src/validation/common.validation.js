@@ -2,6 +2,9 @@ import { z } from 'zod';
 
 const addToCartSchema = z.object({
   body: z.object({
+    paymentIntentId: z.string().optional(),
+    shippingMethodId: z.string().optional(),
+    coupon: z.string().optional(),
     productId: z.string({ required_error: 'product id is required' }),
     actionType: z.string(
       z.enum(['plus', 'minus', 'absolute'], {

@@ -178,9 +178,9 @@ const calcItems = payload => {
       const price =
         purchaseType === 'one_time'
           ? isSale
-            ? unitPrice.salePrice
-            : unitPrice.price
-          : unitPrice.subscriptionPrice;
+            ? Number(unitPrice.salePrice.toFixed(2))
+            : Number(unitPrice.price.toFixed(2))
+          : Number(unitPrice.subscriptionPrice.toFixed(2));
 
       const tPrice = price * quantity;
       const subtractPrice = isMultiDiscount
@@ -189,7 +189,7 @@ const calcItems = payload => {
           : 0
         : 0;
 
-      const totalPrice = tPrice - subtractPrice;
+        const totalPrice = Number((tPrice - subtractPrice).toFixed(2));
 
       const unit = unitPrice.unit;
 
@@ -261,14 +261,14 @@ const createTempOrder = async (payload, userId) => {
   );
 
   const items = cartData.items;
-  const subtotal = cartData.totalPrice;
-  const shipping = method.cost;
+  const subtotal = Number(cartData?.totalPrice.toFixed(2)) || 0;
+  const shipping = Number(method?.cost.toFixed(2)) || 0;
   const total = Number((subtotal + shipping).toFixed(2));
 
   const orderId = await generateOrderId();
 
   const orderData = {
-    email: email || "",
+    email: email || '',
     orderId,
     user: user ? user._id : user,
     cart: new ObjectId(cartId),
@@ -282,14 +282,19 @@ const createTempOrder = async (payload, userId) => {
     items,
   };
 
-  await TempOrder.create(orderData);
+  const isItemsExists = items.length > 0;
+
+  if (isItemsExists) {
+    await TempOrder.create(orderData);
+  }
 
   return {
-    email: email || "",
+    email: email || '',
     firstName: shippingAddress?.firstName || '',
     lastName: shippingAddress?.lastName || '',
     total,
     orderId,
+    isItemsExists,
   };
 };
 

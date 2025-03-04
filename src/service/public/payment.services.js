@@ -39,32 +39,32 @@ const createPaymentIntent = async (payload, token) => {
       config?.jwt?.refresh_secret,
     );
 
-  const { email, firstName, lastName, total, orderId } = await createTempOrder(
-    payload,
-    verifiedToken?.userId,
-  );
+  const { email, firstName, lastName, total, orderId, isItemsExists } =
+    await createTempOrder(payload, verifiedToken?.userId);
 
-  const customer = await stripe.customers.create({
-    email,
-    name: `${firstName} ${lastName}`,
-  });
+  if (isItemsExists) {
+    const customer = await stripe.customers.create({
+      email,
+      name: `${firstName} ${lastName}`,
+    });
 
-  const paymentIntent = await stripe.paymentIntents.create({
-    currency: 'gbp',
-    amount: Number(Math.round(total * 100).toFixed(2)),
-    customer: customer.id,
-    automatic_payment_methods: {
-      enabled: true,
-    },
-    metadata: {
-      orderId,
-    },
-  });
+    const paymentIntent = await stripe.paymentIntents.create({
+      currency: 'gbp',
+      amount: Number(Math.round(total * 100).toFixed(2)),
+      customer: customer.id,
+      automatic_payment_methods: {
+        enabled: true,
+      },
+      metadata: {
+        orderId,
+      },
+    });
 
-  return {
-    id: paymentIntent.id,
-    clientSecret: paymentIntent.client_secret,
-  };
+    return {
+      id: isItemsExists ? paymentIntent.id : '',
+      clientSecret: isItemsExists ? paymentIntent.client_secret : '',
+    };
+  }
 };
 
 const handleWebhookEvent = async (data, sig) => {
