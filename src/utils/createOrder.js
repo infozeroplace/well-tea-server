@@ -49,8 +49,12 @@ const createOrder = async (orderId, paymentIntentId) => {
     items: existingOrder.items,
   };
 
+ try {
   await Order.create(newOrder);
   console.log('newOrder 53', newOrder)
+ } catch (error) {
+  console.log('error 56', error)
+ }
 
   await Cart.findOneAndUpdate(
     { _id: existingOrder.cart },
