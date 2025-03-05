@@ -4,7 +4,6 @@ import catchAsync from '../../shared/catchAsync.js';
 import sendResponse from '../../shared/sendResponse.js';
 
 const getIGAccessToken = catchAsync(async (req, res) => {
-  console.log(req.query, " line 7")
   const result = await CommonService.getIGAccessToken(req.query);
 
   return sendResponse(res, {
