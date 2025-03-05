@@ -3,6 +3,11 @@ import { PaymentController } from '../../controller/public/payment.controller.js
 
 const router = express.Router();
 
+router.get(
+  '/payment/get-payment-intent',
+  PaymentController.getPaymentIntent,
+);
+
 router.post(
   '/payment/update-payment-intent',
   PaymentController.updatePaymentIntent,

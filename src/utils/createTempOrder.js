@@ -294,6 +294,7 @@ const createTempOrder = async (payload, userId) => {
     lastName: shippingAddress?.lastName || '',
     total,
     orderId,
+    shippingMethodId,
     isItemsExists,
   };
 };
