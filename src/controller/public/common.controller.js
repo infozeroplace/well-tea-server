@@ -5,6 +5,7 @@ import sendResponse from '../../shared/sendResponse.js';
 
 const getIGAccessToken = catchAsync(async (req, res) => {
   const result = await CommonService.getIGAccessToken(req.query);
+  console.log(req.query)
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,

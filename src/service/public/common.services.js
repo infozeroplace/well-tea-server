@@ -293,6 +293,7 @@ const updateTempOrder = async (paymentIntentId, shippingMethodId, coupon) => {
 
 const getIGAccessToken = async query => {
   const { code } = query;
+  
 
   if (!code) {
     throw new ApiError(httpStatus.FORBIDDEN, 'authorization code not found');
