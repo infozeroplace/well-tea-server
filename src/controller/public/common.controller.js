@@ -3,6 +3,18 @@ import { CommonService } from '../../service/public/common.services.js';
 import catchAsync from '../../shared/catchAsync.js';
 import sendResponse from '../../shared/sendResponse.js';
 
+const getIGAccessToken = catchAsync(async (req, res) => {
+  const result = await CommonService.getIGAccessToken(req.query);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'retrieved ig access token successfully',
+    meta: null,
+    data: result,
+  });
+});
+
 const addToCart = catchAsync(async (req, res) => {
   const { message } = await CommonService.addToCart(req, res);
 
@@ -52,6 +64,7 @@ const wt = catchAsync(async (req, res) => {
 });
 
 export const CommonController = {
+  getIGAccessToken,
   addToCart,
   wtc,
   addToWishlist,

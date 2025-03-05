@@ -90,6 +90,10 @@ const config = {
 
   royal_mail_client_id: process.env.ROYAL_MAIL_CLIENT_ID,
   royal_mail_client_secret: process.env.ROYAL_MAIL_CLIENT_SECRET,
+
+  instagram_client_id: process.env.INSTAGRAM_CLIENT_ID,
+  instagram_client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
+  instagram_redirect_uri: process.env.INSTAGRAM_REDIRECT_URI,
 };
 
 export default config;

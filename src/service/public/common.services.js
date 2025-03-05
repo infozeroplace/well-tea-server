@@ -1,3 +1,4 @@
+import axios from 'axios';
 import httpStatus from 'http-status';
 import { stripe } from '../../app.js';
 import config from '../../config/index.js';
@@ -288,6 +289,27 @@ const updateTempOrder = async (paymentIntentId, shippingMethodId, coupon) => {
   await stripe.paymentIntents.update(paymentIntentId, {
     amount: Number(Math.round(total * 100).toFixed(2)),
   });
+};
+
+const getIGAccessToken = async query => {
+  const { code } = query;
+
+  if (!code) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'authorization code not found');
+  }
+
+  const accessTokenUrl = 'https://graph.facebook.com/v18.0/oauth/access_token';
+
+  const params = new URLSearchParams({
+    client_id: config.instagram_client_id,
+    client_secret: config.instagram_client_secret,
+    redirect_uri: config.server_url + config.instagram_redirect_uri,
+    code: code,
+  });
+
+  const { data } = await axios.get(`${accessTokenUrl}?${params}`);
+
+  return data.access_token;
 };
 
 const addToCart = async (req, res) => {
@@ -1131,4 +1153,4 @@ const wt = async (req, res) => {
   }
 };
 
-export const CommonService = { addToCart, addToWishlist, wt };
+export const CommonService = { getIGAccessToken, addToCart, addToWishlist, wt };
