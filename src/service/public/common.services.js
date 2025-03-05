@@ -300,14 +300,15 @@ const getIGAccessToken = async query => {
 
   const accessTokenUrl = 'https://graph.facebook.com/v18.0/oauth/access_token';
 
-  const params = new URLSearchParams({
-    client_id: config.instagram_client_id,
-    client_secret: config.instagram_client_secret,
-    redirect_uri: config.server_url + config.instagram_redirect_uri,
-    code: code,
+  const { data } = await axios.post(accessTokenUrl, null, {
+    params: {
+      client_id: config.instagram_client_id,
+      client_secret: config.instagram_client_secret,
+      redirect_uri: config.server_url + config.instagram_redirect_uri,
+      code: code,
+      grant_type: 'authorization_code', // 🔹 Required field
+    },
   });
-
-  const { data } = await axios.get(`${accessTokenUrl}?${params}`);
 
   return data.access_token;
 };
