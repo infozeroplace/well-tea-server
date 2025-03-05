@@ -1,26 +1,7 @@
-const menuList = async () => {
-  const mainCategories = [
-    {
-      category: {
-        assortment: 'tea',
-      },
-      pattern: true,
-    },
-    {
-      category: {
-        assortment: 'teaware',
-      },
-      pattern: true,
-    },
-    {
-      category: {
-        assortment: 'gift',
-      },
-      pattern: true,
-    },
-  ];
+import Menu from '../../model/menu.model.js';
 
-  return mainCategories;
+const menuList = async () => {
+ 
 };
 
 export const MenuService = {
