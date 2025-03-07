@@ -1,18 +1,18 @@
-import httpStatus from "http-status";
-import { assortmentFilterableField } from "../../constant/assortment.constant.js";
-import { paginationFields } from "../../constant/pagination.constant.js";
-import { AssortmentService } from "../../service/private/assortment.services.js";
-import catchAsync from "../../shared/catchAsync.js";
-import pick from "../../shared/pick.js";
-import sendResponse from "../../shared/sendResponse.js";
+import httpStatus from 'http-status';
+import { assortmentFilterableField } from '../../constant/assortment.constant.js';
+import { paginationFields } from '../../constant/pagination.constant.js';
+import { AssortmentService } from '../../service/private/assortment.services.js';
+import catchAsync from '../../shared/catchAsync.js';
+import pick from '../../shared/pick.js';
+import sendResponse from '../../shared/sendResponse.js';
 
-const deleteAssortments = catchAsync(async (req, res) => {
-  const result = await AssortmentService.deleteAssortments(req.body);
+const editAssortment = catchAsync(async (req, res) => {
+  const result = await AssortmentService.editAssortment(req.body);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Assortments deleted successfully",
+    message: 'Assortments edited successfully',
     meta: null,
     data: result,
   });
@@ -24,19 +24,7 @@ const getAllAssortmentList = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Assortments retrieved successfully",
-    meta: null,
-    data: result,
-  });
-});
-
-const deleteAssortment = catchAsync(async (req, res) => {
-  const result = await AssortmentService.deleteAssortment(req.body);
-
-  return sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Delete successfully!",
+    message: 'Assortments retrieved successfully',
     meta: null,
     data: result,
   });
@@ -48,13 +36,13 @@ const getAssortmentList = catchAsync(async (req, res) => {
 
   const { meta, data } = await AssortmentService.getAssortmentList(
     filters,
-    paginationOptions
+    paginationOptions,
   );
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Assortments retrieved successfully",
+    message: 'Assortments retrieved successfully',
     meta,
     data,
   });
@@ -66,16 +54,15 @@ const addAssortment = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Added successfully!",
+    message: 'Added successfully!',
     meta: null,
     data: result,
   });
 });
 
 export const AssortmentController = {
-  deleteAssortments,
+  editAssortment,
   getAllAssortmentList,
-  deleteAssortment,
   getAssortmentList,
   addAssortment,
 };

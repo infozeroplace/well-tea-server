@@ -1,0 +1,69 @@
+{
+  "title": "tea dropdown",
+  "productType": {
+    "columnTitle": "Types",
+    "children": [
+      "67c9320183cb371cb5f2dc37",
+      "67c9321783cb371cb5f2dc3e",
+      "67c9323583cb371cb5f2dc51",
+      "67c9325083cb371cb5f2dc58",
+      "67c9327183cb371cb5f2dc6b",
+      "67c932ab83cb371cb5f2dc72",
+      "67c932c083cb371cb5f2dc79",
+      "67c932d583cb371cb5f2dc80",
+      "67c932f183cb371cb5f2dc87"
+    ]
+  },
+  "teaFlavor": {
+    "columnTitle": "Flavor",
+    "children": [
+      "67c9447b83cb371cb5f2dcaa",
+      "67c9449083cb371cb5f2dcb3",
+      "67c9449883cb371cb5f2dcba",
+      "67c944a583cb371cb5f2dcc1",
+      "67c944b383cb371cb5f2dcc8"
+    ]
+  },
+  "attribute": {
+    "columnTitle": "Discover",
+    "children": [
+      "67c9450783cb371cb5f2dcf2",
+      "67c9451583cb371cb5f2dcf9",
+      "67c9452183cb371cb5f2dd00"
+    ]
+  },
+  "teaFormat": {
+    "columnTitle": "Format",
+    "children": [
+      "67c92a5083cb371cb5f2dc22",
+      "67c92a8083cb371cb5f2dc29",
+      "67c92dd083cb371cb5f2dc30"
+    ]
+  },
+  "origin": {
+    "columnTitle": "Origin",
+    "children": [
+      "china",
+      "bangladesh",
+      "sri lanka",
+      "japan",
+      "indonesia",
+      "nepal"
+    ]
+  },
+  "teaBenefit": {
+    "columnTitle": "Health",
+    "children": [
+      "67c944c883cb371cb5f2dccf",
+      "67c944d883cb371cb5f2dcd6",
+      "67c944e383cb371cb5f2dcdd",
+      "67c944ed83cb371cb5f2dce4",
+      "67c944f783cb371cb5f2dceb"
+    ]
+  },
+  "featured1": {
+    "thumbnail": "67b78c572ba30e1cc02c309d",
+    "title": "Moon light",
+    "route": "/"
+  }
+}

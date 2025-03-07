@@ -5,34 +5,18 @@ import ApiError from '../../error/ApiError.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
 import Assortment from '../../model/assortment.model.js';
 
-const deleteAssortments = async ids => {
-  const result = await Assortment.deleteMany({
-    _id: { $in: ids },
-  });
+const editAssortment = async payload => {
+  const isExists = await Assortment.findById(payload.id);
 
-  if (!result)
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+  if (!isExists) throw new ApiError(httpStatus.BAD_REQUEST, 'not found!');
+
+  const result = await Assortment.findByIdAndUpdate(payload.id, payload);
 
   return result;
 };
 
 const getAllAssortmentList = async () => {
   const result = await Assortment.find({});
-  return result;
-};
-
-const deleteAssortment = async payload => {
-  const { id } = payload;
-
-  const isExisting = await Assortment.findById(id);
-
-  if (!isExisting) throw new ApiError(httpStatus.BAD_REQUEST, 'Not found!');
-
-  const result = await Assortment.findByIdAndDelete(id);
-
-  if (!result)
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
-
   return result;
 };
 
@@ -118,9 +102,8 @@ const addAssortment = async payload => {
 };
 
 export const AssortmentService = {
-  deleteAssortments,
+  editAssortment,
   getAllAssortmentList,
-  deleteAssortment,
   getAssortmentList,
   addAssortment,
 };

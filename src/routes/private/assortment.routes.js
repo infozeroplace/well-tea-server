@@ -7,11 +7,12 @@ import { AssortmentValidation } from "../../validation/assortment.validation.js"
 
 const router = express.Router();
 
-router.delete(
-  "/assortment/delete-assortments",
+router.put(
+  "/assortment/edit-assortment",
   auth(ENUM_USER_ROLE.SUPER_ADMIN),
-  AssortmentController.deleteAssortments
+  AssortmentController.editAssortment
 );
+
 
 router.get(
   "/assortment/all-list",
@@ -19,11 +20,6 @@ router.get(
   AssortmentController.getAllAssortmentList
 );
 
-router.delete(
-  "/assortment/delete-assortment",
-  auth(ENUM_USER_ROLE.SUPER_ADMIN),
-  AssortmentController.deleteAssortment
-);
 
 router.get(
   "/assortment/list",

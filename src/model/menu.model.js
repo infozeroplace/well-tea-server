@@ -3,50 +3,14 @@ import mongoosePlugin from 'mongoose-aggregate-paginate-v2';
 
 const MenuSchema = Schema(
   {
-    menuId: {
-      type: String,
-      default: 'menu-1',
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: 'Assortment',
     },
-    tea: {
-      productType: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Assortment',
-        },
-      ],
-      flavor: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Assortment',
-        },
-      ],
-      format: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Assortment',
-        },
-      ],
-      benefit: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Assortment',
-        },
-      ],
-      discover: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Assortment',
-        },
-      ],
-      origin: [],
-      featured: {
-        thumbnail: {
-          type: Schema.Types.ObjectId,
-          ref: 'Assortment',
-        },
-        title: String,
-        route: String,
-      },
+    dropdown: {
+      type: Schema.Types.ObjectId,
+      ref: 'Dropdown',
+      default: null,
     },
   },
   { timestamps: true },

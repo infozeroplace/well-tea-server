@@ -1,0 +1,22 @@
+{
+  "title": "teaware dropdown",
+  "productType": {
+    "columnTitle": "all teaware",
+    "children": [
+      "67c935cf83cb371cb5f2dc8e",
+      "67c935db83cb371cb5f2dc95",
+      "67c935ed83cb371cb5f2dc9c",
+      "67c935fc83cb371cb5f2dca3"
+    ]
+  },
+  "featured1": {
+    "thumbnail": "67b78c572ba30e1cc02c309d",
+    "title": "Moon light",
+    "route": "/"
+  },
+  "featured2": {
+    "thumbnail": "67b78c572ba30e1cc02c309d",
+    "title": "Moon light 2",
+    "route": "/"
+  }
+}
