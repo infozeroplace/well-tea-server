@@ -2,6 +2,38 @@ import httpStatus from 'http-status';
 import ApiError from '../../error/ApiError.js';
 import { System } from '../../model/system.model.js';
 
+const updateSectionBanner = async payload => {
+  const existing = await System.findOne({ systemId: 'system-1' });
+  const { id } = payload;
+
+  if (!existing) {
+    // If no existing document, create a new one
+    const result = await System.create({
+      systemId: 'system-1',
+      sectionBanner: id,
+    });
+
+    if (!result) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+    }
+
+    return result;
+  } else {
+    // Update the document with the new hero slides
+    const result = await System.findOneAndUpdate(
+      { systemId: 'system-1' },
+      { $set: { sectionBanner: id } },
+      { new: true },
+    );
+
+    if (!result) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong!');
+    }
+
+    return result;
+  }
+};
+
 const updateExploreTeaOptions = async payload => {
   const { exploreTeaOptions } = payload;
 
@@ -667,6 +699,14 @@ const getSystemConfiguration = async () => {
       },
     },
     {
+      $lookup: {
+        from: 'media',
+        localField: 'sectionBanner',
+        foreignField: '_id',
+        as: 'sectionBanner',
+      },
+    },
+    {
       $group: {
         _id: '$_id',
         systemId: { $first: '$systemId' },
@@ -699,6 +739,7 @@ const getSystemConfiguration = async () => {
             iconPath: '$companyService.iconPath',
           },
         },
+        sectionBanner: { $first: '$sectionBanner' },
         offer: { $first: '$offer' },
         featured: { $first: '$featured' },
         topNotifications: { $first: '$topNotifications' },
@@ -723,6 +764,7 @@ const getSystemConfiguration = async () => {
 };
 
 export const SystemService = {
+  updateSectionBanner,
   updateExploreTeaOptions,
   updateFilter,
   updateFAQ,

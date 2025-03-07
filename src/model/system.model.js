@@ -126,6 +126,10 @@ const SystemSchema = Schema(
     exploreTeaOptions: {
       type: [{ type: Schema.Types.ObjectId, ref: 'Assortment' }],
     },
+    sectionBanner: {
+      type: Schema.Types.ObjectId,
+      ref: 'Media',
+    },
     topNotifications: [String],
     privacyPolicy: String,
     termsAndConditions: String,

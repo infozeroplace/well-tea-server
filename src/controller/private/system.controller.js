@@ -1,7 +1,21 @@
-import httpStatus from "http-status";
-import { SystemService } from "../../service/private/system.services.js";
-import catchAsync from "../../shared/catchAsync.js";
-import sendResponse from "../../shared/sendResponse.js";
+import httpStatus from 'http-status';
+import { SystemService } from '../../service/private/system.services.js';
+import catchAsync from '../../shared/catchAsync.js';
+import sendResponse from '../../shared/sendResponse.js';
+
+const updateSectionBanner = catchAsync(async (req, res) => {
+  const data = req.body;
+
+  const result = await SystemService.updateSectionBanner(data);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Updated successfully!',
+    meta: null,
+    data: result,
+  });
+});
 
 const updateExploreTeaOptions = catchAsync(async (req, res) => {
   const data = req.body;
@@ -11,7 +25,7 @@ const updateExploreTeaOptions = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -25,7 +39,7 @@ const updateFilter = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -39,7 +53,7 @@ const updateFAQ = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -53,7 +67,7 @@ const updateDeliveryPolicy = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -67,7 +81,7 @@ const updateSubscriptionPolicy = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -81,7 +95,7 @@ const updateReturnAndRefundPolicy = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -95,7 +109,7 @@ const updateCookiesPolicy = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -109,7 +123,7 @@ const updateTermsAndConditions = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -123,7 +137,7 @@ const updatePrivacyPolicy = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -135,7 +149,7 @@ const updateCompanyService = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -147,7 +161,7 @@ const updateWhyChooseUs = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -161,7 +175,7 @@ const updateSecondaryLogo = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -173,7 +187,7 @@ const updateNotification = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -187,7 +201,7 @@ const updateFeaturedSectionSetting = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -201,7 +215,7 @@ const updateLogo = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -213,7 +227,7 @@ const updateOfferSetting = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -225,7 +239,7 @@ const updateHeroSetting = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Updated successfully!",
+    message: 'Updated successfully!',
     meta: null,
     data: result,
   });
@@ -237,13 +251,14 @@ const getSystemConfiguration = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Data retrieved successfully!",
+    message: 'Data retrieved successfully!',
     meta: null,
     data: result,
   });
 });
 
 export const SystemController = {
+  updateSectionBanner,
   updateExploreTeaOptions,
   updateFilter,
   updateFAQ,
