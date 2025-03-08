@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import { postSearchableFields } from '../../constant/post.constant.js';
 import ApiError from '../../error/ApiError.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
-import Post from '../../model/Post.model.js';
+import Post from '../../model/post.model.js';
 import { mediaUnset } from '../../constant/product.constant.js';
 
 const getList = async (filters, paginationOptions) => {
