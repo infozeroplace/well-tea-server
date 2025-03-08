@@ -1,7 +1,7 @@
 import { postSearchableFields } from '../../constant/post.constant.js';
 import { mediaUnset } from '../../constant/product.constant.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
-import Post from '../../model/Post.model.js';
+import Post from '../../model/post.model.js';
 
 const getList = async (filters, paginationOptions) => {
   const { searchTerm, ...filtersData } = filters;
