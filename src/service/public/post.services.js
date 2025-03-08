@@ -57,6 +57,7 @@ const getList = async (filters, paginationOptions) => {
         pipeline: [mediaUnset],
       },
     },
+    { $unwind: { path: '$thumbnail' } },
     {
       $match: whereConditions,
     },
