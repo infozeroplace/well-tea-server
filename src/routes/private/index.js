@@ -10,6 +10,7 @@ import { MenuRoutes } from './menu.routes.js';
 import { NewsletterRoutes } from './newsletter.routes.js';
 import { OrderRoutes } from './order.routes.js';
 import { OtpRoutes } from './otp.routes.js';
+import { PostRoutes } from './post.routes.js';
 import { ProductRoutes } from './product.routes.js';
 import { ProfileRoutes } from './profile.routes.js';
 import { ShippingRoutes } from './shipping.routes.js';
@@ -19,6 +20,7 @@ import { WishlistRoutes } from './wishlist.routes.js';
 
 const router = express.Router();
 
+router.use(PostRoutes);
 router.use(MenuRoutes);
 router.use(BlogRoutes);
 router.use(OrderRoutes);

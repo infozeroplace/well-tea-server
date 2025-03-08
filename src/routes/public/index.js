@@ -5,6 +5,7 @@ import { CommonRoutes } from './common.routes.js';
 import { MenuRoutes } from './menu.routes.js';
 import { NewsletterRoutes } from './newsletter.routes.js';
 import { PaymentRoutes } from './payment.routes.js';
+import { PostRoutes } from './post.routes.js';
 import { ProductRoutes } from './product.routes.js';
 import { ShippingRoutes } from './shipping.routes.js';
 import { SystemRoutes } from './system.routes.js';
@@ -12,6 +13,7 @@ import { TestRoutes } from './test.routes.js';
 
 const router = express.Router();
 
+router.use(PostRoutes);
 router.use(MenuRoutes);
 router.use(TestRoutes);
 router.use(BlogRoutes);
