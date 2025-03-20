@@ -107,6 +107,10 @@ export const sendOrderDetailsToAdmin = async (invoice, email) => {
 
 export const sendOrderInvoiceToCustomer = async invoice => {
   const templatePath = path.join(__dirname, '../views/orderInvoice.ejs');
+  const modifiedInvoice = {
+    ...invoice,
+    ...config
+  }
 
   ejs.renderFile(templatePath, invoice, async (err, template) => {
     if (err) {

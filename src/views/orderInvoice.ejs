@@ -227,26 +227,22 @@
 
       <div class="footer">
         <p>&copy; <%= new Date().getFullYear() %> Well Tea. All Rights Reserved.</p>
-        <p>123 Tea Street, Beverage City, TC 56789 | Contact: support@welltea.com</p>
-        <div class="social-icons">
-          <a href="#"><img src="http://localhost:8081/public/icons/facebook.png" alt="Facebook" width="20"></a>
-          <a href="#"><img src="http://localhost:8081/public/icons/twitter.png" alt="Twitter" width="20"></a>
-          <a href="#"><img src="http://localhost:8081/public/icons/instagram.png" alt="Instagram" width="20"></a>
-          <a href="#"><img src="http://localhost:8081/public/icons/linkedin.png" alt="LinkedIn" width="20"></a>
-        </div>
-      </div>
+        <p>123 Tea Street, Beverage City, TC 56789 | Contact: <a href="mailto:4welltea@gmail.com">4welltea@gmail.com</a></p>
+        
+        <p>
+          <a href="<%= frontend_base_url %>/terms-conditions" style="text-decoration: none; color: #47634D;">Terms of Service</a>
+          <a href="<%= frontend_base_url %>/privacy-policy" style="text-decoration: none; color: #47634D;">Privacy Policy</a>
+        </p>
       
-      <p
-        style="
-          font-size: 12px;
-          text-align: center;
-          color: #888;
-          margin-top: 20px;
-        "
-      >
-        NOTE: This is a computer-generated receipt and does not require a
-        physical signature.
-      </p>
+        <div class="social-icons">
+          <a href="https://facebook.com/yourpage"><img src="<%= server_url %>/public/icons/facebook.png" alt="Facebook" width="20"></a>
+          <a href="https://instagram.com/yourhandle"><img src="<%= server_url %>/public/icons/instagram.png" alt="Instagram" width="20"></a>
+        </div>
+      
+        <p style="font-size: 12px; color: #888; margin-top: 10px;">
+          This is an automated email. Please do not reply to this message.
+        </p>
+      </div>
     </div>
   </body>
 </html>
