@@ -81,8 +81,12 @@ export const sendPromotionalEmail = async () => {
 
 export const sendOrderDetailsToAdmin = async (invoice, email) => {
   const templatePath = path.join(__dirname, '../views/orderInvoice.ejs');
+  const modifiedInvoice = {
+    ...invoice,
+    ...config
+  }
 
-  ejs.renderFile(templatePath, invoice, async (err, template) => {
+  ejs.renderFile(templatePath, modifiedInvoice, async (err, template) => {
     if (err) {
       console.log(err);
     } else {
@@ -112,7 +116,7 @@ export const sendOrderInvoiceToCustomer = async invoice => {
     ...config
   }
 
-  ejs.renderFile(templatePath, invoice, async (err, template) => {
+  ejs.renderFile(templatePath, modifiedInvoice, async (err, template) => {
     if (err) {
       console.log(err);
     } else {

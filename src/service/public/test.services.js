@@ -19,7 +19,7 @@ const test = async payload => {
 
   const createdInvoice = await Invoice.create(newInvoice);
 
-   await sendOrderInvoiceToCustomer(createdInvoice);
+   await sendOrderInvoiceToCustomer(createdInvoice.toObject());
 };
 
 export const TestService = {
