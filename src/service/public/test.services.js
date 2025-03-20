@@ -1,10 +1,25 @@
 import { Invoice } from '../../model/invoice.model.js';
-import { sendOrderInvoiceToCustomer } from '../../shared/nodeMailer.js';
+import {
+  sendOrderInvoiceToCustomer,
+} from '../../shared/nodeMailer.js';
 
 const test = async payload => {
-  const invoice = await Invoice.findById('67c6c89b9658ad32d78cfdd0');
+  const newInvoice = {
+    invoiceId: "123",
+    transactionId: "123",
+    orderId: "123",
+    name: "123",
+    email: "rumanislam0429@gmail.com",
+    phone: "123",
+    subtotal: 0,
+    shipping: 0,
+    total: 0,
+    items: [],
+  };
 
-  await sendOrderInvoiceToCustomer(invoice._doc);
+  const createdInvoice = await Invoice.create(newInvoice);
+
+   await sendOrderInvoiceToCustomer(createdInvoice);
 };
 
 export const TestService = {
