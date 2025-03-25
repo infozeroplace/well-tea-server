@@ -40,7 +40,7 @@ const updatePaymentIntent = async (payload, token, res) => {
     { cartId: payload.cartId },
     {
       id: paymentIntent.id,
-      coupon: payload.coupon,
+      coupon: payload.coupon.toUpperCase(),
       clientSecret: paymentIntent.client_secret,
       shippingMethodId: payload.shippingMethodId,
     },

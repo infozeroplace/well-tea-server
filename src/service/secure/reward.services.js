@@ -44,10 +44,11 @@ const redeemReward = async (payload, userId) => {
   const coupon = await generateCoupon();
 
   await Coupon.create({
+    limit: 1,
     coupon,
-    eligibleUsers: [user._id],
     discount,
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    discountCap: 5,
+    discountType: 'solid',
   });
 
   return {

@@ -54,12 +54,10 @@ const createOrder = async (orderId, paymentIntentId) => {
     { $set: { items: [] } },
   );
 
-  if (existingOrder.coupon && existingOrder.user) {
-    const user = await User.findById(existingOrder.user);
-
+  if (existingOrder.coupon) {
     await Coupon.findOneAndUpdate(
       { coupon: existingOrder.coupon },
-      { $push: { usedUsers: user._id } },
+      { $inc: { limit: -1 } },
     );
   }
 

@@ -10,9 +10,11 @@ import { ProductRoutes } from './product.routes.js';
 import { ShippingRoutes } from './shipping.routes.js';
 import { SystemRoutes } from './system.routes.js';
 import { TestRoutes } from './test.routes.js';
+import { CouponRoutes } from './coupon.routes.js';
 
 const router = express.Router();
 
+router.use(CouponRoutes);
 router.use(PostRoutes);
 router.use(MenuRoutes);
 router.use(TestRoutes);

@@ -6,21 +6,6 @@ import catchAsync from '../../shared/catchAsync.js';
 import pick from '../../shared/pick.js';
 import sendResponse from '../../shared/sendResponse.js';
 
-const applyCoupon = catchAsync(async (req, res) => {
-  const { ...data } = req.body;
-  const { userId } = req.user;
-
-  const result = await OrderService.applyCoupon(data, userId);
-
-  return sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'applied successfully!',
-    meta: null,
-    data: result,
-  });
-});
-
 const getOrderList = catchAsync(async (req, res) => {
   const { userId } = req.user;
   const filters = pick(req.query, orderFilterableField);
@@ -42,6 +27,5 @@ const getOrderList = catchAsync(async (req, res) => {
 });
 
 export const OrderController = {
-  applyCoupon,
   getOrderList,
 };

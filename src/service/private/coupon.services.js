@@ -3,7 +3,6 @@ import { couponSearchableFields } from '../../constant/coupon.constant.js';
 import ApiError from '../../error/ApiError.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
 import Coupon from '../../model/coupon.model.js';
-import User from '../../model/user.model.js';
 
 const deleteCoupons = async ids => {
   const result = await Coupon.deleteMany({
@@ -48,10 +47,22 @@ const getList = async (filters, paginationOptions) => {
   }
 
   if (Object.keys(filtersData).length) {
+    const splitter = val => val.split(',').map(x => x.toLowerCase().trim());
+
+    const filterHandlers = {
+      discountType: val => ({
+        discountType: { $in: splitter(val) },
+      }),
+      default: (field, val) => ({
+        [field]: val,
+      }),
+    };
+
     andCondition.push({
-      $and: Object.entries(filtersData).map(([field, value]) => ({
-        [field]: value,
-      })),
+      $and: Object.entries(filtersData).map(([field, value]) => {
+        const handler = filterHandlers[field] || filterHandlers.default;
+        return handler(field === 'default' ? [field, value] : value);
+      }),
     });
   }
 
@@ -113,24 +124,15 @@ const getList = async (filters, paginationOptions) => {
 };
 
 const addCoupon = async payload => {
-  const { coupon, eligibleUsers, discount, expiresAt, isAll } = payload;
+  const { coupon, expiresAt } = payload;
 
   const isExist = await Coupon.findOne({ coupon });
 
   if (isExist)
     throw new ApiError(httpStatus.BAD_REQUEST, 'coupon already exists!');
 
-  let updatedUsers = eligibleUsers;
-
-  if (isAll) {
-    const users = await User.find({});
-    updatedUsers = users.map(u => u._id);
-  }
-
   const result = await Coupon.create({
-    coupon,
-    eligibleUsers: updatedUsers,
-    discount,
+    ...payload,
     expiresAt: new Date(expiresAt),
   });
 

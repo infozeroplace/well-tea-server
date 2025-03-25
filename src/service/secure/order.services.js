@@ -1,58 +1,6 @@
-import httpStatus from 'http-status';
-import { stripe } from '../../app.js';
-import config from '../../config/index.js';
 import { orderSearchableFields } from '../../constant/order.constant.js';
-import ApiError from '../../error/ApiError.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
-import Coupon from '../../model/coupon.model.js';
 import Order from '../../model/order.model.js';
-import TempOrder from '../../model/tempOrder.model.js';
-import User from '../../model/user.model.js';
-
-const endpointSecret = config.stripe_endpoint_secret_key;
-
-const applyCoupon = async (payload, userId) => {
-  const { coupon, paymentIntent } = payload;
-
-  const existingCoupon = await Coupon.findOne({ coupon }).populate(
-    'eligibleUsers',
-  );
-
-  if (!existingCoupon)
-    throw new ApiError(httpStatus.BAD_REQUEST, 'invalid or expired!');
-
-  const currentDate = new Date();
-  const expireDate = new Date(existingCoupon.expiresAt);
-
-  if (currentDate > expireDate)
-    throw new ApiError(httpStatus.BAD_REQUEST, 'invalid or expired!');
-
-  const user = await User.findOne({ userId });
-
-  const isUserEligible = existingCoupon.eligibleUsers.find(
-    c => c._id.toString() === user._id.toString(),
-  );
-
-  if (!isUserEligible)
-    throw new ApiError(httpStatus.BAD_REQUEST, 'invalid or expired!');
-
-  const isUserUsed = existingCoupon.usedUsers.find(
-    c => c._id.toString() === user._id.toString(),
-  );
-
-  if (isUserUsed) throw new ApiError(httpStatus.BAD_REQUEST, 'already used!');
-
-  const paymentIntentData = await stripe.paymentIntents.retrieve(paymentIntent);
-
-  const tempOrder = await TempOrder.findOne({
-    orderId: paymentIntentData?.metadata?.orderId,
-  });
-
-  if (tempOrder.coupon === coupon)
-    throw new ApiError(httpStatus.BAD_REQUEST, 'already used!');
-
-  return existingCoupon.discount;
-};
 
 const getOrderList = async (filters, paginationOptions, userId) => {
   const { searchTerm, ...filtersData } = filters;
@@ -162,6 +110,5 @@ const getOrderList = async (filters, paginationOptions, userId) => {
 };
 
 export const OrderService = {
-  applyCoupon,
   getOrderList,
 };

@@ -1,8 +1,13 @@
 import { model, Schema } from 'mongoose';
 import mongoosePlugin from 'mongoose-aggregate-paginate-v2';
+import { discountType } from '../constant/coupon.constant.js';
 
 const CouponSchema = Schema(
   {
+    limit: {
+      type: Number,
+      required: [true, 'limit is required'],
+    },
     coupon: {
       type: String,
       unique: true,
@@ -11,30 +16,27 @@ const CouponSchema = Schema(
       required: [true, 'coupon is required'],
       set: value => value.toUpperCase(),
     },
-    eligibleUsers: {
-      type: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'User',
-        },
-      ],
-      default: [],
-    },
-    usedUsers: {
-      type: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'User',
-        },
-      ],
-      default: [],
-    },
     discount: {
       type: Number,
       required: [true, 'discount is required'],
     },
+    discountCap: {
+      type: Number,
+      required: [true, 'discount cap is required'],
+    },
+    discountType: {
+      type: String,
+      trim: true,
+      required: [true, 'discount type is required'],
+      enum: {
+        values: [...discountType],
+        message: '{VALUE} is not matched',
+      },
+      set: value => value.trim().toLowerCase(),
+    },
     expiresAt: {
       type: Date,
+      set: value => new Date(value),
       default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
   },
