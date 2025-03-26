@@ -274,9 +274,9 @@ const updateTempOrder = async (payload, orderId, userId, pId, pCs) => {
   let discountPrice = 0;
   const couponCondition =
     existingCoupon &&
-    existingCoupon.limit <= 0 &&
-    new Date() > new Date(existingCoupon.expiresAt) &&
-    existingCoupon.discountCap > tempOrder.subtotal;
+    existingCoupon?.limit > 0 &&
+    new Date(existingCoupon?.expiresAt) > new Date() &&
+    tempOrder?.subtotal >= existingCoupon?.discountCap;
 
   if (couponCondition) {
     discountPrice =
@@ -310,7 +310,6 @@ const updateTempOrder = async (payload, orderId, userId, pId, pCs) => {
       $set: updatedOrder,
     },
   );
-
   await PaymentIntent.findOneAndUpdate(
     { cartId },
     {
