@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Cart from '../model/cart.model.js';
 import Coupon from '../model/coupon.model.js';
+import PaymentIntent from '../model/paymentIntent.model.js';
 import ShippingMethod from '../model/shippingMethod.js';
 import TempOrder from '../model/tempOrder.model.js';
 import User from '../model/user.model.js';
@@ -230,8 +231,9 @@ const calcItems = payload => {
   return data;
 };
 
-const updateTempOrder = async (payload, orderId, userId) => {
+const updateTempOrder = async (payload, orderId, userId, pId, pCs) => {
   const {
+    cartId,
     email,
     coupon = '',
     billingAddress,
@@ -270,14 +272,19 @@ const updateTempOrder = async (payload, orderId, userId) => {
   );
 
   let discountPrice = 0;
-  
-  if (existingCoupon) {
+  const couponCondition =
+    existingCoupon &&
+    existingCoupon.limit <= 0 &&
+    new Date() > new Date(existingCoupon.expiresAt) &&
+    existingCoupon.discountCap > tempOrder.subtotal;
+
+  if (couponCondition) {
     discountPrice =
-    existingCoupon.discountType === 'percent'
-    ? (cartData?.totalPrice / 100) * existingCoupon.discount
-    : existingCoupon.discount;
+      existingCoupon.discountType === 'percent'
+        ? (cartData?.totalPrice / 100) * existingCoupon.discount
+        : existingCoupon.discount;
   }
-  
+
   const items = cartData.items;
   const subtotal = cartData?.totalPrice - discountPrice;
   const shipping = method?.cost || 0;
@@ -287,7 +294,7 @@ const updateTempOrder = async (payload, orderId, userId) => {
     user: user ? user._id : user,
     customerType: user ? 'user' : 'guest',
     email,
-    coupon: existingCoupon?.coupon || '',
+    coupon: couponCondition ? existingCoupon?.coupon : '',
     billingAddress,
     shippingAddress,
     shippingMethod: shippingMethodId,
@@ -301,6 +308,16 @@ const updateTempOrder = async (payload, orderId, userId) => {
     { orderId },
     {
       $set: updatedOrder,
+    },
+  );
+
+  await PaymentIntent.findOneAndUpdate(
+    { cartId },
+    {
+      id: pId,
+      coupon: couponCondition ? existingCoupon?.coupon : '',
+      clientSecret: pCs,
+      shippingMethodId,
     },
   );
 

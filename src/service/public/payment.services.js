@@ -30,21 +30,13 @@ const updatePaymentIntent = async (payload, token, res) => {
     payload,
     paymentIntent.metadata.orderId,
     verifiedToken?.userId,
+    paymentIntent.id,
+    paymentIntent.client_secret,
   );
 
   await stripe.paymentIntents.update(payload.id, {
     amount: Number(Math.round(total * 100).toFixed(2)),
   });
-
-  await PaymentIntent.findOneAndUpdate(
-    { cartId: payload.cartId },
-    {
-      id: paymentIntent.id,
-      coupon: payload.coupon.toUpperCase(),
-      clientSecret: paymentIntent.client_secret,
-      shippingMethodId: payload.shippingMethodId,
-    },
-  );
 };
 
 const createPaymentIntent = async (payload, token) => {
