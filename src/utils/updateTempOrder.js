@@ -269,18 +269,18 @@ const updateTempOrder = async (payload, orderId, userId) => {
     m => m._id.toString() === shippingMethodId.toString(),
   );
 
-  const items = cartData.items;
-  let discount = 0;
-
+  let discountPrice = 0;
+  
   if (existingCoupon) {
-    discount =
-      existingCoupon.discountType === 'percent'
-        ? (cartData?.totalPrice / 100) * existingCoupon.discount
-        : existingCoupon.discount;
+    discountPrice =
+    existingCoupon.discountType === 'percent'
+    ? (cartData?.totalPrice / 100) * existingCoupon.discount
+    : existingCoupon.discount;
   }
-
-  const subtotal = Number(cartData?.totalPrice.toFixed(2)) - discount || 0;
-  const shipping = Number(method?.cost.toFixed(2)) || 0;
+  
+  const items = cartData.items;
+  const subtotal = cartData?.totalPrice - discountPrice;
+  const shipping = method?.cost || 0;
   const total = Number((subtotal + shipping).toFixed(2));
 
   const updatedOrder = {

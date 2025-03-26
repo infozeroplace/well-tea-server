@@ -7,6 +7,7 @@ import { jwtHelpers } from '../../helper/jwtHelpers.js';
 import updateCart from '../../helper/updateCart.js';
 import Cart from '../../model/cart.model.js';
 import Coupon from '../../model/coupon.model.js';
+import PaymentIntent from '../../model/paymentIntent.model.js';
 import ShippingMethod from '../../model/shippingMethod.js';
 import TempOrder from '../../model/tempOrder.model.js';
 import User from '../../model/user.model.js';
@@ -236,64 +237,75 @@ const calcItems = payload => {
   return data;
 };
 
-const updateTempOrder = async (paymentIntentId, shippingMethodId, coupon) => {
-  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-  const orderId = paymentIntent.metadata.orderId;
+const updateTempOrder = async cartId => {
+  const tempOrder = await TempOrder.findOne({ cart: cartId }).lean();
+  if (cartId && tempOrder) {
 
-  const tempOrder = await TempOrder.findOne({ orderId });
-  const existingCoupon = await Coupon.findOne({ coupon });
+    const { cart, shippingMethod, coupon } = tempOrder;
 
-  const pipelines = [
-    {
-      $match: {
-        _id: tempOrder.cart,
+    const pipelines = [
+      {
+        $match: {
+          _id: cart,
+        },
       },
-    },
-    ...pipeline,
-  ];
+      ...pipeline,
+    ];
 
-  const { docs } = await Cart.aggregatePaginate(pipelines);
+    const { docs } = await Cart.aggregatePaginate(pipelines);
 
-  const cartData = calcItems(docs[0]);
+    const cartData = calcItems(docs[0]);
 
-  const shippingMethod = await ShippingMethod.findOne({
-    'methods._id': shippingMethodId,
-  });
+    const SMDoc = await ShippingMethod.findOne({
+      'methods._id': shippingMethod,
+    });
 
-  const method = shippingMethod.methods.find(
-    m => m._id.toString() === shippingMethodId.toString(),
-  );
+    const method = SMDoc.methods.find(
+      m => m._id.toString() === shippingMethod.toString(),
+    );
 
-  const items = cartData.items;
-  const subtotal = Number(cartData?.totalPrice.toFixed(2)) || 0;
-  const shipping = Number(method?.cost.toFixed(2)) || 0;
-  const discount = Number(existingCoupon?.discount.toFixed(2)) || 0;
-  const total = Number((subtotal + shipping - discount).toFixed(2));
+    const existingCoupon = await Coupon.findOne({ coupon });
 
-  const updatedOrder = {
-    coupon: existingCoupon?.coupon || '',
-    shippingMethod: shippingMethodId,
-    subtotal,
-    shipping,
-    total,
-    items,
-  };
+    let discountPrice = 0;
 
-  await TempOrder.findOneAndUpdate(
-    { orderId },
-    {
-      $set: updatedOrder,
-    },
-  );
+    if (existingCoupon) {
+      discountPrice =
+        existingCoupon.discountType === 'percent'
+          ? (cartData?.totalPrice / 100) * existingCoupon.discount
+          : existingCoupon.discount;
+    }
 
-  await stripe.paymentIntents.update(paymentIntentId, {
-    amount: Number(Math.round(total * 100).toFixed(2)),
-  });
+    const items = cartData.items;
+    const subtotal = cartData?.totalPrice - discountPrice;
+    const shipping = method?.cost || 0;
+    const total = Number((subtotal + shipping).toFixed(2));
+
+    const updatedOrder = {
+      coupon: existingCoupon?.coupon || '',
+      shippingMethod,
+      subtotal,
+      shipping,
+      total,
+      items,
+    };
+
+    await TempOrder.findOneAndUpdate(
+      { cart: cartId },
+      {
+        $set: updatedOrder,
+      },
+    );
+
+    const paymentIntent = await PaymentIntent.findOne({ cartId });
+
+    await stripe.paymentIntents.update(paymentIntent.id, {
+      amount: Number(Math.round(total * 100).toFixed(2)),
+    });
+  }
 };
 
 const getIGAccessToken = async query => {
   const { code } = query;
-  
 
   if (!code) {
     throw new ApiError(httpStatus.FORBIDDEN, 'authorization code not found');
@@ -316,10 +328,9 @@ const getIGAccessToken = async query => {
 
 const addToCart = async (req, res) => {
   const { wtg_id, auth_refresh } = req.cookies;
+
   const {
-    paymentIntentId = '',
-    shippingMethodId = '',
-    coupon = '',
+    cartId,
     productId,
     actionType,
     purchaseType,
@@ -427,8 +438,8 @@ const addToCart = async (req, res) => {
       subscriptionId,
     );
 
-    if (paymentIntentId && shippingMethodId) {
-      await updateTempOrder(paymentIntentId, shippingMethodId);
+    if (cartId) {
+      await updateTempOrder(cartId);
     }
 
     return updatedCartData;
@@ -471,9 +482,8 @@ const addToCart = async (req, res) => {
     unitPriceId,
     subscriptionId,
   );
-
-  if (paymentIntentId && shippingMethodId) {
-    await updateTempOrder(paymentIntentId, shippingMethodId);
+  if (cartId) {
+    await updateTempOrder(cartId);
   }
 
   return updatedCartData;
