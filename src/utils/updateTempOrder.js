@@ -286,8 +286,8 @@ const updateTempOrder = async (payload, orderId, userId, pId, pCs) => {
   }
 
   const items = cartData.items;
-  const subtotal = cartData?.totalPrice - discountPrice;
-  const shipping = method?.cost || 0;
+  const subtotal = Number((cartData?.totalPrice - discountPrice).toFixed(2));
+  const shipping = Number(method?.cost.toFixed(2)) || 0;
   const total = Number((subtotal + shipping).toFixed(2));
 
   const updatedOrder = {
