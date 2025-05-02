@@ -1,7 +1,6 @@
 import express from 'express';
 import { AssortmentRoutes } from './assortment.routes.js';
 import { BlogRoutes } from './blog.routes.js';
-import { BrewInstructionRoutes } from './brewInstruction.routes.js';
 import { CartRoutes } from './cart.routes.js';
 import { CouponRoutes } from './coupon.routes.js';
 import { CustomerRoutes } from './customer.routes.js';
@@ -33,7 +32,6 @@ router.use(CustomerRoutes);
 router.use(WishlistRoutes);
 router.use(CartRoutes);
 router.use(MediaRoutes);
-router.use(BrewInstructionRoutes);
 router.use(AssortmentRoutes);
 router.use(SystemRoutes);
 router.use(UploadRoutes);

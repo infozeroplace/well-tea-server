@@ -1,6 +1,10 @@
 import { stripe } from '../../app.js';
 import config from '../../config/index.js';
 import { jwtHelpers } from '../../helper/jwtHelpers.js';
+import {
+  handleOneTimePayment,
+  handleSubscriptionPayment,
+} from '../../helper/paymentHandlers.js';
 import PaymentIntent from '../../model/paymentIntent.model.js';
 import TempOrder from '../../model/tempOrder.model.js';
 import createOrder from '../../utils/createOrder.js';
@@ -9,6 +13,25 @@ import updateTempOrder from '../../utils/updateTempOrder.js';
 
 const endpointSecret = config.stripe_endpoint_secret_key;
 
+const createPaymentIntentTest = async () => {
+  const customer = await stripe.customers.create({
+    email: 'rumanislam0429@gmail.com',
+    name: 'Ruman Islam',
+  });
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    currency: 'gbp',
+    amount: 21.99 * 100,
+    customer: customer.id,
+    // payment_method_types: ['paypal']
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
+  return paymentIntent.client_secret;
+};
+
 const getPaymentIntent = async cartId => {
   const result = await PaymentIntent.findOne({ cartId });
 
@@ -16,13 +39,15 @@ const getPaymentIntent = async cartId => {
 };
 
 const updatePaymentIntent = async (payload, token, res) => {
+  console.log('update');
   let verifiedToken = token;
 
-  if (verifiedToken)
+  if (verifiedToken) {
     verifiedToken = jwtHelpers.verifiedToken(
       verifiedToken,
       config?.jwt?.refresh_secret,
     );
+  }
 
   const paymentIntent = await stripe.paymentIntents.retrieve(payload.id);
 
@@ -40,13 +65,15 @@ const updatePaymentIntent = async (payload, token, res) => {
 };
 
 const createPaymentIntent = async (payload, token) => {
+  console.log('create');
   let verifiedToken = token;
 
-  if (verifiedToken)
+  if (verifiedToken) {
     verifiedToken = jwtHelpers.verifiedToken(
       verifiedToken,
       config?.jwt?.refresh_secret,
     );
+  }
 
   const {
     email,
@@ -56,34 +83,42 @@ const createPaymentIntent = async (payload, token) => {
     orderId,
     shippingMethodId,
     isItemsExists,
+    subscriptionItems,
+    onetimeItems,
   } = await createTempOrder(payload, verifiedToken?.userId);
 
-  if (isItemsExists) {
-    const customer = await stripe.customers.create({
-      email,
-      name: `${firstName} ${lastName}`,
-    });
+  if (!isItemsExists) {
+    return;
+  }
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      currency: 'gbp',
-      amount: Number(Math.round(total * 100).toFixed(2)),
-      customer: customer.id,
-      automatic_payment_methods: {
-        enabled: true,
-      },
-      metadata: {
-        orderId,
-      },
-    });
+  const customer = await stripe.customers.create({
+    email,
+    name: `${firstName} ${lastName}`,
+  });
 
-    await PaymentIntent.create({
-      cartId: payload.cartId,
-      id: paymentIntent.id,
+  // Handle both one-time payment and subscription
+  if (subscriptionItems.length > 0 && onetimeItems.length > 0) {
+    console.log('both');
+  } else if (subscriptionItems.length > 0) {
+    console.log('Subscription');
+    // Subscription only
+    return await handleSubscriptionPayment(
+      customer,
+      subscriptionItems,
+      orderId,
       shippingMethodId,
-      clientSecret: paymentIntent.client_secret,
-    });
-
-    return paymentIntent.client_secret;
+      payload.cartId,
+    );
+  } else {
+    console.log('one time');
+    // One-time payment only (existing flow)
+    return await handleOneTimePayment(
+      customer,
+      total,
+      orderId,
+      shippingMethodId,
+      payload.cartId,
+    );
   }
 };
 
@@ -110,6 +145,7 @@ const handleWebhookEvent = async (data, sig) => {
 };
 
 export const PaymentService = {
+  createPaymentIntentTest,
   getPaymentIntent,
   updatePaymentIntent,
   createPaymentIntent,

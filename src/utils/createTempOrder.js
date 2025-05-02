@@ -189,7 +189,7 @@ const calcItems = payload => {
           : 0
         : 0;
 
-        const totalPrice = Number((tPrice - subtractPrice).toFixed(2));
+      const totalPrice = Number((tPrice - subtractPrice).toFixed(2));
 
       const unit = unitPrice.unit;
 
@@ -265,10 +265,16 @@ const createTempOrder = async (payload, userId) => {
   const shipping = Number(method?.cost.toFixed(2)) || 0;
   const total = Number((subtotal + shipping).toFixed(2));
 
+  const subscriptionItems = items.filter(
+    item => item.purchaseType === 'subscribe',
+  );
+
+  const onetimeItems = items.filter(item => item.purchaseType === 'one_time');
+
   const orderId = await generateOrderId();
 
   const orderData = {
-    email: email || '',
+    email,
     orderId,
     user: user ? user._id : user,
     cart: new ObjectId(cartId),
@@ -289,13 +295,15 @@ const createTempOrder = async (payload, userId) => {
   }
 
   return {
-    email: email || '',
+    email,
     firstName: shippingAddress?.firstName || '',
     lastName: shippingAddress?.lastName || '',
     total,
     orderId,
     shippingMethodId,
     isItemsExists,
+    subscriptionItems,
+    onetimeItems,
   };
 };
 

@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
 import mongoosePlugin from 'mongoose-aggregate-paginate-v2';
-import { countries } from '../constant/address.constant.js';
+import { countries } from '../constant/common.constant.js';
 
 const AddressSchema = Schema(
   {
@@ -43,6 +43,7 @@ const AddressSchema = Schema(
       type: String,
       trim: true,
       required: [true, 'country is required'],
+      set: value => value.trim().toLowerCase(),
       enum: {
         values: [...countries],
         message: '{VALUE} is not matched',

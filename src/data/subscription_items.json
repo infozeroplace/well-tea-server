@@ -1,0 +1,20 @@
+[
+  {
+    "thumbnail": {
+      "filepath": "/public/image/upload/product_01_thumbnail_01__1740082514238_467640196aebf5a3.png",
+      "alternateText": ""
+    },
+    "title": "Jade Sword™ Organic Green Tea",
+    "productId": "67c9461883cb371cb5f2dd4d",
+    "unitPriceId": "67c9461883cb371cb5f2dd4e",
+    "subscriptionId": "67e378687a07a90a1dfc1b48",
+    "subscription": "2 weeks",
+    "purchaseType": "subscribe",
+    "urlParameter": "jade-sword™-organic-green-tea",
+    "unit": "10gm",
+    "price": 10.8,
+    "quantity": 2,
+    "totalPrice": 21.6,
+    "addedAt": "2025-03-30T18:58:37.585Z"
+  }
+]

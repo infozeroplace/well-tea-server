@@ -45,6 +45,7 @@ const registerForNewsletter = async payload => {
       },
     );
   } catch (error) {
+    console.log(error);
     throw new ApiError(httpStatus.BAD_REQUEST, 'something went wrong');
   }
 };
@@ -437,11 +438,11 @@ const googleLogin = async code => {
 
     createdUser.isPasswordHas = createdUser.password ? true : false;
 
-    await registerForNewsletter({
-      email: email,
-      firstName: given_name,
-      lastName: family_name,
-    });
+    // await registerForNewsletter({
+    //   email: email,
+    //   firstName: given_name || '.',
+    //   lastName: family_name || '.',
+    // });
 
     return {
       accessToken,

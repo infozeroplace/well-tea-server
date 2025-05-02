@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { countries } from "../constant/address.constant.js";
+import { countries } from "../constant/common.constant.js";
 
 const deleteAddressSchema = z.object({
   body: z.object({

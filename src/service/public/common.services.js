@@ -240,7 +240,6 @@ const calcItems = payload => {
 const updateTempOrder = async cartId => {
   const tempOrder = await TempOrder.findOne({ cart: cartId }).lean();
   if (cartId && tempOrder) {
-
     const { cart, shippingMethod, coupon } = tempOrder;
 
     const pipelines = [
@@ -997,7 +996,9 @@ const wt = async (req, res) => {
   }
 
   if (userId) {
+    // ✅ User is logged in – find their cart
     // ✅ User is logged in – find their wishlist
+    let userCart = await Cart.findOne({ userId });
     let userWishlist = await Wishlist.findOne({ userId });
 
     // ✅ If the user has a guest cart, merge it
@@ -1007,12 +1008,11 @@ const wt = async (req, res) => {
       const guestWishlist = await Wishlist.findOne({ guestId });
 
       if (guestCart) {
-        // Find the user's cart
-        let userCart = await Cart.findOne({ userId });
-
+        // Merge guest cart into user cart
         if (!userCart) {
           // No user cart? Convert guest cart to user cart by updating guestCart with userId
           guestCart.userId = userId;
+          guestCart.guestId = null;
           await guestCart.save();
         } else {
           // Merge guest cart items into user cart
@@ -1039,6 +1039,7 @@ const wt = async (req, res) => {
 
           // ✅ Instead of deleting guest cart, update it to belong to the user
           guestCart.userId = userId;
+          guestCart.guestId = null;
           guestCart.items = userCart.items; // Sync guest cart with user cart items
           await guestCart.save();
         }
@@ -1046,27 +1047,33 @@ const wt = async (req, res) => {
 
       if (guestWishlist) {
         // Merge guest wishlist into user wishlist
-        if (userWishlist) {
-          // Add unique products from guest wishlist to user wishlist
-          const guestItems = guestWishlist.items.map(item =>
-            item.productId.toString(),
-          );
-          userWishlist.items = [
-            ...userWishlist.items,
-            ...guestWishlist.items.filter(
-              item =>
-                !userWishlist.items.some(
-                  i => i.productId.toString() === item.productId.toString(),
-                ),
-            ),
-          ];
+        if (!userWishlist) {
+          // No user wishlist? Convert guest wishlist to user wishlist by updating guestWishlist with userId
+          guestWishlist.userId = userId;
+          guestWishlist.guestId = null;
+          await guestWishlist.save();
         } else {
-          // No user wishlist? Convert guest wishlist to user wishlist
-          userWishlist = new Wishlist({ userId, items: guestWishlist.items });
-        }
+          // Merge guest wishlist items into user wishlist (only unique products)
+          guestWishlist.items.forEach(guestItem => {
+            const existingItem = userWishlist.items.find(
+              item =>
+                item.productId.toString() === guestItem.productId.toString(),
+            );
 
-        await userWishlist.save();
-        await Wishlist.deleteOne({ guestId }); // ✅ Delete guest wishlist after merging
+            if (!existingItem) {
+              userWishlist.items.push(guestItem); // Add only if product doesn't exist
+            }
+          });
+
+          // Save updated user wishlist
+          await userWishlist.save();
+
+          // Update guest wishlist to belong to the user (consistent with cart approach)
+          guestWishlist.userId = userId;
+          guestWishlist.guestId = null;
+          guestWishlist.items = userWishlist.items; // Sync with user wishlist
+          await guestWishlist.save();
+        }
       }
 
       if (guestCart || guestWishlist) {
