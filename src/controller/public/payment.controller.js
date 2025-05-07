@@ -3,53 +3,6 @@ import { PaymentService } from '../../service/public/payment.services.js';
 import catchAsync from '../../shared/catchAsync.js';
 import sendResponse from '../../shared/sendResponse.js';
 
-const createPaymentIntentTest = catchAsync(async (req, res) => {
-  const { ...data } = req.body;
-
-  const result = await PaymentService.createPaymentIntentTest(data);
-
-  return sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'successful',
-    meta: null,
-    data: result,
-  });
-});
-
-const getPaymentIntent = catchAsync(async (req, res) => {
-  const { cartId } = req.query;
-
-  const result = await PaymentService.getPaymentIntent(cartId);
-
-  return sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'successful',
-    meta: null,
-    data: result,
-  });
-});
-
-const updatePaymentIntent = catchAsync(async (req, res) => {
-  const { ...data } = req.body;
-  const { auth_refresh } = req.cookies;
-
-  const result = await PaymentService.updatePaymentIntent(
-    data,
-    auth_refresh,
-    res,
-  );
-
-  return sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'successful',
-    meta: null,
-    data: result,
-  });
-});
-
 const createPaymentIntent = catchAsync(async (req, res) => {
   const { ...data } = req.body;
   const { auth_refresh } = req.cookies;
@@ -81,9 +34,6 @@ const stripeWebhookHandler = catchAsync(async (req, res) => {
 });
 
 export const PaymentController = {
-  createPaymentIntentTest,
-  getPaymentIntent,
-  updatePaymentIntent,
   createPaymentIntent,
   stripeWebhookHandler,
 };

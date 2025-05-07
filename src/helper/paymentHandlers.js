@@ -1,5 +1,4 @@
 import { stripe } from '../app.js';
-import PaymentIntent from '../model/paymentIntent.model.js';
 import ShippingMethod from '../model/shippingMethod.js';
 
 // Helper function for subscription-only payment
@@ -64,13 +63,6 @@ export const handleSubscriptionPayment = async (
     ],
   });
 
-  await PaymentIntent.create({
-    cartId,
-    id: subscription.latest_invoice.payment_intent.id,
-    shippingMethodId,
-    clientSecret: subscription.latest_invoice.payment_intent.client_secret,
-  });
-
   return subscription.latest_invoice.payment_intent.client_secret;
 };
 
@@ -91,13 +83,6 @@ export const handleOneTimePayment = async (
     metadata: {
       orderId,
     },
-  });
-
-  await PaymentIntent.create({
-    cartId,
-    id: paymentIntent.id,
-    shippingMethodId,
-    clientSecret: paymentIntent.client_secret,
   });
 
   return paymentIntent.client_secret;

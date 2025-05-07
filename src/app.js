@@ -40,40 +40,23 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1', routes);
 
-// TESTING...............................................
-// Webhook verification (GET request)
-app.get('/webhook', (req, res) => {
-  const VERIFY_TOKEN = 'welltea'; // Set this manually
-
-  let mode = req.query['hub.mode'];
-  let token = req.query['hub.verify_token'];
-  let challenge = req.query['hub.challenge'];
-
-  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-    console.log('Webhook Verified!');
-    return res.status(200).send(challenge); // Send back the challenge to verify
-  } else {
-    return res.sendStatus(403); // Forbidden
-  }
-});
-
-// Webhook event handler (POST request)
-app.post('/webhook', (req, res) => {
-  console.log('Webhook Event Received:', JSON.stringify(req.body, null, 2));
-  return res.sendStatus(200); // Always respond with 200 to acknowledge
-});
-
-// TESTING...............................................
-
 app.get('/', async (req, res) => {
-  // res.send("WELCOME TO WELL TEA PRODUCTION!!");
-  return sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'WELCOME TO WELL TEA PRODUCTION!!',
-    meta: null,
-    data: null,
-  });
+  if (req.accepts('html')) {
+    // Render view for browser requests
+    return res.render('welcome', {
+      title: 'WELL TEA',
+      currentYear: new Date().getFullYear(),
+    });
+  } else {
+    // Return JSON for API requests
+    return sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'WELCOME TO WELL TEA PRODUCTION!!',
+      meta: null,
+      data: null,
+    });
+  }
 });
 
 app.use((_, res, next) => {

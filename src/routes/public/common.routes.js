@@ -4,8 +4,6 @@ import validateRequest from '../../middleware/validateRequest.js';
 import { CommonValidation } from '../../validation/common.validation.js';
 const router = express.Router();
 
-router.get('/auth/instagram/callback', CommonController.getIGAccessToken);
-
 router.post(
   '/common/cart/add-to-cart',
   validateRequest(CommonValidation.addToCartSchema),

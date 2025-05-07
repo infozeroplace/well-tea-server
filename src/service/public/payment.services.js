@@ -5,67 +5,13 @@ import {
   handleOneTimePayment,
   handleSubscriptionPayment,
 } from '../../helper/paymentHandlers.js';
-import PaymentIntent from '../../model/paymentIntent.model.js';
 import TempOrder from '../../model/tempOrder.model.js';
 import createOrder from '../../utils/createOrder.js';
 import createTempOrder from '../../utils/createTempOrder.js';
-import updateTempOrder from '../../utils/updateTempOrder.js';
 
 const endpointSecret = config.stripe_endpoint_secret_key;
 
-const createPaymentIntentTest = async () => {
-  const customer = await stripe.customers.create({
-    email: 'rumanislam0429@gmail.com',
-    name: 'Ruman Islam',
-  });
-
-  const paymentIntent = await stripe.paymentIntents.create({
-    currency: 'gbp',
-    amount: 21.99 * 100,
-    customer: customer.id,
-    // payment_method_types: ['paypal']
-    automatic_payment_methods: {
-      enabled: true,
-    },
-  });
-
-  return paymentIntent.client_secret;
-};
-
-const getPaymentIntent = async cartId => {
-  const result = await PaymentIntent.findOne({ cartId });
-
-  return result;
-};
-
-const updatePaymentIntent = async (payload, token, res) => {
-  console.log('update');
-  let verifiedToken = token;
-
-  if (verifiedToken) {
-    verifiedToken = jwtHelpers.verifiedToken(
-      verifiedToken,
-      config?.jwt?.refresh_secret,
-    );
-  }
-
-  const paymentIntent = await stripe.paymentIntents.retrieve(payload.id);
-
-  const { total } = await updateTempOrder(
-    payload,
-    paymentIntent.metadata.orderId,
-    verifiedToken?.userId,
-    paymentIntent.id,
-    paymentIntent.client_secret,
-  );
-
-  await stripe.paymentIntents.update(payload.id, {
-    amount: Number(Math.round(total * 100).toFixed(2)),
-  });
-};
-
 const createPaymentIntent = async (payload, token) => {
-  console.log('create');
   let verifiedToken = token;
 
   if (verifiedToken) {
@@ -145,9 +91,6 @@ const handleWebhookEvent = async (data, sig) => {
 };
 
 export const PaymentService = {
-  createPaymentIntentTest,
-  getPaymentIntent,
-  updatePaymentIntent,
   createPaymentIntent,
   handleWebhookEvent,
 };

@@ -6,8 +6,8 @@ const applyCoupon = z.object({
     coupon: z.string({
       required_error: 'coupon is required',
     }),
-    paymentIntent: z.string({
-      required_error: 'payment intent is required',
+    cartId: z.string({
+      required_error: 'cart id is required',
     }),
   }),
 });

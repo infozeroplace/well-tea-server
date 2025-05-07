@@ -206,3 +206,141 @@ export const countries = [
   'zambia',
   'zimbabwe',
 ];
+
+export const cartPipeline = [
+  {
+    $lookup: {
+      from: 'products',
+      let: { productIds: '$items.productId' }, // Pass product IDs
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $and: [
+                { $in: ['$_id', '$$productIds'] }, // Match product IDs
+                { $eq: ['$isPublished', true] }, // Only published products
+              ],
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'media', // Assuming your media collection is named "media"
+            localField: 'thumbnails',
+            foreignField: '_id',
+            as: 'thumbnails',
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+            urlParameter: { $first: '$urlParameter' },
+            title: { $first: '$title' },
+            thumbnails: { $first: '$thumbnails' },
+            isSale: { $first: '$isSale' },
+            isSubscription: { $first: '$isSubscription' },
+            isMultiDiscount: { $first: '$isMultiDiscount' },
+            sale: { $first: '$sale' },
+            subscriptionSale: { $first: '$subscriptionSale' },
+            multiDiscountQuantity: { $first: '$multiDiscountQuantity' },
+            multiDiscountAmount: { $first: '$multiDiscountAmount' },
+            unitPrices: { $first: '$unitPrices' },
+            subscriptions: { $first: '$subscriptions' },
+          },
+        },
+        {
+          $addFields: {
+            unitPrices: {
+              $map: {
+                input: '$unitPrices',
+                as: 'unitPrice',
+                in: {
+                  _id: '$$unitPrice._id',
+                  unit: '$$unitPrice.unit',
+                  price: '$$unitPrice.price',
+                  salePrice: {
+                    $cond: {
+                      if: '$isSale',
+                      then: {
+                        $round: [
+                          {
+                            $subtract: [
+                              '$$unitPrice.price',
+                              {
+                                $multiply: [
+                                  '$$unitPrice.price',
+                                  { $divide: ['$sale', 100] },
+                                ],
+                              },
+                            ],
+                          },
+                          2,
+                        ],
+                      },
+                      else: 0,
+                    },
+                  },
+                  subscriptionPrice: {
+                    $cond: {
+                      if: '$isSubscription',
+                      then: {
+                        $round: [
+                          {
+                            $subtract: [
+                              '$$unitPrice.price',
+                              {
+                                $multiply: [
+                                  '$$unitPrice.price',
+                                  { $divide: ['$subscriptionSale', 100] },
+                                ],
+                              },
+                            ],
+                          },
+                          2,
+                        ],
+                      },
+                      else: 0,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+      as: 'productData',
+    },
+  },
+  {
+    $addFields: {
+      items: {
+        $map: {
+          input: '$items',
+          as: 'item',
+          in: {
+            $mergeObjects: [
+              '$$item',
+              {
+                $arrayElemAt: [
+                  {
+                    $filter: {
+                      input: '$productData',
+                      as: 'prod',
+                      cond: { $eq: ['$$prod._id', '$$item.productId'] },
+                    },
+                  },
+                  0,
+                ],
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+  {
+    $project: {
+      productData: 0,
+    },
+  },
+];

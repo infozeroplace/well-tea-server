@@ -4,7 +4,6 @@ import Cart from '../model/cart.model.js';
 import Coupon from '../model/coupon.model.js';
 import { Invoice } from '../model/invoice.model.js';
 import Order from '../model/order.model.js';
-import PaymentIntent from '../model/paymentIntent.model.js';
 import TempOrder from '../model/tempOrder.model.js';
 import User from '../model/user.model.js';
 import {
@@ -68,7 +67,6 @@ const createOrder = async (orderId, paymentIntentId) => {
   }
 
   await TempOrder.deleteOne({ orderId });
-  await PaymentIntent.deleteOne({ cartId: existingOrder.cart.toString() });
 
   const superAdmin = await User.findOne({ role: config.super_admin_role });
 
