@@ -106,6 +106,10 @@ const OrderSchema = Schema(
       type: Number,
       required: [true, 'total is required'],
     },
+    discount: {
+      type: Number,
+      default: 0,
+    },
     items: {
       type: [],
       required: [true, 'items are required'],

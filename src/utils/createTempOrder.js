@@ -92,6 +92,7 @@ const createTempOrder = async (payload, userId) => {
     customerType: user ? 'user' : 'guest',
     subtotal,
     shipping,
+    discount: discountPrice,
     coupon: couponCons ? coupon : '',
     total,
     items,

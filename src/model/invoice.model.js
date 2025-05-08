@@ -6,6 +6,7 @@ const InvoiceSchema = Schema(
     invoiceId: String,
     transactionId: String,
     orderId: String,
+    coupon: String,
     name: String,
     email: String,
     phone: String,
@@ -13,6 +14,7 @@ const InvoiceSchema = Schema(
     subtotal: Number,
     shipping: Number,
     total: Number,
+    discount: Number,
   },
   {
     timestamps: true,

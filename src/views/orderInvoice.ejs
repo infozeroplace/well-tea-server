@@ -2,21 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice</title>
 
     <style type="text/css">
-      /* Logo Styles */
-      .logo {
-        font-family: 'Georgia', serif;
-        font-size: 32px;
-        font-weight: bold;
-        color: #47634D;
-        display: flex;
-        align-items: center;
-      }
-      .logo .text {
-        text-transform: uppercase;
-        letter-spacing: 2px;
+      /* Base Styles */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+        -webkit-text-size-adjust: 100%;
       }
 
       /* Container Styles */
@@ -26,28 +22,13 @@
         padding: 30px;
         background-color: #fff;
         border: 1px solid #ddd;
+        box-sizing: border-box;
       }
-      .container .header {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 20px;
-      }
-      .container .header .header__left {
-        text-align: left;
-        width: 100%;
-      }
-      .container .header .header__right {
-        text-align: right;
-        width: 100%;
-      }
-      .container .header .header__right h1 {
-        margin: 0;
+      .container .header h1 {
         font-size: 24px;
         font-weight: bold;
       }
-      .container .header .header__right p {
+      .container .header p {
         margin: 5px 0;
         font-size: 14px;
         color: #555;
@@ -66,31 +47,22 @@
       }
 
       .container .address__container {
-        display: flex;
-        justify-content: space-between;
         margin: 20px 0;
       }
-      .container .address__container .address__container__left,
-      .container .address__container .address__container__right {
-        width: 50%;
-      }
-      .container .address__container .address__container__left {
-        text-align: left;
-      }
-      .container .address__container .address__container__right {
-        text-align: right;
-      }
 
+      /* Table Styles */
       table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 20px;
+        word-break: break-word;
       }
       table thead tr th {
         padding: 10px;
         border: 1px solid #ddd;
         background-color: #f4f4f4;
         text-align: left;
+        font-size: 14px;
       }
       table thead tr th.th__right {
         text-align: right;
@@ -98,33 +70,28 @@
       table tbody tr td {
         padding: 10px;
         border: 1px solid #ddd;
+        font-size: 14px;
       }
       table tbody tr td.td__right {
         text-align: right;
       }
 
-      /* Media Query for Mobile Devices */
-      @media screen and (max-width: 768px) {
-        .container .header {
-          flex-direction: column;
-          text-align: center;
-        }
-        .container .header .header__left {
-          margin-bottom: 10px;
-        }
-        .container .header .header__right {
-          text-align: center;
-        }
-        .container .address__container {
-          flex-direction: column;
-        }
-        .container .address__container .address__container__left,
-        .container .address__container .address__container__right {
-          width: 100%;
-          text-align: center;
-          margin-bottom: 10px;
-        }
+      /* Coupon Styles */
+      .coupon-container {
+        margin: 15px 0;
+        padding: 10px;
+        background-color: #f8f8f8;
+        border: 1px dashed #47634D;
+        border-radius: 4px;
+        text-align: center;
       }
+      .coupon-container p {
+        margin: 0;
+        color: #47634D;
+        font-weight: bold;
+      }
+
+      /* Footer Styles */
       .footer {
         text-align: center;
         font-size: 12px;
@@ -142,32 +109,20 @@
         margin: 10px 0;
       }
       .footer .social-icons img {
-        margin: 0;
+        margin: 0 5px;
+        width: 24px;
+        height: 24px;
       }
-
     </style>
   </head>
 
-  <body
-    style="
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f4f4f4;
-    "
-  >
+  <body>
     <div class="container">
       <div class="header">
-        <div class="header__left">
-          <div class="logo">
-            <div class="text">Well Tea</div>
-          </div>
-        </div>
-        <div class="header__right">
-          <h1>Invoice</h1>
-          <p>Invoice ID: <strong><%= invoiceId %></strong></p>
-          <p>Transaction ID: <strong><%= transactionId %></strong></p>
-        </div>
+        <h1>Invoice</h1>
+        <p>Order ID: <strong><%= orderId %></strong></p>
+        <p>Invoice ID: <strong><%= invoiceId %></strong></p>
+        <p>Transaction ID: <strong><%= transactionId %></strong></p>
       </div>
 
       <div class="date">
@@ -175,16 +130,17 @@
       </div>
 
       <div class="address__container">
-        <div class="address__container__left">
-          <p><strong>Invoiced To:</strong></p>
-          <p>Name: <%= name %></p>
-          <p>Email: <%= email %></p>
-          <p>Phone: <%= phone %></p>
-        </div>
-        <div class="address__container__right">
-          <p>Order ID: <strong><%= orderId %></strong></p>
-        </div>
+        <p><strong>Invoiced To:</strong></p>
+        <p>Name: <%= name %></p>
+        <p>Email: <%= email %></p>
+        <p>Phone: <%= phone %></p>
       </div>
+
+      <% if (coupon) { %>
+        <div class="coupon-container">
+          <p>Coupon Applied: <%= coupon %></p>
+        </div>
+      <% } %>
 
       <table>
         <thead>
@@ -211,6 +167,12 @@
             <td colspan="4" class="td__right"><strong>Subtotal:</strong></td>
             <td class="td__right">$<%= subtotal.toFixed(2) %></td>
           </tr>
+          <% if (discount > 0) { %>
+            <tr>
+              <td colspan="4" class="td__right"><strong>Discount:</strong></td>
+              <td class="td__right">-$<%= discount.toFixed(2) %></td>
+            </tr>
+          <% } %>
           <tr>
             <td colspan="4" class="td__right"><strong>Shipping:</strong></td>
             <td class="td__right">$<%= shipping.toFixed(2) %></td>
@@ -227,16 +189,16 @@
         <p>123 Tea Street, Beverage City, TC 56789 | Contact: <a href="mailto:4welltea@gmail.com">4welltea@gmail.com</a></p>
         
         <p>
-          <a href="<%= frontend_base_url %>/terms-conditions" style="text-decoration: none; color: #47634D;">Terms of Service</a>
-          <a href="<%= frontend_base_url %>/privacy-policy" style="text-decoration: none; color: #47634D;">Privacy Policy</a>
+          <a href="<%= frontend_base_url %>/terms-conditions">Terms of Service</a>
+          <a href="<%= frontend_base_url %>/privacy-policy">Privacy Policy</a>
         </p>
       
         <div class="social-icons">
-          <a href="https://www.facebook.com/profile.php?id=61573689292133"><img src="<%= server_url %>/public/icons/facebook_icon.png" alt="Facebook" width="30"></a>
-          <a href="https://www.instagram.com/wellteauk"><img src="<%= server_url %>/public/icons/instagram_icon.png" alt="Instagram" width="30"></a>
+          <a href="https://www.facebook.com/profile.php?id=61573689292133"><img src="<%= server_url %>/public/icons/facebook_icon.png" alt="Facebook"></a>
+          <a href="https://www.instagram.com/wellteauk"><img src="<%= server_url %>/public/icons/instagram_icon.png" alt="Instagram"></a>
         </div>
       
-        <p style="font-size: 12px; color: #888; margin-top: 10px;">
+        <p>
           This is an automated email. Please do not reply to this message.
         </p>
       </div>

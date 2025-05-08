@@ -27,12 +27,14 @@ const createOrder = async (orderId, paymentIntentId) => {
     invoiceId,
     transactionId: paymentIntentId,
     orderId,
+    coupon: existingOrder.coupon,
     name,
     email: existingOrder.email,
     phone: existingOrder.shippingAddress.phone,
     subtotal: existingOrder.subtotal,
     shipping: existingOrder.shipping,
     total: existingOrder.total,
+    discount: existingOrder.discount,
     items: existingOrder.items,
   };
 
