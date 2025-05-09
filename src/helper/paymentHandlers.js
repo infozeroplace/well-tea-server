@@ -77,7 +77,9 @@ export const handleOneTimePayment = async (
     currency: 'gbp',
     amount: Number(Math.round(total * 100).toFixed(2)),
     customer: customer.id,
-    payment_method_types: ['card', 'paypal'],
+    automatic_payment_methods: {
+      enabled: true,
+    },
     metadata: {
       orderId,
     },
