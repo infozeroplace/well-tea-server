@@ -58,7 +58,7 @@ export const handleSubscriptionPayment = async (
           currency: 'gbp',
           product: shippingProduct.id, // Use the created product ID
           unit_amount: shippingCostInPence,
-        },
+        }, 
       },
     ],
   });
