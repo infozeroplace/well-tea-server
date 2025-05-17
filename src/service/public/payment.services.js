@@ -44,19 +44,22 @@ const createPaymentIntent = async (payload, token) => {
 
   // Handle both one-time payment and subscription
   if (subscriptionItems.length > 0 && onetimeItems.length > 0) {
-    console.log('both');
+    // console.log('both');
+    return;
   } else if (subscriptionItems.length > 0) {
-    console.log('Subscription');
+    // console.log('Subscription');
     // Subscription only
-    return await handleSubscriptionPayment(
-      customer,
-      subscriptionItems,
-      orderId,
-      shippingMethodId,
-      payload.cartId,
-    );
+    // return await handleSubscriptionPayment(
+    //   customer,
+    //   subscriptionItems,
+    //   orderId,
+    //   shippingMethodId,
+    //   payload.cartId,
+    // );
+
+    return;
   } else {
-    console.log('one time');
+    // console.log('one time');
     // One-time payment only (existing flow)
     return await handleOneTimePayment(
       customer,
@@ -66,6 +69,22 @@ const createPaymentIntent = async (payload, token) => {
       payload.cartId,
     );
   }
+
+  // const product = await stripe.products.create({
+  //   name: 'Demo',
+  // });
+
+  // const plan = await stripe.plans.create({
+  //   currency: 'gbp',
+  //   interval: 'week',
+  //   interval_count: 2,
+  //   nickname: 'Demo',
+  //   product:  product.id,
+  //   amount: 500,
+  //   usage_type: 'licensed'
+  // });
+
+  // console.log(plan)
 };
 
 const handleWebhookEvent = async (data, sig) => {

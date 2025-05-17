@@ -24,8 +24,8 @@ export const handleSubscriptionPayment = async (
   const subscriptionPrices = await Promise.all(
     subscriptionItems.map(async item => {
       return await stripe.prices.create({
-        unit_amount: Number(Math.round(item.totalPrice * 100).toFixed(2)),
         currency: 'gbp',
+        unit_amount: Number(Math.round(item.totalPrice * 100).toFixed(2)),
         recurring: {
           interval: item.subscription.toLowerCase().includes('week')
             ? 'week'
@@ -50,6 +50,9 @@ export const handleSubscriptionPayment = async (
     customer: customer.id,
     items: subscriptionPrices.map(price => ({ price: price.id })),
     payment_behavior: 'default_incomplete',
+    payment_settings: {
+      save_default_payment_method: 'on_subscription',
+    },
     expand: ['latest_invoice.payment_intent'],
     metadata: { orderId },
     add_invoice_items: [
