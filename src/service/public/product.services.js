@@ -14,9 +14,9 @@ const getAllProducts = async () => {
   const products = await Product.find({ isPublished: true })
     .populate({
       path: 'thumbnails',
-      select: 'filepath alternateText metaTitle',
+      select: 'filepath alternateText',
     })
-    .select('urlParameter thumbnails updatedAt');
+    .select('urlParameter thumbnails metaTitle updatedAt');
 
   return products;
 };
