@@ -5,6 +5,17 @@ import ApiError from '../../error/ApiError.js';
 import { PaginationHelpers } from '../../helper/paginationHelper.js';
 import Blog from '../../model/blog.model.js';
 
+const getAllBlogs = async () => {
+  const blogs = await Blog.find({})
+    .populate({
+      path: 'thumbnail',
+      select: 'filepath alternateText',
+    })
+    .select('urlParameter thumbnail updatedAt');
+
+  return blogs;
+};
+
 const blog = async id => {
   const result = await Blog.findOne({ urlParameter: id }).populate('thumbnail');
 
@@ -82,6 +93,7 @@ const blogList = async (filters, paginationOptions) => {
 };
 
 export const BlogService = {
+  getAllBlogs,
   blog,
   blogList,
 };

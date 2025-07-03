@@ -10,6 +10,17 @@ import { PaginationHelpers } from '../../helper/paginationHelper.js';
 import Product from '../../model/products.model.js';
 import escapeRegex from '../../utils/escapeRegex.js';
 
+const getAllProducts = async () => {
+  const products = await Product.find({ isPublished: true })
+    .populate({
+      path: 'thumbnails',
+      select: 'filepath alternateText',
+    })
+    .select('urlParameter thumbnails updatedAt');
+
+  return products;
+};
+
 const getRelatedProductList = async productIds => {
   const ObjectId = mongoose.Types.ObjectId;
 
@@ -868,6 +879,7 @@ const getProductList = async (filters, paginationOptions) => {
 };
 
 export const ProductService = {
+  getAllProducts,
   getRelatedProductList,
   getProduct,
   getProductList,

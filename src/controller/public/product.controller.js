@@ -1,10 +1,22 @@
-import httpStatus from "http-status";
-import { paginationFields } from "../../constant/pagination.constant.js";
-import { productFilterableField } from "../../constant/product.constant.js";
-import { ProductService } from "../../service/public/product.services.js";
-import catchAsync from "../../shared/catchAsync.js";
-import pick from "../../shared/pick.js";
-import sendResponse from "../../shared/sendResponse.js";
+import httpStatus from 'http-status';
+import { paginationFields } from '../../constant/pagination.constant.js';
+import { productFilterableField } from '../../constant/product.constant.js';
+import { ProductService } from '../../service/public/product.services.js';
+import catchAsync from '../../shared/catchAsync.js';
+import pick from '../../shared/pick.js';
+import sendResponse from '../../shared/sendResponse.js';
+
+const getAllProducts = catchAsync(async (req, res) => {
+  const data = await ProductService.getAllProducts();
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Products retrieved successfully',
+    meta: null,
+    data,
+  });
+});
 
 const getRelatedProductList = catchAsync(async (req, res) => {
   const { ids } = req.body;
@@ -14,7 +26,7 @@ const getRelatedProductList = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Product retrieved successfully",
+    message: 'Product retrieved successfully',
     meta: null,
     data: result,
   });
@@ -26,13 +38,13 @@ const getProductList = catchAsync(async (req, res) => {
 
   const { meta, data } = await ProductService.getProductList(
     filters,
-    paginationOptions
+    paginationOptions,
   );
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Products retrieved successfully",
+    message: 'Products retrieved successfully',
     meta,
     data,
   });
@@ -46,13 +58,14 @@ const getProduct = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Product retrieved successfully",
+    message: 'Product retrieved successfully',
     meta: null,
     data: result,
   });
 });
 
 export const ProductController = {
+  getAllProducts,
   getRelatedProductList,
   getProduct,
   getProductList,

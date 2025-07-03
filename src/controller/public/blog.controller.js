@@ -1,10 +1,22 @@
-import httpStatus from "http-status";
-import { blogFilterableField } from "../../constant/blog.constant.js";
-import { paginationFields } from "../../constant/pagination.constant.js";
-import { BlogService } from "../../service/public/blog.services.js";
-import catchAsync from "../../shared/catchAsync.js";
-import pick from "../../shared/pick.js";
-import sendResponse from "../../shared/sendResponse.js";
+import httpStatus from 'http-status';
+import { blogFilterableField } from '../../constant/blog.constant.js';
+import { paginationFields } from '../../constant/pagination.constant.js';
+import { BlogService } from '../../service/public/blog.services.js';
+import catchAsync from '../../shared/catchAsync.js';
+import pick from '../../shared/pick.js';
+import sendResponse from '../../shared/sendResponse.js';
+
+const getAllBlogs = catchAsync(async (req, res) => {
+  const data = await BlogService.getAllBlogs();
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Blogs retrieved successfully',
+    meta: null,
+    data,
+  });
+});
 
 const blog = catchAsync(async (req, res) => {
   const { id } = req.params;
@@ -13,7 +25,7 @@ const blog = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Blog retrieved successfully",
+    message: 'Blog retrieved successfully',
     meta: null,
     data: result,
   });
@@ -28,13 +40,10 @@ const blogList = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Blog list retrieved successfully",
+    message: 'Blog list retrieved successfully',
     meta,
     data,
   });
 });
 
-export const BlogController = {
-  blog,
-  blogList,
-};
+export const BlogController = { getAllBlogs, blog, blogList };
