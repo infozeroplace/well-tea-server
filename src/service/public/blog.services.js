@@ -11,7 +11,7 @@ const getAllBlogs = async () => {
       path: 'thumbnail',
       select: 'filepath alternateText',
     })
-    .select('urlParameter thumbnail updatedAt');
+    .select('urlParameter thumbnail metaTitle updatedAt');
 
   return blogs;
 };
