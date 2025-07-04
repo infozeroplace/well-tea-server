@@ -16,6 +16,14 @@ const getSystemConfig = async () => {
     {
       $lookup: {
         from: 'media',
+        localField: 'sectionBanner',
+        foreignField: '_id',
+        as: 'sectionBanner',
+      },
+    },
+    {
+      $lookup: {
+        from: 'media',
         localField: 'logo',
         foreignField: '_id',
         as: 'logo',
