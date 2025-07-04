@@ -194,7 +194,7 @@ const getSystemConfig = async () => {
 
   const result = await System.aggregate(pipeline);
 
-  console.log(result[0]);
+  // console.log(result[0]);
 
   return result[0];
 };
