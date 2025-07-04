@@ -129,6 +129,7 @@ const getSystemConfig = async () => {
         offer: { $first: '$offer' },
         featured: { $first: '$featured' },
         topNotifications: { $first: '$topNotifications' },
+        sectionBanner: { $first: '$sectionBanner' },
         hero: {
           $addToSet: {
             _id: '$hero._id',
