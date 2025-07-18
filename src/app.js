@@ -1,3 +1,4 @@
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
@@ -19,6 +20,7 @@ export const stripe = new Stripe(config.stripe_secret_key);
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(compression());
 
 app.use(
   express.json({
