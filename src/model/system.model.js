@@ -114,8 +114,6 @@ const SystemSchema = Schema(
       },
     },
     featured: {
-      title: String,
-      subTitle: String,
       buttonText: String,
       buttonUrl: String,
       bannerImage: {

@@ -441,8 +441,6 @@ const updateFeaturedSectionSetting = async payload => {
     const result = await System.create({
       systemId: 'system-1',
       featured: {
-        title: payload.title,
-        subTitle: payload.subTitle,
         buttonText: payload.buttonText,
         buttonUrl: payload.buttonUrl,
         bannerImage: payload.bannerImage,
@@ -461,8 +459,6 @@ const updateFeaturedSectionSetting = async payload => {
       {
         $set: {
           featured: {
-            title: payload.title,
-            subTitle: payload.subTitle,
             buttonText: payload.buttonText,
             buttonUrl: payload.buttonUrl,
             bannerImage: payload.bannerImage,
