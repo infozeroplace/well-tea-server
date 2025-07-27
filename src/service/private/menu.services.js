@@ -11,6 +11,14 @@ const updateDropdown = async payload => {
   return result;
 };
 
+const deleteDropdown = async payload => {
+  const { id } = payload;
+
+  const result = await Dropdown.findByIdAndDelete(id);
+
+  return result;
+};
+
 const deleteMenu = async payload => {
   const { id } = payload;
 
@@ -96,6 +104,7 @@ const addMenu = async payload => {
 
 export const MenuService = {
   updateDropdown,
+  deleteDropdown,
   deleteMenu,
   getMenus,
   getDropdowns,

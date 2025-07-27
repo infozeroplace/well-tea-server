@@ -4,6 +4,8 @@ const router = express.Router();
 
 router.put('/menu/update-dropdown', MenuController.updateDropdown);
 
+router.delete('/menu/delete-dropdown', MenuController.deleteDropdown);
+
 router.delete('/menu/delete-menu', MenuController.deleteMenu);
 
 router.get('/menu/get-menus', MenuController.getMenus);

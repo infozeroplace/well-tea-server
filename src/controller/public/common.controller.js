@@ -11,7 +11,7 @@ const sendFeedback = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "", 
+    message: "Thank you for submitting", 
     meta: null,
     data: null,
   });

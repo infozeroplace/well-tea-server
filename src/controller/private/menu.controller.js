@@ -3,8 +3,22 @@ import { MenuService } from '../../service/private/menu.services.js';
 import catchAsync from '../../shared/catchAsync.js';
 import sendResponse from '../../shared/sendResponse.js';
 
+
+
 const updateDropdown = catchAsync(async (req, res) => {
   const result = await MenuService.updateDropdown(req.body);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'successful!',
+    meta: null,
+    data: result,
+  });
+});
+
+const deleteDropdown = catchAsync(async (req, res) => {
+  const result = await MenuService.deleteDropdown(req.body);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -77,6 +91,7 @@ const addMenu = catchAsync(async (req, res) => {
 
 export const MenuController = {
   updateDropdown,
+  deleteDropdown,
   deleteMenu,
   getMenus,
   getDropdowns,
