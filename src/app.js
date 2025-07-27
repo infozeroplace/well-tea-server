@@ -20,13 +20,15 @@ export const stripe = new Stripe(config.stripe_secret_key);
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(compression({
-  threshold: 0, // Compress all responses regardless of size
-  filter: (req, res) => {
-    console.log(`Compressing: ${req.url} - ${res.getHeader('Content-Type')}`);
-    return true;
-  }
-}));
+app.use(
+  compression({
+    threshold: 0, // Compress all responses regardless of size
+    filter: (req, res) => {
+      // console.log(`Compressing: ${req.url} - ${res.getHeader('Content-Type')}`);
+      return true;
+    },
+  }),
+);
 
 app.use(
   express.json({

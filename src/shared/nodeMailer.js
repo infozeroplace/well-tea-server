@@ -5,7 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import config from '../config/index.js';
 import ApiError from '../error/ApiError.js';
-import { System } from '../model/system.model.js';
+import getLogo from '../lib/getLogo.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +22,49 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false,
   },
 });
+
+export const getFeedback = async data => {
+  const templatePath = path.join(__dirname, '../views/customer-message.ejs');
+  const logo = await getLogo();
+
+  ejs.renderFile(
+    templatePath,
+    {
+      ...data,
+      logo: config.server_url + logo.filepath,
+      alternateText: logo.alternateText,
+    },
+    async (err, template) => {
+      if (err) {
+        console.log(err);
+      } else {
+        try {
+          const mailOptions = {
+            from: `"WellTea Support" <${config.support_mail_address}>`,
+            to: [config.sales_mail_address],
+            subject: `Customer Message: ${data.subject}`,
+            html: template,
+            headers: {
+              'X-Mailer': 'WellTea Mailer',
+              'X-Priority': '1',
+              'List-Unsubscribe':
+                '<mailto:unsubscribe@churchlogo.co>, <https://churchlogo.co/unsubscribe>',
+            },
+          };
+
+          const info = await transporter.sendMail(mailOptions);
+
+          return info;
+        } catch (error) {
+          throw new ApiError(
+            httpStatus.INTERNAL_SERVER_ERROR,
+            'Internal Server Error',
+          );
+        }
+      }
+    },
+  );
+};
 
 export const sendPromotionalEmail = async () => {
   const emailTemplate = `
@@ -59,7 +102,7 @@ export const sendPromotionalEmail = async () => {
 `;
 
   const mailOptions = {
-    from: `"WellTea" <${config.support_mail_address}>`,
+    from: `"WellTea Support" <${config.support_mail_address}>`,
     to: 'rumanislam48@gmail.com',
     subject: 'Fluid compute is now available—up to 85% lower compute costs',
     headers: {
@@ -83,15 +126,15 @@ export const sendOrderDetailsToAdmin = async (invoice, email) => {
   const templatePath = path.join(__dirname, '../views/orderInvoice.ejs');
   const modifiedInvoice = {
     ...invoice,
-    ...config
-  }
+    ...config,
+  };
 
   ejs.renderFile(templatePath, modifiedInvoice, async (err, template) => {
     if (err) {
       console.log(err);
     } else {
       const mailOptions = {
-        from: `"ChurchLogo" <${config.invoice_mail_address}>`,
+        from: `"WellTea Support" <${config.support_mail_address}>`,
         to: email,
         subject: 'Invoice',
         html: template,
@@ -113,15 +156,15 @@ export const sendOrderInvoiceToCustomer = async invoice => {
   const templatePath = path.join(__dirname, '../views/orderInvoice.ejs');
   const modifiedInvoice = {
     ...invoice,
-    ...config
-  }
+    ...config,
+  };
 
   ejs.renderFile(templatePath, modifiedInvoice, async (err, template) => {
     if (err) {
       console.log(err);
     } else {
       const mailOptions = {
-        from: `"ChurchLogo" <${config.invoice_mail_address}>`,
+        from: `"WellTea Support" <${config.support_mail_address}>`,
         to: invoice.email,
         subject: 'Invoice',
         html: template,
@@ -141,7 +184,7 @@ export const sendOrderInvoiceToCustomer = async invoice => {
 
 export const sendForgotPasswordLink = async (email, name, token) => {
   const mailOptions = {
-    from: `"ChurchLogo" <${config.support_mail_address}>`,
+    from: `"WellTea Support" <${config.support_mail_address}>`,
     to: email,
     subject: 'Reset Your WellTea Password',
     html: `
@@ -219,7 +262,7 @@ export const sendForgotPasswordLink = async (email, name, token) => {
 
 export const sendAdminForgotPasswordLink = async (email, name, token) => {
   const mailOptions = {
-    from: `"ChurchLogo" <${config.support_mail_address}>`,
+    from: `"WellTea Support" <${config.support_mail_address}>`,
     to: email,
     subject: 'Reset Your Admin Password - Church Logo Dashboard',
     html: `
@@ -281,14 +324,8 @@ export const sendAdminForgotPasswordLink = async (email, name, token) => {
 };
 
 export const sendOtpToEmailChangeAdmin = async (email, otp) => {
-  const { logo } = await System.findOne({
-    systemId: 'system-1',
-  }).populate({
-    path: 'logo',
-    select: 'filepath alternateText',
-  });
-
   const templatePath = path.join(__dirname, '../views/otp-email.ejs');
+  const logo = await getLogo();
 
   const data = {
     config,
@@ -302,7 +339,7 @@ export const sendOtpToEmailChangeAdmin = async (email, otp) => {
       console.log(err);
     } else {
       const mailOptions = {
-        from: `"ChurchLogo" <${config.support_mail_address}>`,
+        from: `"WellTea Support" <${config.support_mail_address}>`,
         to: email,
         subject: 'Your OTP Code',
         html: template,

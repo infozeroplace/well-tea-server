@@ -1,5 +1,24 @@
 import { z } from 'zod';
 
+const sendFeedbackSchema = z.object({
+  body: z.object({
+    name: z.string({
+      required_error: 'Name is required',
+    }),
+    email: z
+      .string({
+        required_error: 'Email is required',
+      })
+      .email({ message: 'Invalid email address' }),
+    subject: z.string({
+      required_error: 'Subject is required',
+    }),
+    message: z.string({
+      required_error: 'Message is required',
+    }),
+  }),
+});
+
 const addToCartSchema = z.object({
   body: z.object({
     paymentIntentId: z.string().optional(),
@@ -29,6 +48,7 @@ const addToWishlistSchema = z.object({
 });
 
 export const CommonValidation = {
+  sendFeedbackSchema,
   addToCartSchema,
   addToWishlistSchema,
 };

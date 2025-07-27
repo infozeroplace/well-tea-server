@@ -3,6 +3,20 @@ import { CommonService } from '../../service/public/common.services.js';
 import catchAsync from '../../shared/catchAsync.js';
 import sendResponse from '../../shared/sendResponse.js';
 
+const sendFeedback = catchAsync(async (req, res) => {
+  const { ...data } = req.body;
+  
+  await CommonService.sendFeedback(data);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "", 
+    meta: null,
+    data: null,
+  });
+});
+
 const addToCart = catchAsync(async (req, res) => {
   const { message } = await CommonService.addToCart(req, res);
 
@@ -39,8 +53,4 @@ const wt = catchAsync(async (req, res) => {
   });
 });
 
-export const CommonController = {
-  addToCart,
-  addToWishlist,
-  wt,
-};
+export const CommonController = { sendFeedback, addToCart, addToWishlist, wt };

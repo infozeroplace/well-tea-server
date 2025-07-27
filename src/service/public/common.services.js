@@ -8,6 +8,11 @@ import User from '../../model/user.model.js';
 import Wishlist from '../../model/wishlist.model.js';
 import calcItems from '../../utils/calculateCartItems.js';
 import genGuestId from '../../utils/genGuestId.js';
+import { getFeedback } from '../../shared/nodeMailer.js';
+
+const sendFeedback = async payload => {
+  await getFeedback(payload);
+};
 
 const addToCart = async (req, res) => {
   const { wtg_id, auth_refresh } = req.cookies;
@@ -849,4 +854,4 @@ const wt = async (req, res) => {
   }
 };
 
-export const CommonService = { addToCart, addToWishlist, wt };
+export const CommonService = { sendFeedback, addToCart, addToWishlist, wt };

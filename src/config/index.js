@@ -75,9 +75,8 @@ const config = {
     email_expires_in: process.env.JWT_EMAIL_EXPIRES_IN,
   },
 
-  info_mail_address: process.env.INFO_MAIL_ADDRESS,
+  sales_mail_address: process.env.SALES_MAIL_ADDRESS,
   support_mail_address: process.env.SUPPORT_MAIL_ADDRESS,
-  invoice_mail_address: process.env.INVOICE_MAIL_ADDRESS,
   nodemailer_pass: process.env.NODEMAILER_PASS,
 
   google_client_id: process.env.GOOGLE_CLIENT_ID,

@@ -5,6 +5,12 @@ import { CommonValidation } from '../../validation/common.validation.js';
 const router = express.Router();
 
 router.post(
+  '/common/send-feedback',
+  validateRequest(CommonValidation.sendFeedbackSchema),
+  CommonController.sendFeedback,
+);
+
+router.post(
   '/common/cart/add-to-cart',
   validateRequest(CommonValidation.addToCartSchema),
   CommonController.addToCart,
