@@ -1,7 +1,7 @@
 import Order from '../model/order.model.js';
 
 const generateRandomOrderId = () => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const characters = '0123456789';
   let id = '';
 
   for (let i = 0; i < 12; i++) {
