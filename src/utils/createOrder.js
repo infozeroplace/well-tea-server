@@ -73,7 +73,7 @@ const createOrder = async (orderId, paymentIntentId) => {
   const superAdmin = await User.findOne({ role: config.super_admin_role });
 
   await sendOrderDetailsToAdmin(createdInvoice.toObject(), superAdmin.email);
-  await sendOrderInvoiceToCustomer(createdInvoice.toObject());
+  await sendOrderInvoiceToCustomer({...newOrder, ...newInvoice});
 };
 
 export default createOrder;

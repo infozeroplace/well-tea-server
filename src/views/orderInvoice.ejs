@@ -24,12 +24,16 @@
         border: 1px solid #ddd;
         box-sizing: border-box;
       }
+      .header {
+        margin-bottom: 10px;
+      }
       .container .header h1 {
         font-size: 24px;
         font-weight: bold;
       }
       .container .header p {
-        margin: 5px 0;
+        padding: 0;
+        margin: 0;
         font-size: 14px;
         color: #555;
       }
@@ -46,8 +50,19 @@
         color: #555;
       }
 
-      .container .address__container {
+      .container .ship__container {
+        text-transform: capitalize;
+      }
+      .container .address__container, .container .ship__container {
         margin: 20px 0;
+      }
+      .container .address__container h4, .container .ship__container h4 {
+        margin: 0;
+        padding: 0;
+      }
+      .container .address__container p, .container .ship__container p {
+        margin: 0;
+        padding: 0;
       }
 
       /* Table Styles */
@@ -120,9 +135,9 @@
     <div class="container">
       <div class="header">
         <h1>Invoice</h1>
-        <p>Order ID: <strong><%= orderId %></strong></p>
-        <p>Invoice ID: <strong><%= invoiceId %></strong></p>
-        <p>Transaction ID: <strong><%= transactionId %></strong></p>
+        <p>Order ID: <strong>#<%= orderId %></strong></p>
+        <p>Invoice ID: <strong>#<%= invoiceId %></strong></p>
+        <p>Transaction ID: <strong>#<%= transactionId %></strong></p>
       </div>
 
       <div class="date">
@@ -130,10 +145,21 @@
       </div>
 
       <div class="address__container">
-        <p><strong>Invoiced To:</strong></p>
+        <h4><strong>Invoiced To:</strong></h4>
         <p>Name: <%= name %></p>
         <p>Email: <%= email %></p>
         <p>Phone: <%= phone %></p>
+      </div>
+
+      <div class="ship__container">
+        <h4><strong>Ship To:</strong></h4>
+        <p><%= shippingAddress.firstName %> <%= shippingAddress.lastName %></p>
+        <p><%= shippingAddress.company %></p>
+        <p><%= shippingAddress.address1 %></p>
+        <p><%= shippingAddress.address2 %></p>
+        <p><%= shippingAddress.city %>, <%= shippingAddress.postalCode %></p>
+        <p><%= shippingAddress.country %></p>
+        <p><%= shippingAddress.phone %></p>
       </div>
 
       <% if (coupon) { %>
@@ -159,27 +185,27 @@
             <td><%= item.title %></td>
             <td><%= item.unit %></td>
             <td><%= item.quantity %></td>
-            <td class="td__right">$<%= item.price.toFixed(2) %></td>
-            <td class="td__right">$<%= item.totalPrice.toFixed(2) %></td>
+            <td class="td__right">£<%= item.price.toFixed(2) %></td>
+            <td class="td__right">£<%= item.totalPrice.toFixed(2) %></td>
           </tr>
           <% }) %>
           <tr>
             <td colspan="4" class="td__right"><strong>Subtotal:</strong></td>
-            <td class="td__right">$<%= subtotal.toFixed(2) %></td>
+            <td class="td__right">£<%= subtotal.toFixed(2) %></td>
           </tr>
           <% if (discount > 0) { %>
             <tr>
               <td colspan="4" class="td__right"><strong>Discount:</strong></td>
-              <td class="td__right">-$<%= discount.toFixed(2) %></td>
+              <td class="td__right">-£<%= discount.toFixed(2) %></td>
             </tr>
           <% } %>
           <tr>
             <td colspan="4" class="td__right"><strong>Shipping:</strong></td>
-            <td class="td__right">$<%= shipping.toFixed(2) %></td>
+            <td class="td__right">£<%= shipping.toFixed(2) %></td>
           </tr>
           <tr>
             <td colspan="4" class="td__right"><strong>Total:</strong></td>
-            <td class="td__right">$<%= total.toFixed(2) %></td>
+            <td class="td__right">£<%= total.toFixed(2) %></td>
           </tr>
         </tbody>
       </table>
